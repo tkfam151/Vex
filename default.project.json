@@ -1,0 +1,22 @@
+{
+  "name": "VexRoboticsTycoon",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Config": { "$path": "src/ReplicatedStorage/Config.lua" }
+    },
+    "ServerScriptService": {
+      "DataManager": { "$path": "src/ServerScriptService/DataManager.lua" },
+      "RobotBuilder": { "$path": "src/ServerScriptService/RobotBuilder.lua" },
+      "WorldBuilder": { "$path": "src/ServerScriptService/WorldBuilder.lua" },
+      "TycoonServer": { "$path": "src/ServerScriptService/TycoonServer.server.lua" },
+      "ArenaServer": { "$path": "src/ServerScriptService/ArenaServer.server.lua" }
+    },
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "MainUI": { "$path": "src/StarterPlayerScripts/MainUI.client.lua" },
+        "DriveClient": { "$path": "src/StarterPlayerScripts/DriveClient.client.lua" }
+      }
+    }
+  }
+}
