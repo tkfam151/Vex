@@ -20,9 +20,9 @@ Config.StartingCash = 0
 -- World layout
 ---------------------------------------------------------------------
 Config.MaxPlots = 6
-Config.PlotRadius = 220 -- distance from hub center to each workshop
-Config.PlotSize = 110
-Config.HubRadius = 130
+Config.PlotRadius = 275 -- distance from hub center to each workshop
+Config.PlotSize = 150
+Config.HubRadius = 175
 Config.ConveyorSpeed = 10
 Config.DropLifetime = 25
 Config.MaxDropsPerPlot = 80
@@ -255,6 +255,138 @@ Config.Match = {
 	WinCashPerRating = 40,
 	LoseCash = 100,
 }
+
+
+---------------------------------------------------------------------
+-- Rarities (shared by seeds and market robots)
+---------------------------------------------------------------------
+Config.RarityOrder = { "Common", "Uncommon", "Rare", "Epic", "Legendary", "Mythic" }
+Config.Rarities = {
+	Common = { Color = Color3.fromRGB(210, 210, 210), Weight = 50 },
+	Uncommon = { Color = Color3.fromRGB(90, 225, 90), Weight = 28 },
+	Rare = { Color = Color3.fromRGB(70, 160, 255), Weight = 14 },
+	Epic = { Color = Color3.fromRGB(190, 100, 255), Weight = 6 },
+	Legendary = { Color = Color3.fromRGB(255, 195, 40), Weight = 1.8 },
+	Mythic = { Color = Color3.fromRGB(255, 70, 130), Weight = 0.2 },
+}
+
+---------------------------------------------------------------------
+-- Garden: plant seeds, wait, harvest, sell
+---------------------------------------------------------------------
+Config.Garden = {
+	RestockInterval = 300, -- seconds between seed shop restocks
+	MaxBackpack = 200,
+	StartingSeeds = { gear = 3 },
+	SellDistance = 25, -- how close to the Sell Stand you must be to sell from the menu
+	-- 12 beds on the right side of every workshop (plot-local positions)
+	TileSize = 9,
+	TileColumns = { 59, 69 },
+	TileRows = { -52, -42, -32, -22, -12, -2 },
+	-- chance the stock includes a seed, and how many, by rarity
+	Stock = {
+		Common = { Chance = 1, Min = 6, Max = 15 },
+		Uncommon = { Chance = 0.8, Min = 2, Max = 8 },
+		Rare = { Chance = 0.5, Min = 1, Max = 4 },
+		Epic = { Chance = 0.25, Min = 1, Max = 2 },
+		Legendary = { Chance = 0.08, Min = 1, Max = 1 },
+		Mythic = { Chance = 0.02, Min = 1, Max = 1 },
+	},
+	-- rolled when a seed is planted
+	Mutations = {
+		{ Name = "Titanium", Chance = 0.005, Multiplier = 15, Color = Color3.fromRGB(200, 210, 230) },
+		{ Name = "Golden", Chance = 0.025, Multiplier = 5, Color = Color3.fromRGB(255, 200, 40) },
+		{ Name = "Shiny", Chance = 0.08, Multiplier = 2, Color = Color3.fromRGB(120, 235, 255) },
+	},
+}
+
+Config.Seeds = {
+	{ Id = "gear", Name = "Gear Sprout", Rarity = "Common", Price = 10, GrowTime = 30, Value = 18, Color = Color3.fromRGB(170, 170, 180) },
+	{ Id = "bolt", Name = "Bolt Bush", Rarity = "Common", Price = 25, GrowTime = 45, Value = 45, Color = Color3.fromRGB(120, 130, 145) },
+	{ Id = "spring", Name = "Spring Vine", Rarity = "Uncommon", Price = 80, GrowTime = 90, Value = 150, Color = Color3.fromRGB(90, 220, 120) },
+	{ Id = "motor", Name = "Motor Melon", Rarity = "Uncommon", Price = 200, GrowTime = 150, Value = 400, Color = Color3.fromRGB(220, 60, 60) },
+	{ Id = "battery", Name = "Battery Berry", Rarity = "Rare", Price = 750, GrowTime = 240, Value = 1500, Color = Color3.fromRGB(60, 140, 255) },
+	{ Id = "sensor", Name = "Sensor Sunflower", Rarity = "Rare", Price = 2000, GrowTime = 360, Value = 4200, Color = Color3.fromRGB(255, 210, 40) },
+	{ Id = "chip", Name = "Microchip Mango", Rarity = "Epic", Price = 8000, GrowTime = 600, Value = 18000, Color = Color3.fromRGB(255, 140, 40) },
+	{ Id = "brain", Name = "Brain Blossom", Rarity = "Legendary", Price = 40000, GrowTime = 900, Value = 100000, Color = Color3.fromRGB(255, 120, 200) },
+	{ Id = "quantum", Name = "Quantum Cactus", Rarity = "Mythic", Price = 250000, GrowTime = 1800, Value = 700000, Color = Color3.fromRGB(170, 80, 255) },
+}
+Config.SeedById = {}
+for i, seed in ipairs(Config.Seeds) do
+	seed.Index = i
+	Config.SeedById[seed.Id] = seed
+end
+
+function Config.GetMutation(name)
+	for _, m in ipairs(Config.Garden.Mutations) do
+		if m.Name == name then
+			return m
+		end
+	end
+	return nil
+end
+
+---------------------------------------------------------------------
+-- Robot Market: buy robots off the conveyor, they earn at your base,
+-- other players can steal them. Lock your base to stop thieves.
+---------------------------------------------------------------------
+Config.Market = {
+	SpawnInterval = 4,
+	Speed = 5, -- studs per second along the conveyor
+	Start = Vector3.new(-95, 0.8, -140),
+	End = Vector3.new(95, 0.8, -140),
+	-- 8 showcase pads on the left side of every workshop
+	PadSize = 9,
+	PadColumns = { -69, -58 },
+	PadRows = { -52, -40, -28, -16 },
+	StealHold = 1.2, -- seconds to hold the steal prompt
+	StealTimeout = 90, -- thief must reach their base within this time
+	CarrySpeed = 12, -- thief walk speed while carrying
+	RecoverDistance = 7, -- owner gets the robot back by touching the thief
+	LockDuration = 60,
+	LockCooldown = 20,
+	LockPad = Vector3.new(-58, 0, -66),
+	Mutations = {
+		{ Name = "Diamond", Chance = 0.01, Multiplier = 8, Tint = Color3.fromRGB(140, 230, 255) },
+		{ Name = "Gold", Chance = 0.05, Multiplier = 3, Tint = Color3.fromRGB(255, 200, 40) },
+	},
+}
+
+Config.Species = {
+	{ Id = "clawbot", Name = "Clawbot", Rarity = "Common", Price = 100, Income = 2, Scale = 0.8, Loadout = { Drivetrain = "dt_basic", Intake = "in_claw", Lift = "lf_none", Brain = "br_basic" } },
+	{ Id = "pushbot", Name = "Pushbot", Rarity = "Common", Price = 250, Income = 5, Scale = 0.85, Loadout = { Drivetrain = "dt_4m", Intake = "in_claw", Lift = "lf_none", Brain = "br_basic" } },
+	{ Id = "stackbot", Name = "Stackbot", Rarity = "Uncommon", Price = 900, Income = 15, Scale = 0.9, Loadout = { Drivetrain = "dt_4m", Intake = "in_flex", Lift = "lf_4bar", Brain = "br_v5" } },
+	{ Id = "scoopbot", Name = "Scoopbot", Rarity = "Uncommon", Price = 1800, Income = 28, Scale = 0.95, Loadout = { Drivetrain = "dt_omni", Intake = "in_roller", Lift = "lf_none", Brain = "br_v5" } },
+	{ Id = "flingbot", Name = "Flingbot", Rarity = "Rare", Price = 6000, Income = 80, Scale = 1, Loadout = { Drivetrain = "dt_omni", Intake = "in_roller", Lift = "lf_cata", Brain = "br_pid" } },
+	{ Id = "spinbot", Name = "Spinbot", Rarity = "Rare", Price = 12000, Income = 150, Scale = 1, Loadout = { Drivetrain = "dt_mecanum", Intake = "in_chain", Lift = "lf_dr4b", Brain = "br_pid" } },
+	{ Id = "shooterbot", Name = "Shooterbot", Rarity = "Epic", Price = 45000, Income = 450, Scale = 1.1, Loadout = { Drivetrain = "dt_mecanum", Intake = "in_chain", Lift = "lf_fly", Brain = "br_odom" } },
+	{ Id = "climbbot", Name = "Climbbot", Rarity = "Epic", Price = 90000, Income = 850, Scale = 1.15, Loadout = { Drivetrain = "dt_xdrive", Intake = "in_dual", Lift = "lf_cascade", Brain = "br_odom" } },
+	{ Id = "skillsbot", Name = "Skills Champion", Rarity = "Legendary", Price = 350000, Income = 2800, Scale = 1.25, Loadout = { Drivetrain = "dt_blue", Intake = "in_dual", Lift = "lf_cata", Brain = "br_vision" } },
+	{ Id = "worldsbot", Name = "Worlds Finalist", Rarity = "Legendary", Price = 800000, Income = 6500, Scale = 1.3, Loadout = { Drivetrain = "dt_worlds", Intake = "in_pro", Lift = "lf_fly", Brain = "br_vision" } },
+	{ Id = "prototype", Name = "Golden Prototype", Rarity = "Mythic", Price = 3000000, Income = 25000, Scale = 1.45, Loadout = { Drivetrain = "dt_worlds", Intake = "in_pro", Lift = "lf_fly", Brain = "br_worlds" } },
+}
+Config.SpeciesById = {}
+for _, sp in ipairs(Config.Species) do
+	Config.SpeciesById[sp.Id] = sp
+end
+
+function Config.GetMarketMutation(name)
+	for _, m in ipairs(Config.Market.Mutations) do
+		if m.Name == name then
+			return m
+		end
+	end
+	return nil
+end
+
+-- income per second of a showcase entry { S = speciesId, M = mutation }
+function Config.ShowcaseIncome(entry)
+	local sp = entry and Config.SpeciesById[entry.S]
+	if not sp then
+		return 0
+	end
+	local m = entry.M and Config.GetMarketMutation(entry.M)
+	return sp.Income * (m and m.Multiplier or 1)
+end
 
 ---------------------------------------------------------------------
 -- Game passes: put your real Game Pass IDs here (0 = disabled)

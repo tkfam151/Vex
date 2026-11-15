@@ -25,6 +25,7 @@ Create these objects in the **Explorer** (right-click the parent → *Insert Obj
 | `WorldBuilder` | ModuleScript | ServerScriptService | `src/ServerScriptService/WorldBuilder.lua` |
 | `TycoonServer` | Script | ServerScriptService | `src/ServerScriptService/TycoonServer.server.lua` |
 | `ArenaServer` | Script | ServerScriptService | `src/ServerScriptService/ArenaServer.server.lua` |
+| `SimServer` | Script | ServerScriptService | `src/ServerScriptService/SimServer.server.lua` |
 | `MainUI` | LocalScript | StarterPlayer → StarterPlayerScripts | `src/StarterPlayerScripts/MainUI.client.lua` |
 | `DriveClient` | LocalScript | StarterPlayer → StarterPlayerScripts | `src/StarterPlayerScripts/DriveClient.client.lua` |
 
@@ -40,6 +41,18 @@ Ranked matches need two players. In Studio go to **Test → Clients and Servers*
 ---
 
 ## How to play
+
+### Garden (grow, harvest, sell)
+- Buy seeds at the **Seed Shop** stall in the hub. Stock is random and restocks every 5 minutes; rarer seeds show up less often.
+- Pick a seed in the **SEEDS** menu, then use a **garden bed** on the right side of your workshop to plant it.
+- Crops grow in real time, even while you're offline. Some come up **Shiny (×2)**, **Golden (×5)** or **Titanium (×15)**.
+- Harvest ripe crops into your **BAG**, then sell everything at the **Sell Stand**.
+
+### Robot Market (buy, earn, steal)
+- Robots ride the **Robot Market** conveyor in the hub. Their rarity ranges from Common to Mythic, and Gold/Diamond versions earn extra.
+- Buy one and it stands on a **showcase pad** at your base, filling the pad with cash. Step on the pad to collect.
+- **Steal:** hold the prompt on another player's robot, then carry it back into your own base. You walk slower while carrying it. If the owner catches you, they get it back.
+- **Lock:** step on the red lock pad at your base to raise laser walls for 60 seconds. Nobody can steal from you while it's locked.
 
 1. **Workshop (tycoon).** You're given one of 6 team workshops when you join. Step on the green buttons to buy machines. Machines drop parts onto the conveyor, the parts get worth more as they pass through upgraders, and the collector stores the cash. Step on the **collect pad** to cash out.
 2. **Robot Lab** (🤖). Buy the *Robot Assembly Station* first. Each robot has 4 module slots:
@@ -77,6 +90,8 @@ Every price, stat, reward and robot part is in **`Config`** (ReplicatedStorage):
 | What | Where in Config |
 |---|---|
 | Tycoon buttons, prices and machine output | `Config.Items` |
+| Seeds, restock timer, crop mutations | `Config.Seeds`, `Config.Garden` |
+| Market robots, rarities, steal and lock rules | `Config.Species`, `Config.Rarities`, `Config.Market` |
 | Robot parts and stats | `Config.Modules` |
 | Tournaments | `Config.Competitions` |
 | Match length and rewards | `Config.Match`, `Config.Practice` |
@@ -94,6 +109,7 @@ src/
   ServerScriptService/WorldBuilder.lua    generates hub, fields, workshops, items
   ServerScriptService/TycoonServer.server.lua   tycoon, lab, garage, competitions, seasons
   ServerScriptService/ArenaServer.server.lua    practice + ranked driving
+  ServerScriptService/SimServer.server.lua      garden, seed shop, robot market, stealing, base lock
   StarterPlayerScripts/MainUI.client.lua        all UI (auto-scales, 3D previews, animations)
   StarterPlayerScripts/DriveClient.client.lua   robot driving controls
 Installer.lua         generated one-paste installer

@@ -18,8 +18,8 @@ local WorldBuilder = {}
 local world = nil
 
 local SMOOTH = Enum.SurfaceType.Smooth
-local FONT_BOLD = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
-local FONT_SEMI = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.SemiBold)
+local FONT_BOLD = Font.fromEnum(Enum.Font.FredokaOne)
+local FONT_SEMI = Font.fromEnum(Enum.Font.FredokaOne)
 local SIGN_BLACK = Color3.fromRGB(16, 16, 18)
 local VEX_RED = Color3.fromRGB(226, 35, 42)
 local METAL = Color3.fromRGB(196, 198, 204)
@@ -73,12 +73,31 @@ local function surfaceText(part, face, text, textColor, bgColor, font)
 	label.TextColor3 = textColor or Color3.new(1, 1, 1)
 	label.Text = text
 	label.Parent = gui
+	local textStroke = Instance.new("UIStroke")
+	textStroke.Thickness = 3
+	textStroke.Color = Color3.fromRGB(20, 20, 30)
+	textStroke.Parent = label
 	local pad = Instance.new("UIPadding")
 	pad.PaddingLeft = UDim.new(0.04, 0)
 	pad.PaddingRight = UDim.new(0.04, 0)
 	pad.PaddingTop = UDim.new(0.08, 0)
 	pad.PaddingBottom = UDim.new(0.08, 0)
 	pad.Parent = label
+	return label
+end
+
+local function strokedLabel(parent, text, color, thickness)
+	local label = Instance.new("TextLabel")
+	label.BackgroundTransparency = 1
+	label.TextScaled = true
+	label.FontFace = FONT_BOLD
+	label.TextColor3 = color or Color3.new(1, 1, 1)
+	label.Text = text
+	label.Parent = parent
+	local stroke = Instance.new("UIStroke")
+	stroke.Thickness = thickness or 2
+	stroke.Color = Color3.fromRGB(20, 20, 30)
+	stroke.Parent = label
 	return label
 end
 
@@ -89,83 +108,43 @@ local function billboard(adornee, text, studsWidth, studsHeight, offset, color)
 	gui.MaxDistance = 90
 	gui.LightInfluence = 0
 	gui.Parent = adornee
-	local card = Instance.new("Frame")
-	card.Size = UDim2.fromScale(1, 1)
-	card.BackgroundColor3 = SIGN_BLACK
-	card.BackgroundTransparency = 0.2
-	card.Parent = gui
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0.5, 0)
-	corner.Parent = card
-	local stroke = Instance.new("UIStroke")
-	stroke.Color = Color3.new(1, 1, 1)
-	stroke.Thickness = 1
-	stroke.Transparency = 0.85
-	stroke.Parent = card
-	local label = Instance.new("TextLabel")
-	label.Position = UDim2.fromScale(0.05, 0.1)
-	label.Size = UDim2.fromScale(0.9, 0.8)
-	label.BackgroundTransparency = 1
-	label.TextScaled = true
-	label.FontFace = FONT_SEMI
-	label.TextColor3 = Color3.new(1, 1, 1)
-	label.Text = text
-	label.Parent = card
+	local label = strokedLabel(gui, text, color)
+	label.Size = UDim2.fromScale(1, 1)
 	return label
 end
 
--- two-line "shop tag" used above tycoon buttons
+-- name + price floating above tycoon buttons
 local function priceTag(adornee, name, price)
 	local gui = Instance.new("BillboardGui")
-	gui.Size = UDim2.new(8, 0, 2.2, 0)
+	gui.Size = UDim2.new(8, 0, 2.4, 0)
 	gui.StudsOffset = Vector3.new(0, 3, 0)
 	gui.MaxDistance = 80
 	gui.LightInfluence = 0
 	gui.Parent = adornee
-	local card = Instance.new("Frame")
-	card.Size = UDim2.fromScale(1, 1)
-	card.BackgroundColor3 = SIGN_BLACK
-	card.BackgroundTransparency = 0.15
-	card.Parent = gui
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0.3, 0)
-	corner.Parent = card
-	local nameLabel = Instance.new("TextLabel")
-	nameLabel.Position = UDim2.fromScale(0.06, 0.1)
-	nameLabel.Size = UDim2.fromScale(0.88, 0.48)
-	nameLabel.BackgroundTransparency = 1
-	nameLabel.TextScaled = true
-	nameLabel.FontFace = FONT_BOLD
-	nameLabel.TextColor3 = Color3.new(1, 1, 1)
-	nameLabel.Text = name
-	nameLabel.Parent = card
-	local priceLabel = Instance.new("TextLabel")
+	local nameLabel = strokedLabel(gui, name, Color3.new(1, 1, 1))
+	nameLabel.Size = UDim2.fromScale(1, 0.55)
+	local priceLabel = strokedLabel(gui, price, Color3.fromRGB(120, 255, 100))
 	priceLabel.Name = "Price"
-	priceLabel.Position = UDim2.fromScale(0.06, 0.58)
-	priceLabel.Size = UDim2.fromScale(0.88, 0.32)
-	priceLabel.BackgroundTransparency = 1
-	priceLabel.TextScaled = true
-	priceLabel.FontFace = FONT_SEMI
-	priceLabel.TextColor3 = Color3.fromRGB(170, 170, 178)
-	priceLabel.Text = price
-	priceLabel.Parent = card
-	return card
+	priceLabel.Position = UDim2.fromScale(0, 0.55)
+	priceLabel.Size = UDim2.fromScale(1, 0.45)
+	return gui
 end
 
 -- black VEX-style sign with a red accent bar along the bottom
-local function vexSign(parent, size, cf, text)
-	local sign = newPart(parent, { Size = size, CFrame = cf, Color = SIGN_BLACK })
-	newPart(parent, { Size = Vector3.new(size.X, 0.4, size.Z + 0.1), CFrame = cf * CFrame.new(0, -size.Y / 2 + 0.2, 0), Color = VEX_RED })
+local function vexSign(parent, size, cf, text, color)
+	local sign = newPart(parent, { Size = size, CFrame = cf, Color = color or VEX_RED })
+	newPart(parent, { Size = Vector3.new(size.X + 0.6, 0.6, size.Z + 0.2), CFrame = cf * CFrame.new(0, -size.Y / 2, 0), Color = Color3.fromRGB(255, 255, 255) })
+	newPart(parent, { Size = Vector3.new(size.X + 0.6, 0.6, size.Z + 0.2), CFrame = cf * CFrame.new(0, size.Y / 2, 0), Color = Color3.fromRGB(255, 255, 255) })
 	surfaceText(sign, Enum.NormalId.Front, text, Color3.new(1, 1, 1))
 	return sign
 end
 
 local function setupLighting()
 	local Lighting = game:GetService("Lighting")
-	Lighting.ClockTime = 14.5
-	Lighting.Brightness = 2.2
+	Lighting.ClockTime = 13.5
+	Lighting.Brightness = 2.6
 	Lighting.GlobalShadows = true
-	Lighting.OutdoorAmbient = Color3.fromRGB(135, 135, 150)
+	Lighting.OutdoorAmbient = Color3.fromRGB(150, 150, 160)
 	Lighting.Ambient = Color3.fromRGB(60, 60, 75)
 	Lighting.EnvironmentDiffuseScale = 0.6
 	Lighting.EnvironmentSpecularScale = 0.6
@@ -179,9 +158,9 @@ local function setupLighting()
 			effect.Parent = Lighting
 		end
 	end
-	ensure("Atmosphere", { Density = 0.28, Offset = 0.2, Color = Color3.fromRGB(200, 215, 235), Decay = Color3.fromRGB(110, 120, 150), Glare = 0.1, Haze = 1 })
-	ensure("BloomEffect", { Intensity = 0.2, Size = 20, Threshold = 2 })
-	ensure("ColorCorrectionEffect", { Saturation = 0.03, Contrast = 0.04, Brightness = 0 })
+	ensure("Atmosphere", { Density = 0.22, Offset = 0.15, Color = Color3.fromRGB(190, 225, 255), Decay = Color3.fromRGB(120, 160, 210), Glare = 0.2, Haze = 0.8 })
+	ensure("BloomEffect", { Intensity = 0.45, Size = 24, Threshold = 1.6 })
+	ensure("ColorCorrectionEffect", { Saturation = 0.25, Contrast = 0.08, Brightness = 0.03 })
 	ensure("SunRaysEffect", { Intensity = 0.03, Spread = 0.5 })
 end
 
@@ -212,7 +191,7 @@ local function buildHub(root)
 
 	local baseplate = workspace:FindFirstChild("Baseplate")
 	if baseplate and baseplate:IsA("BasePart") then
-		baseplate.Color = Color3.fromRGB(80, 140, 70)
+		baseplate.Color = Color3.fromRGB(95, 190, 70)
 		baseplate.Material = Enum.Material.Grass
 		for _, child in ipairs(baseplate:GetChildren()) do
 			if child:IsA("Texture") then
@@ -224,7 +203,7 @@ local function buildHub(root)
 			Name = "Ground",
 			Size = Vector3.new(1200, 2, 1200),
 			CFrame = CFrame.new(0, -1, 0),
-			Color = Color3.fromRGB(80, 140, 70),
+			Color = Color3.fromRGB(95, 190, 70),
 			Material = Enum.Material.Grass,
 		})
 	end
@@ -234,8 +213,8 @@ local function buildHub(root)
 		Shape = Enum.PartType.Cylinder,
 		Size = Vector3.new(0.6, Config.HubRadius * 2, Config.HubRadius * 2),
 		CFrame = CFrame.new(0, 0, 0) * CFrame.Angles(0, 0, math.rad(90)),
-		Color = Color3.fromRGB(205, 205, 210),
-		Material = Enum.Material.Concrete,
+		Color = Color3.fromRGB(235, 220, 185),
+		Material = Enum.Material.SmoothPlastic,
 	})
 
 	local spawn = Instance.new("SpawnLocation")
@@ -312,8 +291,8 @@ local function buildHub(root)
 		CFrame = CFrame.new(0, 3.3, 100),
 		Color = SIGN_BLACK,
 	})
-	vexSign(hubFolder, Vector3.new(18, 5, 1), CFrame.new(0, 10, 100), "COMPETITIONS")
 	hub.CompetitionPrompt = prompt(kiosk, "Enter Competitions", "Tournament Desk")
+	vexSign(hubFolder, Vector3.new(18, 5, 1), CFrame.new(0, 10, 100), "COMPETITIONS", Color3.fromRGB(255, 190, 30))
 
 	-- lamp posts
 	for i = 0, 11 do
@@ -326,6 +305,49 @@ local function buildHub(root)
 		light.Brightness = 1.5
 		light.Parent = bulb
 	end
+
+	-- seed shop + sell stand (simple market stalls)
+	local function stall(pos, roofA, roofB, title, signColor)
+		local counter = newPart(hubFolder, { Name = "Counter", Size = Vector3.new(16, 4, 5), CFrame = CFrame.new(pos + Vector3.new(0, 2.3, 0)), Color = Color3.fromRGB(165, 110, 65), Material = Enum.Material.WoodPlanks })
+		for _, x in ipairs({ -7.6, 7.6 }) do
+			for _, z in ipairs({ -2.2, 2.2 }) do
+				newPart(hubFolder, { Size = Vector3.new(0.8, 10, 0.8), CFrame = CFrame.new(pos + Vector3.new(x, 5.3, z)), Color = Color3.fromRGB(130, 85, 50), Material = Enum.Material.Wood })
+			end
+		end
+		for i = 0, 5 do
+			newPart(hubFolder, { Size = Vector3.new(3, 0.8, 8), CFrame = CFrame.new(pos + Vector3.new(-7.5 + i * 3, 10.6, 0)), Color = (i % 2 == 0) and roofA or roofB })
+		end
+		vexSign(hubFolder, Vector3.new(16, 3.4, 0.6), CFrame.new(pos + Vector3.new(0, 13.2, -1.5)), title, signColor)
+		return counter
+	end
+	local seedCounter = stall(Vector3.new(-48, 0.3, 115), Color3.fromRGB(80, 200, 80), Color3.fromRGB(255, 255, 255), "SEED SHOP", Color3.fromRGB(60, 170, 60))
+	for i = 0, 3 do
+		newPart(hubFolder, { Shape = Enum.PartType.Ball, Size = Vector3.new(1.6, 1.6, 1.6), CFrame = CFrame.new(-53 + i * 3.4, 5.2, 113.5), Color = Config.Seeds[(i % #Config.Seeds) + 1].Color })
+	end
+	local sellCounter = stall(Vector3.new(48, 0.3, 115), Color3.fromRGB(255, 200, 40), Color3.fromRGB(255, 90, 60), "SELL", Color3.fromRGB(240, 150, 30))
+	hub.SeedPrompt = prompt(seedCounter, "Open Seed Shop", "Seed Shop")
+	hub.SellPrompt = prompt(sellCounter, "Sell Backpack", "Sell Stand")
+	hub.SellPosition = sellCounter.Position
+
+	-- robot market conveyor
+	local market = Config.Market
+	local mid = (market.Start + market.End) / 2
+	local length = (market.End - market.Start).Magnitude
+	newPart(hubFolder, { Name = "MarketBelt", Size = Vector3.new(length + 10, 0.8, 10), CFrame = CFrame.new(mid.X, 0.4, mid.Z), Color = Color3.fromRGB(50, 50, 60), Material = Enum.Material.DiamondPlate })
+	for _, side in ipairs({ -1, 1 }) do
+		newPart(hubFolder, { Size = Vector3.new(length + 10, 1, 0.8), CFrame = CFrame.new(mid.X, 0.5, mid.Z + side * 5.4), Color = Color3.fromRGB(255, 200, 40) })
+	end
+	for _, x in ipairs({ market.Start.X, market.End.X }) do
+		for _, side in ipairs({ -1, 1 }) do
+			newPart(hubFolder, { Size = Vector3.new(1.2, 12, 1.2), CFrame = CFrame.new(x, 6.3, mid.Z + side * 6), Color = VEX_RED })
+		end
+		newPart(hubFolder, { Size = Vector3.new(1.6, 1.6, 13.2), CFrame = CFrame.new(x, 12.6, mid.Z), Color = VEX_RED })
+	end
+	for _, x in ipairs({ -12, 12 }) do
+		newPart(hubFolder, { Size = Vector3.new(1, 16, 1), CFrame = CFrame.new(mid.X + x, 8.3, mid.Z - 7), Color = Color3.fromRGB(255, 255, 255) })
+	end
+	vexSign(hubFolder, Vector3.new(30, 5, 1), CFrame.new(mid.X, 17, mid.Z - 7) * CFrame.Angles(0, math.pi, 0), "ROBOT MARKET", Color3.fromRGB(60, 140, 255))
+	hub.MarketFolder = folder("Market", hubFolder)
 
 	return hub
 end
@@ -502,7 +524,7 @@ local function buildPlot(root, index)
 	plotPart(plot, base, Vector3.new(16, 0.4, pathLength), Vector3.new(0, 0.1, -half - pathLength / 2 + 2), Color3.fromRGB(150, 150, 155), Enum.Material.Concrete)
 
 	-- owner sign
-	local sign = plotPart(plot, base, Vector3.new(26, 6, 1), Vector3.new(-30, 6, -half + 1), SIGN_BLACK)
+	local sign = plotPart(plot, base, Vector3.new(26, 6, 1), Vector3.new(-30, 6, -half + 1), color)
 	plotPart(plot, base, Vector3.new(1, 3, 1), Vector3.new(-40, 2, -half + 1), METAL, Enum.Material.Metal)
 	plotPart(plot, base, Vector3.new(1, 3, 1), Vector3.new(-20, 2, -half + 1), METAL, Enum.Material.Metal)
 	plotPart(plot, base, Vector3.new(26, 0.4, 1.1), Vector3.new(-30, 3.2, -half + 1), color, Enum.Material.SmoothPlastic)
@@ -535,6 +557,55 @@ local function buildPlot(root, index)
 	local collectPad = plotPart(plot, base, Vector3.new(7, 0.4, 7), Vector3.new(40, 1.2, -4), Color3.fromRGB(52, 199, 89), Enum.Material.SmoothPlastic, { Name = "CollectPad" })
 	plot.CollectPad = collectPad
 	plot.StorageLabel = billboard(collectPad, "Collect\n$0", 9, 3, Vector3.new(0, 4, 0), Color3.fromRGB(120, 255, 140))
+
+	-- garden beds
+	plot.GardenTiles = {}
+	local garden = Config.Garden
+	local tileIndex = 0
+	for _, tz in ipairs(garden.TileRows) do
+		for _, tx in ipairs(garden.TileColumns) do
+			tileIndex += 1
+			plotPart(plot, base, Vector3.new(garden.TileSize + 0.8, 0.6, garden.TileSize + 0.8), Vector3.new(tx, 1.15, tz), Color3.fromRGB(150, 100, 55), Enum.Material.WoodPlanks)
+			local bed = plotPart(plot, base, Vector3.new(garden.TileSize, 0.6, garden.TileSize), Vector3.new(tx, 1.3, tz), Color3.fromRGB(105, 70, 40), Enum.Material.Ground, { Name = "Bed" .. tileIndex })
+			local bedPrompt = prompt(bed, "Plant", "Garden Bed")
+			bedPrompt.MaxActivationDistance = 8
+			bedPrompt.Enabled = false
+			plot.GardenTiles[tileIndex] = { Part = bed, Prompt = bedPrompt, Key = "t" .. tileIndex }
+		end
+	end
+
+	-- showcase pads for market robots
+	plot.ShowcasePads = {}
+	local market = Config.Market
+	local padIndex = 0
+	for _, pz in ipairs(market.PadRows) do
+		for _, px in ipairs(market.PadColumns) do
+			padIndex += 1
+			plotPart(plot, base, Vector3.new(market.PadSize + 0.8, 0.4, market.PadSize + 0.8), Vector3.new(px, 1.1, pz), color)
+			local showPad = plotPart(plot, base, Vector3.new(market.PadSize, 0.5, market.PadSize), Vector3.new(px, 1.3, pz), Color3.fromRGB(240, 240, 245), Enum.Material.SmoothPlastic, { Name = "Showcase" .. padIndex })
+			local cashLabel = billboard(showPad, "", 8, 1.6, Vector3.new(0, 12, 0), Color3.fromRGB(120, 255, 100))
+			plot.ShowcasePads[padIndex] = { Part = showPad, Key = "p" .. padIndex, Label = cashLabel }
+		end
+	end
+
+	-- base lock pad + laser walls
+	local lockPad = plotPart(plot, base, Vector3.new(6, 0.4, 6), market.LockPad + Vector3.new(0, 1.2, 0), Color3.fromRGB(255, 70, 70), Enum.Material.Neon, { Name = "LockPad" })
+	plot.LockPad = lockPad
+	plot.LockLabel = billboard(lockPad, "LOCK BASE", 8, 2, Vector3.new(0, 3, 0), Color3.fromRGB(255, 140, 140))
+	plot.Lasers = {}
+	local laserH = 14
+	local laserSpecs = {
+		{ Vector3.new(Config.PlotSize, laserH, 0.6), Vector3.new(0, laserH / 2 + 1, -half - 0.4) },
+		{ Vector3.new(Config.PlotSize, laserH, 0.6), Vector3.new(0, laserH / 2 + 1, half + 0.4) },
+		{ Vector3.new(0.6, laserH, Config.PlotSize), Vector3.new(-half - 0.4, laserH / 2 + 1, 0) },
+		{ Vector3.new(0.6, laserH, Config.PlotSize), Vector3.new(half + 0.4, laserH / 2 + 1, 0) },
+	}
+	for _, spec in ipairs(laserSpecs) do
+		local laser = plotPart(plot, base, spec[1], spec[2], Color3.fromRGB(255, 40, 60), Enum.Material.Neon, { Name = "Laser", Transparency = 1, CanCollide = false, CanQuery = false })
+		table.insert(plot.Lasers, laser)
+	end
+	plot.LockedUntil = 0
+	plot.LockReadyAt = 0
 
 	return plot
 end
@@ -678,15 +749,15 @@ end
 function itemBuilders.Shelf(plot, _, model)
 	local half = Config.PlotSize / 2
 	for i, y in ipairs({ 4, 8 }) do
-		plotPart(plot, model, Vector3.new(2, 0.4, 20), Vector3.new(-half + 2, y, 0 - i * 2), Color3.fromRGB(120, 85, 55), Enum.Material.WoodPlanks)
+		plotPart(plot, model, Vector3.new(2, 0.4, 20), Vector3.new(-half + 2, y, 14 - i * 2), Color3.fromRGB(120, 85, 55), Enum.Material.WoodPlanks)
 		for k = 0, 3 do
-			local tz = -i * 2 - 8 + k * 5
+			local tz = 14 - i * 2 - 8 + k * 5
 			plotPart(plot, model, Vector3.new(1.2, 0.4, 1.2), Vector3.new(-half + 2, y + 0.4, tz), Color3.fromRGB(80, 60, 30), Enum.Material.Wood)
 			plotPart(plot, model, Vector3.new(0.4, 1.2, 0.4), Vector3.new(-half + 2, y + 1.1, tz), Color3.fromRGB(255, 200, 60), Enum.Material.Metal)
 			plotPart(plot, model, Vector3.new(1.2, 1.2, 1.2), Vector3.new(-half + 2, y + 2.1, tz), Color3.fromRGB(255, 200, 60), Enum.Material.Metal, { Shape = Enum.PartType.Ball })
 		end
 	end
-	local sign = plotPart(plot, model, Vector3.new(0.4, 3, 14), Vector3.new(-half + 1.5, 12.5, -3), Color3.fromRGB(25, 28, 40))
+	local sign = plotPart(plot, model, Vector3.new(0.4, 3, 14), Vector3.new(-half + 1.5, 12.5, 11), Color3.fromRGB(25, 28, 40))
 	local label = surfaceText(sign, Enum.NormalId.Right, "0 TROPHIES", Color3.new(1, 1, 1))
 	label.Name = "TrophyLabel"
 end

@@ -274,7 +274,7 @@ function tryPurchase(player, item)
 		refreshBays(plot)
 	end
 	if item.Type == "Assembly" then
-		notify(player, "Robot Lab unlocked. Open Lab from the dock or use the workbench.", "success")
+		notify(player, "Robot Lab unlocked! Open ROBOTS from the menu or use the workbench.", "success")
 	else
 		notify(player, "Built " .. item.Name .. "!", "success")
 	end
@@ -330,9 +330,13 @@ local function claimPlot(player, plot)
 	plot.OwnerLabel.Text = player.DisplayName .. "'s Workshop"
 	clearPlot(plot)
 	loadPlot(plot)
+	DataManager.FirePlotClaimed(player, plot)
 end
 
 local function releasePlot(plot)
+	if plot.Owner then
+		DataManager.FirePlotReleased(plot.Owner, plot)
+	end
 	clearPlot(plot)
 	plot.Owner = nil
 	plot.OwnerName = nil
@@ -606,12 +610,17 @@ function Actions.Rebirth(player, data)
 	data.Loadout = loadout
 	data.Garage = {}
 	data.Active = 0
+	data.Seeds = DataManager.DeepCopy(Config.Garden.StartingSeeds)
+	data.Garden = {}
+	data.Backpack = {}
+	data.Showcase = {}
 	DataManager.UpdateLeaderstats(player)
 	local plot = playerPlot[player]
 	if plot then
 		clearPlot(plot)
 		loadPlot(plot)
 	end
+	DataManager.FireProgressReset(player)
 	DataManager.MarkChanged(player)
 	task.spawn(DataManager.Save, player)
 	local mult = Config.GetMultiplier(data.Season, false)

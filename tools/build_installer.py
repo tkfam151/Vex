@@ -17,6 +17,7 @@ FILES = [
     ("src/ServerScriptService/WorldBuilder.lua", "ModuleScript", "ServerScriptService", None, "WorldBuilder"),
     ("src/ServerScriptService/TycoonServer.server.lua", "Script", "ServerScriptService", None, "TycoonServer"),
     ("src/ServerScriptService/ArenaServer.server.lua", "Script", "ServerScriptService", None, "ArenaServer"),
+    ("src/ServerScriptService/SimServer.server.lua", "Script", "ServerScriptService", None, "SimServer"),
     ("src/StarterPlayerScripts/MainUI.client.lua", "LocalScript", "StarterPlayer", "StarterPlayerScripts", "MainUI"),
     ("src/StarterPlayerScripts/DriveClient.client.lua", "LocalScript", "StarterPlayer", "StarterPlayerScripts", "DriveClient"),
 ]

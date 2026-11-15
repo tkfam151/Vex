@@ -10,6 +10,8 @@
 	  Label      = text shown above the robot
 	  SubLabel   = second line of text
 	  NoNameplate = true -> skip the floating name tag (UI previews)
+	  TitleColor = Color3 for the name tag title
+	  Tint       = Color3 to recolor the whole robot (mutations)
 ]]
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -17,58 +19,47 @@ local Config = require(ReplicatedStorage:WaitForChild("Config"))
 
 local RobotBuilder = {}
 
-local FONT_BOLD = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
-local FONT_SEMI = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.SemiBold)
+local FONT_BOLD = Font.fromEnum(Enum.Font.FredokaOne)
 
 local METAL = Color3.fromRGB(196, 198, 204)
 local DARK = Color3.fromRGB(35, 35, 40)
 local MOTOR = Color3.fromRGB(55, 30, 30)
 
-local function makeBillboard(root, label, subLabel, accent)
+local function makeBillboard(root, label, subLabel, titleColor)
 	local gui = Instance.new("BillboardGui")
 	gui.Name = "Nameplate"
-	gui.Size = UDim2.new(9, 0, 2.2, 0)
+	gui.Size = UDim2.new(10, 0, 2.6, 0)
 	gui.StudsOffset = Vector3.new(0, 6.5, 0)
 	gui.MaxDistance = 110
 	gui.LightInfluence = 0
 	gui.Parent = root
 
-	local card = Instance.new("Frame")
-	card.Name = "Card"
-	card.Size = UDim2.fromScale(1, 1)
-	card.BackgroundColor3 = Color3.fromRGB(16, 16, 18)
-	card.BackgroundTransparency = 0.2
-	card.Parent = gui
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0.5, 0)
-	corner.Parent = card
-	local stroke = Instance.new("UIStroke")
-	stroke.Color = Color3.new(1, 1, 1)
-	stroke.Thickness = 1
-	stroke.Transparency = 0.85
-	stroke.Parent = card
-
 	local title = Instance.new("TextLabel")
 	title.Name = "Title"
 	title.BackgroundTransparency = 1
-	title.Position = UDim2.new(0.1, 0, 0.1, 0)
-	title.Size = UDim2.new(0.8, 0, 0.46, 0)
+	title.Size = UDim2.new(1, 0, 0.55, 0)
 	title.FontFace = FONT_BOLD
 	title.TextScaled = true
-	title.TextColor3 = Color3.new(1, 1, 1)
+	title.TextColor3 = titleColor or Color3.new(1, 1, 1)
 	title.Text = label or "Robot"
-	title.Parent = card
+	title.Parent = gui
+	local titleStroke = Instance.new("UIStroke")
+	titleStroke.Thickness = 2
+	titleStroke.Parent = title
 
 	local sub = Instance.new("TextLabel")
 	sub.Name = "Sub"
 	sub.BackgroundTransparency = 1
-	sub.Position = UDim2.new(0.1, 0, 0.56, 0)
-	sub.Size = UDim2.new(0.8, 0, 0.3, 0)
-	sub.FontFace = FONT_SEMI
+	sub.Position = UDim2.new(0, 0, 0.55, 0)
+	sub.Size = UDim2.new(1, 0, 0.45, 0)
+	sub.FontFace = FONT_BOLD
 	sub.TextScaled = true
-	sub.TextColor3 = Color3.fromRGB(170, 170, 178)
+	sub.TextColor3 = Color3.fromRGB(120, 255, 100)
 	sub.Text = subLabel or ""
-	sub.Parent = card
+	sub.Parent = gui
+	local subStroke = Instance.new("UIStroke")
+	subStroke.Thickness = 1.5
+	subStroke.Parent = sub
 end
 
 function RobotBuilder.Build(loadout, options)
@@ -219,7 +210,18 @@ function RobotBuilder.Build(loadout, options)
 	end
 
 	if not options.NoNameplate then
-		makeBillboard(root, options.Label, options.SubLabel, accent)
+		makeBillboard(root, options.Label, options.SubLabel, options.TitleColor)
+	end
+
+	-------------------------------------------------------------- optional full-body tint (mutations)
+	if options.Tint then
+		for _, d in ipairs(model:GetDescendants()) do
+			if d:IsA("BasePart") and d ~= root and d.Name ~= "Screen" then
+				d.Color = options.Tint
+				d.Material = Enum.Material.Metal
+				d.Reflectance = 0.15
+			end
+		end
 	end
 
 	-------------------------------------------------------------- weld everything to root

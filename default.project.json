@@ -10,7 +10,8 @@
       "DataManager": { "$path": "src/ServerScriptService/DataManager.lua" },
       "WorldBuilder": { "$path": "src/ServerScriptService/WorldBuilder.lua" },
       "TycoonServer": { "$path": "src/ServerScriptService/TycoonServer.server.lua" },
-      "ArenaServer": { "$path": "src/ServerScriptService/ArenaServer.server.lua" }
+      "ArenaServer": { "$path": "src/ServerScriptService/ArenaServer.server.lua" },
+      "SimServer": { "$path": "src/ServerScriptService/SimServer.server.lua" }
     },
     "StarterPlayer": {
       "StarterPlayerScripts": {

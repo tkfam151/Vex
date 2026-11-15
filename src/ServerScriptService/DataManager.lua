@@ -20,6 +20,23 @@ DataManager.Runtime = {} -- [player] = non-saved state (cooldowns, debounces)
 local changedEvent = Instance.new("BindableEvent")
 DataManager.Changed = changedEvent.Event
 
+-- fired by TycoonServer so other systems (garden, market) can react
+local plotClaimed = Instance.new("BindableEvent")
+local plotReleased = Instance.new("BindableEvent")
+local progressReset = Instance.new("BindableEvent")
+DataManager.PlotClaimed = plotClaimed.Event -- (player, plot)
+DataManager.PlotReleased = plotReleased.Event -- (player, plot)
+DataManager.ProgressReset = progressReset.Event -- (player) after a new season
+function DataManager.FirePlotClaimed(player, plot)
+	plotClaimed:Fire(player, plot)
+end
+function DataManager.FirePlotReleased(player, plot)
+	plotReleased:Fire(player, plot)
+end
+function DataManager.FireProgressReset(player)
+	progressReset:Fire(player)
+end
+
 ---------------------------------------------------------------------
 -- Remotes (created once, shared by every server script)
 ---------------------------------------------------------------------
@@ -44,6 +61,7 @@ DataManager.Remotes = {
 	Folder = remoteFolder,
 	Request = getRemote("RemoteFunction", "Request"), -- workshop / lab / competitions
 	ArenaRequest = getRemote("RemoteFunction", "ArenaRequest"), -- driving / ranked
+	SimRequest = getRemote("RemoteFunction", "SimRequest"), -- garden / market
 	DataUpdate = getRemote("RemoteEvent", "DataUpdate"),
 	Notify = getRemote("RemoteEvent", "Notify"),
 	OpenUI = getRemote("RemoteEvent", "OpenUI"),
@@ -84,7 +102,7 @@ local function reconcile(data, template)
 	for key, value in pairs(template) do
 		if data[key] == nil then
 			data[key] = deepCopy(value)
-		elseif type(value) == "table" and type(data[key]) == "table" and key ~= "Garage" then
+		elseif type(value) == "table" and type(data[key]) == "table" and key ~= "Garage" and key ~= "Seeds" then
 			reconcile(data[key], value)
 		end
 	end
@@ -111,6 +129,10 @@ local function defaultData()
 		Loadout = loadout,
 		Garage = {},
 		Active = 0,
+		Seeds = deepCopy(Config.Garden.StartingSeeds),
+		Garden = {}, -- ["t1"] = { S = seedId, T = plantedAt, M = mutation }
+		Backpack = {}, -- { { S = seedId, M = mutation, V = value } }
+		Showcase = {}, -- ["p1"] = { S = speciesId, M = mutation }
 		Stats = {
 			CompWins = 0,
 			CompsEntered = 0,
@@ -119,6 +141,8 @@ local function defaultData()
 			BallsScored = 0,
 			RobotsBuilt = 0,
 			TotalEarned = 0,
+			Harvests = 0,
+			Steals = 0,
 		},
 	}
 end
@@ -425,6 +449,14 @@ function DataManager.GetSnapshot(player)
 		RobotIncome = DataManager.GetRobotIncome(player) * DataManager.GetMultiplier(player),
 		Cooldowns = cooldowns,
 		HasPlot = runtime ~= nil and runtime.Plot ~= nil,
+		Seeds = data.Seeds,
+		Garden = data.Garden,
+		Backpack = data.Backpack,
+		Showcase = data.Showcase,
+		Stock = runtime and runtime.Stock or {},
+		SelectedSeed = runtime and runtime.SelectedSeed or nil,
+		LockedUntil = runtime and runtime.Plot and runtime.Plot.LockedUntil or 0,
+		LockReadyAt = runtime and runtime.Plot and runtime.Plot.LockReadyAt or 0,
 	}
 end
 
