@@ -28,12 +28,12 @@ Config.DropLifetime = 25
 Config.MaxDropsPerPlot = 80
 
 Config.PlotColors = {
-	Color3.fromRGB(215, 45, 55), -- red
-	Color3.fromRGB(40, 110, 220), -- blue
-	Color3.fromRGB(50, 175, 80), -- green
-	Color3.fromRGB(240, 190, 40), -- yellow
-	Color3.fromRGB(150, 70, 210), -- purple
-	Color3.fromRGB(240, 120, 30), -- orange
+	Color3.fromRGB(196, 38, 46), -- VEX red
+	Color3.fromRGB(28, 92, 178), -- alliance blue
+	Color3.fromRGB(46, 130, 84), -- green
+	Color3.fromRGB(204, 150, 40), -- amber
+	Color3.fromRGB(104, 72, 160), -- violet
+	Color3.fromRGB(196, 96, 40), -- orange
 }
 
 -- Local positions inside a workshop plot (plot faces the hub on -Z)
@@ -127,10 +127,10 @@ end
 Config.ModuleSlots = { "Drivetrain", "Intake", "Lift", "Brain" }
 
 Config.SlotInfo = {
-	Drivetrain = { Icon = "⚙️", Desc = "Speed & pushing power. Holonomic drives can strafe (Q/E)." },
-	Intake = { Icon = "🧲", Desc = "How many balls you can hold and how easily you grab them." },
-	Lift = { Icon = "🏗️", Desc = "Points per ball scored." },
-	Brain = { Icon = "🧠", Desc = "Control + free Autonomous points at match start." },
+	Drivetrain = { Desc = "Speed and pushing power. Holonomic drives can strafe with Q and E." },
+	Intake = { Desc = "How many balls you can hold, and how easily you pick them up." },
+	Lift = { Desc = "How many points each scored ball is worth." },
+	Brain = { Desc = "Driver control, plus autonomous points at the start of every match." },
 }
 
 Config.Modules = {
@@ -260,10 +260,10 @@ Config.Match = {
 -- Game passes: put your real Game Pass IDs here (0 = disabled)
 ---------------------------------------------------------------------
 Config.GamePasses = {
-	{ Key = "DoubleCash", Name = "2x Cash", Id = 0, Icon = "💰", Desc = "Double all cash you earn, forever." },
-	{ Key = "AutoCollect", Name = "Auto Collect", Id = 0, Icon = "🧺", Desc = "Workshop cash goes straight to your wallet." },
-	{ Key = "ExtraBays", Name = "+2 Robot Bays", Id = 0, Icon = "🏠", Desc = "Two extra robot bays (needs Assembly Station)." },
-	{ Key = "Turbo", Name = "Turbo Motors", Id = 0, Icon = "⚡", Desc = "+15% drive speed in practice & ranked." },
+	{ Key = "DoubleCash", Name = "2x Cash", Id = 0, Desc = "Double all cash you earn, forever." },
+	{ Key = "AutoCollect", Name = "Auto Collect", Id = 0, Desc = "Workshop cash goes straight to your wallet." },
+	{ Key = "ExtraBays", Name = "+2 Robot Bays", Id = 0, Desc = "Two extra robot bays (needs Assembly Station)." },
+	{ Key = "Turbo", Name = "Turbo Motors", Id = 0, Desc = "+15% drive speed in practice & ranked." },
 }
 
 ---------------------------------------------------------------------

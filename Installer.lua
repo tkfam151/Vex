@@ -40,12 +40,12 @@ Config.DropLifetime = 25
 Config.MaxDropsPerPlot = 80
 
 Config.PlotColors = {
-	Color3.fromRGB(215, 45, 55), -- red
-	Color3.fromRGB(40, 110, 220), -- blue
-	Color3.fromRGB(50, 175, 80), -- green
-	Color3.fromRGB(240, 190, 40), -- yellow
-	Color3.fromRGB(150, 70, 210), -- purple
-	Color3.fromRGB(240, 120, 30), -- orange
+	Color3.fromRGB(196, 38, 46), -- VEX red
+	Color3.fromRGB(28, 92, 178), -- alliance blue
+	Color3.fromRGB(46, 130, 84), -- green
+	Color3.fromRGB(204, 150, 40), -- amber
+	Color3.fromRGB(104, 72, 160), -- violet
+	Color3.fromRGB(196, 96, 40), -- orange
 }
 
 -- Local positions inside a workshop plot (plot faces the hub on -Z)
@@ -139,10 +139,10 @@ end
 Config.ModuleSlots = { "Drivetrain", "Intake", "Lift", "Brain" }
 
 Config.SlotInfo = {
-	Drivetrain = { Icon = "⚙️", Desc = "Speed & pushing power. Holonomic drives can strafe (Q/E)." },
-	Intake = { Icon = "🧲", Desc = "How many balls you can hold and how easily you grab them." },
-	Lift = { Icon = "🏗️", Desc = "Points per ball scored." },
-	Brain = { Icon = "🧠", Desc = "Control + free Autonomous points at match start." },
+	Drivetrain = { Desc = "Speed and pushing power. Holonomic drives can strafe with Q and E." },
+	Intake = { Desc = "How many balls you can hold, and how easily you pick them up." },
+	Lift = { Desc = "How many points each scored ball is worth." },
+	Brain = { Desc = "Driver control, plus autonomous points at the start of every match." },
 }
 
 Config.Modules = {
@@ -272,10 +272,10 @@ Config.Match = {
 -- Game passes: put your real Game Pass IDs here (0 = disabled)
 ---------------------------------------------------------------------
 Config.GamePasses = {
-	{ Key = "DoubleCash", Name = "2x Cash", Id = 0, Icon = "💰", Desc = "Double all cash you earn, forever." },
-	{ Key = "AutoCollect", Name = "Auto Collect", Id = 0, Icon = "🧺", Desc = "Workshop cash goes straight to your wallet." },
-	{ Key = "ExtraBays", Name = "+2 Robot Bays", Id = 0, Icon = "🏠", Desc = "Two extra robot bays (needs Assembly Station)." },
-	{ Key = "Turbo", Name = "Turbo Motors", Id = 0, Icon = "⚡", Desc = "+15% drive speed in practice & ranked." },
+	{ Key = "DoubleCash", Name = "2x Cash", Id = 0, Desc = "Double all cash you earn, forever." },
+	{ Key = "AutoCollect", Name = "Auto Collect", Id = 0, Desc = "Workshop cash goes straight to your wallet." },
+	{ Key = "ExtraBays", Name = "+2 Robot Bays", Id = 0, Desc = "Two extra robot bays (needs Assembly Station)." },
+	{ Key = "Turbo", Name = "Turbo Motors", Id = 0, Desc = "+15% drive speed in practice & ranked." },
 }
 
 ---------------------------------------------------------------------
@@ -771,6 +771,9 @@ local Config = require(ReplicatedStorage:WaitForChild("Config"))
 
 local RobotBuilder = {}
 
+local FONT_BOLD = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+local FONT_SEMI = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.SemiBold)
+
 local METAL = Color3.fromRGB(196, 198, 204)
 local DARK = Color3.fromRGB(35, 35, 40)
 local MOTOR = Color3.fromRGB(55, 30, 30)
@@ -787,23 +790,24 @@ local function makeBillboard(root, label, subLabel, accent)
 	local card = Instance.new("Frame")
 	card.Name = "Card"
 	card.Size = UDim2.fromScale(1, 1)
-	card.BackgroundColor3 = Color3.fromRGB(18, 20, 30)
+	card.BackgroundColor3 = Color3.fromRGB(16, 16, 18)
 	card.BackgroundTransparency = 0.2
 	card.Parent = gui
 	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0.25, 0)
+	corner.CornerRadius = UDim.new(0.5, 0)
 	corner.Parent = card
 	local stroke = Instance.new("UIStroke")
-	stroke.Color = accent
-	stroke.Thickness = 2
+	stroke.Color = Color3.new(1, 1, 1)
+	stroke.Thickness = 1
+	stroke.Transparency = 0.85
 	stroke.Parent = card
 
 	local title = Instance.new("TextLabel")
 	title.Name = "Title"
 	title.BackgroundTransparency = 1
-	title.Position = UDim2.new(0.05, 0, 0.06, 0)
-	title.Size = UDim2.new(0.9, 0, 0.52, 0)
-	title.Font = Enum.Font.GothamBlack
+	title.Position = UDim2.new(0.1, 0, 0.1, 0)
+	title.Size = UDim2.new(0.8, 0, 0.46, 0)
+	title.FontFace = FONT_BOLD
 	title.TextScaled = true
 	title.TextColor3 = Color3.new(1, 1, 1)
 	title.Text = label or "Robot"
@@ -812,11 +816,11 @@ local function makeBillboard(root, label, subLabel, accent)
 	local sub = Instance.new("TextLabel")
 	sub.Name = "Sub"
 	sub.BackgroundTransparency = 1
-	sub.Position = UDim2.new(0.05, 0, 0.56, 0)
-	sub.Size = UDim2.new(0.9, 0, 0.36, 0)
-	sub.Font = Enum.Font.GothamBold
+	sub.Position = UDim2.new(0.1, 0, 0.56, 0)
+	sub.Size = UDim2.new(0.8, 0, 0.3, 0)
+	sub.FontFace = FONT_SEMI
 	sub.TextScaled = true
-	sub.TextColor3 = Color3.fromRGB(255, 205, 80)
+	sub.TextColor3 = Color3.fromRGB(170, 170, 178)
 	sub.Text = subLabel or ""
 	sub.Parent = card
 end
@@ -884,7 +888,7 @@ function RobotBuilder.Build(loadout, options)
 				cf = cf * CFrame.Angles(0, math.rad(angle), 0)
 			end
 			add("Wheel", Vector3.new(0.8, wheelD, wheelD), cf, drivetrain.WheelColor, Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
-			add("Hub", Vector3.new(0.85, wheelD * 0.4, wheelD * 0.4), cf, accent, Enum.Material.Neon, Enum.PartType.Cylinder)
+			add("Hub", Vector3.new(0.85, wheelD * 0.4, wheelD * 0.4), cf, accent, Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
 			add("Motor", Vector3.new(0.9, 0.9, 1.2), CFrame.new(side * 2.2, wy + 0.35, z), MOTOR, Enum.Material.SmoothPlastic)
 		end
 	end
@@ -932,7 +936,7 @@ function RobotBuilder.Build(loadout, options)
 	elseif lift.Style == "Flywheel" then
 		add("FlyFrame", Vector3.new(0.3, 3.5, 3.5), CFrame.new(-1.8, wy + 2.5, 2.3), METAL, Enum.Material.Metal)
 		add("FlyFrame2", Vector3.new(0.3, 3.5, 3.5), CFrame.new(1.8, wy + 2.5, 2.3), METAL, Enum.Material.Metal)
-		add("Flywheel", Vector3.new(0.7, 3.2, 3.2), CFrame.new(0, wy + 2.8, 2.3), liftColor, Enum.Material.Neon, Enum.PartType.Cylinder)
+		add("Flywheel", Vector3.new(0.7, 3.2, 3.2), CFrame.new(0, wy + 2.8, 2.3), liftColor, Enum.Material.Metal, Enum.PartType.Cylinder)
 		add("Hood", Vector3.new(3.4, 0.25, 3), CFrame.new(0, wy + 4.5, 1.8) * CFrame.Angles(math.rad(-15), 0, 0), Color3.fromRGB(240, 240, 240), Enum.Material.Glass)
 	end
 
@@ -1046,6 +1050,10 @@ local WorldBuilder = {}
 local world = nil
 
 local SMOOTH = Enum.SurfaceType.Smooth
+local FONT_BOLD = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+local FONT_SEMI = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.SemiBold)
+local SIGN_BLACK = Color3.fromRGB(16, 16, 18)
+local VEX_RED = Color3.fromRGB(226, 35, 42)
 local METAL = Color3.fromRGB(196, 198, 204)
 local WHITE = Color3.fromRGB(240, 240, 240)
 
@@ -1093,7 +1101,7 @@ local function surfaceText(part, face, text, textColor, bgColor, font)
 	label.BackgroundTransparency = bgColor and 0 or 1
 	label.BackgroundColor3 = bgColor or Color3.new(0, 0, 0)
 	label.TextScaled = true
-	label.Font = font or Enum.Font.GothamBlack
+	label.FontFace = font or FONT_BOLD
 	label.TextColor3 = textColor or Color3.new(1, 1, 1)
 	label.Text = text
 	label.Parent = gui
@@ -1115,74 +1123,73 @@ local function billboard(adornee, text, studsWidth, studsHeight, offset, color)
 	gui.Parent = adornee
 	local card = Instance.new("Frame")
 	card.Size = UDim2.fromScale(1, 1)
-	card.BackgroundColor3 = Color3.fromRGB(18, 20, 30)
-	card.BackgroundTransparency = 0.25
+	card.BackgroundColor3 = SIGN_BLACK
+	card.BackgroundTransparency = 0.2
 	card.Parent = gui
 	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0.2, 0)
+	corner.CornerRadius = UDim.new(0.5, 0)
 	corner.Parent = card
 	local stroke = Instance.new("UIStroke")
-	stroke.Color = color or Color3.new(1, 1, 1)
-	stroke.Thickness = 2
-	stroke.Transparency = 0.2
+	stroke.Color = Color3.new(1, 1, 1)
+	stroke.Thickness = 1
+	stroke.Transparency = 0.85
 	stroke.Parent = card
 	local label = Instance.new("TextLabel")
 	label.Position = UDim2.fromScale(0.05, 0.1)
 	label.Size = UDim2.fromScale(0.9, 0.8)
 	label.BackgroundTransparency = 1
 	label.TextScaled = true
-	label.Font = Enum.Font.GothamBlack
-	label.TextColor3 = color or Color3.new(1, 1, 1)
+	label.FontFace = FONT_SEMI
+	label.TextColor3 = Color3.new(1, 1, 1)
 	label.Text = text
 	label.Parent = card
 	return label
 end
 
 -- two-line "shop tag" used above tycoon buttons
-local function priceTag(adornee, name, price, isFree)
+local function priceTag(adornee, name, price)
 	local gui = Instance.new("BillboardGui")
-	gui.Size = UDim2.new(9, 0, 3, 0)
-	gui.StudsOffset = Vector3.new(0, 3.2, 0)
+	gui.Size = UDim2.new(8, 0, 2.2, 0)
+	gui.StudsOffset = Vector3.new(0, 3, 0)
 	gui.MaxDistance = 80
 	gui.LightInfluence = 0
 	gui.Parent = adornee
 	local card = Instance.new("Frame")
-	card.Size = UDim2.fromScale(1, 0.62)
-	card.BackgroundColor3 = Color3.fromRGB(18, 20, 30)
+	card.Size = UDim2.fromScale(1, 1)
+	card.BackgroundColor3 = SIGN_BLACK
 	card.BackgroundTransparency = 0.15
 	card.Parent = gui
 	local corner = Instance.new("UICorner")
 	corner.CornerRadius = UDim.new(0.3, 0)
 	corner.Parent = card
 	local nameLabel = Instance.new("TextLabel")
-	nameLabel.Position = UDim2.fromScale(0.05, 0.12)
-	nameLabel.Size = UDim2.fromScale(0.9, 0.76)
+	nameLabel.Position = UDim2.fromScale(0.06, 0.1)
+	nameLabel.Size = UDim2.fromScale(0.88, 0.48)
 	nameLabel.BackgroundTransparency = 1
 	nameLabel.TextScaled = true
-	nameLabel.Font = Enum.Font.GothamBlack
+	nameLabel.FontFace = FONT_BOLD
 	nameLabel.TextColor3 = Color3.new(1, 1, 1)
 	nameLabel.Text = name
 	nameLabel.Parent = card
-	local pill = Instance.new("Frame")
-	pill.AnchorPoint = Vector2.new(0.5, 0)
-	pill.Position = UDim2.fromScale(0.5, 0.64)
-	pill.Size = UDim2.fromScale(0.5, 0.36)
-	pill.BackgroundColor3 = isFree and Color3.fromRGB(245, 190, 50) or Color3.fromRGB(46, 190, 100)
-	pill.Parent = gui
-	local pillCorner = Instance.new("UICorner")
-	pillCorner.CornerRadius = UDim.new(0.5, 0)
-	pillCorner.Parent = pill
 	local priceLabel = Instance.new("TextLabel")
 	priceLabel.Name = "Price"
-	priceLabel.Position = UDim2.fromScale(0.08, 0.1)
-	priceLabel.Size = UDim2.fromScale(0.84, 0.8)
+	priceLabel.Position = UDim2.fromScale(0.06, 0.58)
+	priceLabel.Size = UDim2.fromScale(0.88, 0.32)
 	priceLabel.BackgroundTransparency = 1
 	priceLabel.TextScaled = true
-	priceLabel.Font = Enum.Font.GothamBlack
-	priceLabel.TextColor3 = Color3.fromRGB(15, 20, 25)
+	priceLabel.FontFace = FONT_SEMI
+	priceLabel.TextColor3 = Color3.fromRGB(170, 170, 178)
 	priceLabel.Text = price
-	priceLabel.Parent = pill
-	return pill
+	priceLabel.Parent = card
+	return card
+end
+
+-- black VEX-style sign with a red accent bar along the bottom
+local function vexSign(parent, size, cf, text)
+	local sign = newPart(parent, { Size = size, CFrame = cf, Color = SIGN_BLACK })
+	newPart(parent, { Size = Vector3.new(size.X, 0.4, size.Z + 0.1), CFrame = cf * CFrame.new(0, -size.Y / 2 + 0.2, 0), Color = VEX_RED })
+	surfaceText(sign, Enum.NormalId.Front, text, Color3.new(1, 1, 1))
+	return sign
 end
 
 local function setupLighting()
@@ -1205,9 +1212,9 @@ local function setupLighting()
 		end
 	end
 	ensure("Atmosphere", { Density = 0.28, Offset = 0.2, Color = Color3.fromRGB(200, 215, 235), Decay = Color3.fromRGB(110, 120, 150), Glare = 0.1, Haze = 1 })
-	ensure("BloomEffect", { Intensity = 0.5, Size = 28, Threshold = 1.4 })
-	ensure("ColorCorrectionEffect", { Saturation = 0.12, Contrast = 0.06, Brightness = 0.01 })
-	ensure("SunRaysEffect", { Intensity = 0.06, Spread = 0.6 })
+	ensure("BloomEffect", { Intensity = 0.2, Size = 20, Threshold = 2 })
+	ensure("ColorCorrectionEffect", { Saturation = 0.03, Contrast = 0.04, Brightness = 0 })
+	ensure("SunRaysEffect", { Intensity = 0.03, Spread = 0.5 })
 end
 
 local function prompt(parent, actionText, objectText, holdTime)
@@ -1269,8 +1276,8 @@ local function buildHub(root)
 	spawn.Neutral = true
 	spawn.Size = Vector3.new(12, 1, 12)
 	spawn.CFrame = CFrame.new(0, 0.5, 72)
-	spawn.Color = Color3.fromRGB(220, 50, 50)
-	spawn.Material = Enum.Material.Neon
+	spawn.Color = Color3.fromRGB(40, 40, 44)
+	spawn.Material = Enum.Material.SmoothPlastic
 	spawn.Duration = 0
 	spawn.TopSurface = SMOOTH
 	spawn.Parent = hubFolder
@@ -1280,17 +1287,18 @@ local function buildHub(root)
 		Name = "Title",
 		Size = Vector3.new(60, 10, 1),
 		CFrame = CFrame.new(0, 30, 0),
-		Color = Color3.fromRGB(25, 28, 40),
+		Color = SIGN_BLACK,
 	})
-	surfaceText(title, Enum.NormalId.Front, Config.GameName, Color3.fromRGB(255, 80, 80))
-	surfaceText(title, Enum.NormalId.Back, Config.GameName, Color3.fromRGB(80, 160, 255))
+	newPart(hubFolder, { Size = Vector3.new(60, 0.6, 1.1), CFrame = CFrame.new(0, 25.3, 0), Color = VEX_RED })
+	surfaceText(title, Enum.NormalId.Front, string.upper(Config.GameName), Color3.new(1, 1, 1))
+	surfaceText(title, Enum.NormalId.Back, string.upper(Config.GameName), Color3.new(1, 1, 1))
 
 	-- leaderboard (faces the center)
 	local board = newPart(hubFolder, {
 		Name = "Leaderboard",
 		Size = Vector3.new(18, 22, 1),
 		CFrame = CFrame.new(0, 12, -100),
-		Color = Color3.fromRGB(25, 28, 40),
+		Color = SIGN_BLACK,
 	})
 	newPart(hubFolder, { Size = Vector3.new(1, 12, 1), CFrame = CFrame.new(-7, 0.5, -100), Color = METAL, Material = Enum.Material.Metal })
 	newPart(hubFolder, { Size = Vector3.new(1, 12, 1), CFrame = CFrame.new(7, 0.5, -100), Color = METAL, Material = Enum.Material.Metal })
@@ -1309,22 +1317,22 @@ local function buildHub(root)
 	layout.Parent = list
 	local header = Instance.new("TextLabel")
 	header.Size = UDim2.new(1, 0, 0, 60)
-	header.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-	header.Font = Enum.Font.GothamBlack
+	header.BackgroundColor3 = VEX_RED
+	header.FontFace = FONT_BOLD
 	header.TextScaled = true
 	header.TextColor3 = Color3.new(1, 1, 1)
-	header.Text = "🏆 TOP TEAMS (Trophies)"
+	header.Text = "TOP TEAMS  ·  TROPHIES"
 	header.Parent = list
 	hub.LeaderboardRows = {}
 	for i = 1, 10 do
 		local row = Instance.new("TextLabel")
 		row.Size = UDim2.new(1, 0, 0, 40)
 		row.BackgroundTransparency = 1
-		row.Font = Enum.Font.GothamBold
+		row.FontFace = FONT_SEMI
 		row.TextScaled = true
 		row.TextXAlignment = Enum.TextXAlignment.Left
-		row.TextColor3 = i <= 3 and Color3.fromRGB(255, 215, 80) or Color3.new(1, 1, 1)
-		row.Text = string.format("  #%d  ---", i)
+		row.TextColor3 = i <= 3 and Color3.new(1, 1, 1) or Color3.fromRGB(170, 170, 178)
+		row.Text = string.format("  %d    —", i)
 		row.Parent = list
 		hub.LeaderboardRows[i] = row
 	end
@@ -1334,15 +1342,9 @@ local function buildHub(root)
 		Name = "CompetitionKiosk",
 		Size = Vector3.new(14, 6, 4),
 		CFrame = CFrame.new(0, 3.3, 100),
-		Color = Color3.fromRGB(25, 28, 40),
+		Color = SIGN_BLACK,
 	})
-	local kioskSign = newPart(hubFolder, {
-		Size = Vector3.new(16, 5, 1),
-		CFrame = CFrame.new(0, 10, 100),
-		Color = Color3.fromRGB(240, 190, 40),
-		Material = Enum.Material.Neon,
-	})
-	surfaceText(kioskSign, Enum.NormalId.Front, "🏆 COMPETITIONS", Color3.fromRGB(30, 30, 30))
+	vexSign(hubFolder, Vector3.new(18, 5, 1), CFrame.new(0, 10, 100), "COMPETITIONS")
 	hub.CompetitionPrompt = prompt(kiosk, "Enter Competitions", "Tournament Desk")
 
 	-- lamp posts
@@ -1414,7 +1416,7 @@ local function buildField(root, name, center, accentText)
 	for _, info in ipairs({ { "Red", -1, Color3.fromRGB(220, 45, 50) }, { "Blue", 1, Color3.fromRGB(40, 110, 230) } }) do
 		local side, sign, color = info[1], info[2], info[3]
 		local gx = sign * (half - 4)
-		local pad = newPart(f, { Name = side .. "GoalPad", Size = Vector3.new(8, 0.1, 12), CFrame = at(gx, 0.65, 0), Color = color, Material = Enum.Material.Neon, Transparency = 0.2 })
+		local pad = newPart(f, { Name = side .. "GoalPad", Size = Vector3.new(8, 0.1, 12), CFrame = at(gx, 0.65, 0), Color = color, Material = Enum.Material.SmoothPlastic })
 		newPart(f, { Size = Vector3.new(0.6, 8, 0.6), CFrame = at(gx + sign * 3.5, 4.6, -5.5), Color = color, Material = Enum.Material.Metal })
 		newPart(f, { Size = Vector3.new(0.6, 8, 0.6), CFrame = at(gx + sign * 3.5, 4.6, 5.5), Color = color, Material = Enum.Material.Metal })
 		newPart(f, { Size = Vector3.new(0.6, 0.6, 11.6), CFrame = at(gx + sign * 3.5, 8.6, 0), Color = color, Material = Enum.Material.Metal })
@@ -1444,9 +1446,8 @@ local function buildField(root, name, center, accentText)
 	end
 
 	-- entrance kiosk
-	local kiosk = newPart(f, { Name = "Kiosk", Size = Vector3.new(10, 4, 3), CFrame = at(0, 2.3, -half - 10), Color = Color3.fromRGB(25, 28, 40) })
-	local sign = newPart(f, { Size = Vector3.new(26, 5, 1), CFrame = at(0, 13, -half - 1.5), Color = Color3.fromRGB(25, 28, 40) })
-	surfaceText(sign, Enum.NormalId.Front, accentText, Color3.fromRGB(255, 255, 255))
+	local kiosk = newPart(f, { Name = "Kiosk", Size = Vector3.new(10, 4, 3), CFrame = at(0, 2.3, -half - 10), Color = SIGN_BLACK })
+	vexSign(f, Vector3.new(28, 5, 1), at(0, 13, -half - 1.5), accentText)
 	field.Kiosk = kiosk
 	field.ExitCFrame = at(0, 3.5, -half - 16)
 
@@ -1459,7 +1460,7 @@ local function buildScoreboard(field)
 		Name = "Scoreboard",
 		Size = Vector3.new(40, 12, 1),
 		CFrame = field.CFrame * CFrame.new(0, 17, half + 3),
-		Color = Color3.fromRGB(20, 22, 30),
+		Color = SIGN_BLACK,
 	})
 	local labels = {}
 	for _, face in ipairs({ Enum.NormalId.Front, Enum.NormalId.Back }) do
@@ -1474,7 +1475,7 @@ local function buildScoreboard(field)
 			l.BackgroundTransparency = 1
 			l.Position = UDim2.fromScale(x, 0)
 			l.Size = UDim2.fromScale(w, 1)
-			l.Font = Enum.Font.GothamBlack
+			l.FontFace = FONT_BOLD
 			l.TextScaled = true
 			l.TextColor3 = color
 			l.Text = text
@@ -1523,23 +1524,24 @@ local function buildPlot(root, index)
 	local base = plot.Base
 	plotPart(plot, base, Vector3.new(Config.PlotSize, 1, Config.PlotSize), Vector3.new(0, 0.5, 0), Color3.fromRGB(175, 175, 180), Enum.Material.Concrete, { Name = "Floor" })
 	-- colored border
-	plotPart(plot, base, Vector3.new(Config.PlotSize, 1.2, 1), Vector3.new(0, 0.6, -half + 0.5), color, Enum.Material.Neon)
-	plotPart(plot, base, Vector3.new(Config.PlotSize, 1.2, 1), Vector3.new(0, 0.6, half - 0.5), color, Enum.Material.Neon)
-	plotPart(plot, base, Vector3.new(1, 1.2, Config.PlotSize), Vector3.new(-half + 0.5, 0.6, 0), color, Enum.Material.Neon)
-	plotPart(plot, base, Vector3.new(1, 1.2, Config.PlotSize), Vector3.new(half - 0.5, 0.6, 0), color, Enum.Material.Neon)
+	plotPart(plot, base, Vector3.new(Config.PlotSize, 1.2, 1), Vector3.new(0, 0.6, -half + 0.5), color, Enum.Material.SmoothPlastic)
+	plotPart(plot, base, Vector3.new(Config.PlotSize, 1.2, 1), Vector3.new(0, 0.6, half - 0.5), color, Enum.Material.SmoothPlastic)
+	plotPart(plot, base, Vector3.new(1, 1.2, Config.PlotSize), Vector3.new(-half + 0.5, 0.6, 0), color, Enum.Material.SmoothPlastic)
+	plotPart(plot, base, Vector3.new(1, 1.2, Config.PlotSize), Vector3.new(half - 0.5, 0.6, 0), color, Enum.Material.SmoothPlastic)
 
 	-- path to hub
 	local pathLength = Config.PlotRadius - half - Config.HubRadius + 6
 	plotPart(plot, base, Vector3.new(16, 0.4, pathLength), Vector3.new(0, 0.1, -half - pathLength / 2 + 2), Color3.fromRGB(150, 150, 155), Enum.Material.Concrete)
 
 	-- owner sign
-	local sign = plotPart(plot, base, Vector3.new(26, 6, 1), Vector3.new(-30, 6, -half + 1), Color3.fromRGB(25, 28, 40))
+	local sign = plotPart(plot, base, Vector3.new(26, 6, 1), Vector3.new(-30, 6, -half + 1), SIGN_BLACK)
 	plotPart(plot, base, Vector3.new(1, 3, 1), Vector3.new(-40, 2, -half + 1), METAL, Enum.Material.Metal)
 	plotPart(plot, base, Vector3.new(1, 3, 1), Vector3.new(-20, 2, -half + 1), METAL, Enum.Material.Metal)
-	plot.OwnerLabel = surfaceText(sign, Enum.NormalId.Front, "Empty Workshop", color)
+	plotPart(plot, base, Vector3.new(26, 0.4, 1.1), Vector3.new(-30, 3.2, -half + 1), color, Enum.Material.SmoothPlastic)
+	plot.OwnerLabel = surfaceText(sign, Enum.NormalId.Front, "Empty Workshop", Color3.new(1, 1, 1))
 
 	-- spawn pad
-	plotPart(plot, base, Vector3.new(8, 0.2, 8), Vector3.new(30, 1.1, -42), color, Enum.Material.Neon, { CanCollide = false })
+	plotPart(plot, base, Vector3.new(8, 0.2, 8), Vector3.new(30, 1.1, -42), color, Enum.Material.SmoothPlastic, { CanCollide = false })
 	plot.SpawnCFrame = cf * CFrame.new(30, 4, -42) * CFrame.Angles(0, math.pi, 0)
 
 	-- conveyor
@@ -1554,7 +1556,7 @@ local function buildPlot(root, index)
 	plotPart(plot, base, Vector3.new(1, 3, 6), Vector3.new(-45.5, 4, z), METAL, Enum.Material.Metal) -- end stop
 
 	-- collector
-	local collector = plotPart(plot, base, Vector3.new(11, 1, 10), Vector3.new(39.5, 1.5, z), color, Enum.Material.Neon, { Name = "Collector" })
+	local collector = plotPart(plot, base, Vector3.new(11, 1, 10), Vector3.new(39.5, 1.5, z), Color3.fromRGB(40, 40, 44), Enum.Material.DiamondPlate, { Name = "Collector" })
 	plotPart(plot, base, Vector3.new(11, 3, 0.5), Vector3.new(39.5, 3, z - 5), METAL, Enum.Material.Metal)
 	plotPart(plot, base, Vector3.new(11, 3, 0.5), Vector3.new(39.5, 3, z + 5), METAL, Enum.Material.Metal)
 	plotPart(plot, base, Vector3.new(0.5, 3, 10), Vector3.new(45.25, 3, z), METAL, Enum.Material.Metal)
@@ -1562,9 +1564,9 @@ local function buildPlot(root, index)
 	billboard(collector, "PART COLLECTOR", 10, 1.5, Vector3.new(0, 4, 0), Color3.fromRGB(255, 255, 255))
 
 	-- collect pad
-	local collectPad = plotPart(plot, base, Vector3.new(7, 0.4, 7), Vector3.new(40, 1.2, -4), Color3.fromRGB(60, 220, 90), Enum.Material.Neon, { Name = "CollectPad" })
+	local collectPad = plotPart(plot, base, Vector3.new(7, 0.4, 7), Vector3.new(40, 1.2, -4), Color3.fromRGB(52, 199, 89), Enum.Material.SmoothPlastic, { Name = "CollectPad" })
 	plot.CollectPad = collectPad
-	plot.StorageLabel = billboard(collectPad, "Step here to collect\n$0", 9, 3, Vector3.new(0, 4, 0), Color3.fromRGB(120, 255, 140))
+	plot.StorageLabel = billboard(collectPad, "Collect\n$0", 9, 3, Vector3.new(0, 4, 0), Color3.fromRGB(120, 255, 140))
 
 	return plot
 end
@@ -1592,7 +1594,7 @@ function WorldBuilder.BuildButton(plot, item)
 		CFrame = plot.CFrame * CFrame.new(x, 1.1, z) * CFrame.Angles(0, 0, math.rad(90)),
 	})
 	local priceText = item.Cost == 0 and "FREE" or Config.Money(item.Cost)
-	priceTag(pad, item.Name, priceText, item.Cost == 0)
+	priceTag(pad, item.Name, priceText)
 	model.PrimaryPart = pad
 	model.Parent = plot.Buttons
 	return model
@@ -1604,7 +1606,7 @@ end
 function WorldBuilder.BuildBayPad(plot, index)
 	local pos = Config.Layout.BayPositions[index]
 	local pad = plotPart(plot, plot.Bays, Vector3.new(10, 0.3, 11), pos + Vector3.new(0, 1.15, 0), Color3.fromRGB(45, 48, 60), Enum.Material.Metal, { Name = "BayPad" .. index })
-	plotPart(plot, plot.Bays, Vector3.new(10, 0.32, 0.4), pos + Vector3.new(0, 1.16, -5.3), plot.Color, Enum.Material.Neon)
+	plotPart(plot, plot.Bays, Vector3.new(10, 0.32, 0.4), pos + Vector3.new(0, 1.16, -5.3), VEX_RED, Enum.Material.SmoothPlastic)
 	return pad
 end
 
@@ -1619,7 +1621,7 @@ function itemBuilders.Dropper(plot, item, model)
 	plotPart(plot, model, Vector3.new(1.2, 12, 1.2), Vector3.new(x, 7, z + 5.5), METAL, Enum.Material.Metal)
 	plotPart(plot, model, Vector3.new(1, 1, 5), Vector3.new(x, 12.5, z + 3), METAL, Enum.Material.Metal)
 	local body = plotPart(plot, model, Vector3.new(4.5, 4, 4.5), Vector3.new(x, 11, z), item.DropColor, Enum.Material.Metal, { Name = "Body" })
-	plotPart(plot, model, Vector3.new(4.7, 0.6, 4.7), Vector3.new(x, 13.2, z), plot.Color, Enum.Material.Neon)
+	plotPart(plot, model, Vector3.new(4.7, 0.6, 4.7), Vector3.new(x, 13.2, z), SIGN_BLACK, Enum.Material.SmoothPlastic)
 	plotPart(plot, model, Vector3.new(2, 1.5, 2), Vector3.new(x, 8.3, z), Color3.fromRGB(50, 50, 55), Enum.Material.Metal)
 	local dropPoint = Instance.new("Attachment")
 	dropPoint.Name = "DropPoint"
@@ -1634,13 +1636,13 @@ function itemBuilders.Upgrader(plot, item, model)
 	local z = Config.Layout.ConveyorZ
 	plotPart(plot, model, Vector3.new(1, 8, 1), Vector3.new(x, 5, z - 4), Color3.fromRGB(50, 50, 55), Enum.Material.Metal)
 	plotPart(plot, model, Vector3.new(1, 8, 1), Vector3.new(x, 5, z + 4), Color3.fromRGB(50, 50, 55), Enum.Material.Metal)
-	local top = plotPart(plot, model, Vector3.new(1.4, 1.4, 9), Vector3.new(x, 9.5, z), item.Color, Enum.Material.Neon)
+	local top = plotPart(plot, model, Vector3.new(1.4, 1.4, 9), Vector3.new(x, 9.5, z), SIGN_BLACK, Enum.Material.Metal)
 	local laser = plotPart(plot, model, Vector3.new(0.4, 3.5, 6), Vector3.new(x, 5.25, z), item.Color, Enum.Material.Neon, {
 		Name = "Laser",
 		Transparency = 0.45,
 		CanCollide = false,
 	})
-	billboard(top, item.Name .. " x" .. item.Multiplier, 8, 1.4, Vector3.new(0, 2, 0), item.Color)
+	billboard(top, item.Name .. "  ·  " .. item.Multiplier .. "×", 8, 1.4, Vector3.new(0, 2, 0), item.Color)
 	model.PrimaryPart = laser
 end
 
@@ -1650,9 +1652,9 @@ function itemBuilders.Walls(plot, _, model)
 	plotPart(plot, model, Vector3.new(Config.PlotSize, 14, 1), Vector3.new(0, 8, half - 0.5), wallColor, Enum.Material.SmoothPlastic)
 	plotPart(plot, model, Vector3.new(1, 14, 75), Vector3.new(-half + 0.5, 8, 17.5), wallColor, Enum.Material.SmoothPlastic)
 	plotPart(plot, model, Vector3.new(1, 14, 75), Vector3.new(half - 0.5, 8, 17.5), wallColor, Enum.Material.SmoothPlastic)
-	plotPart(plot, model, Vector3.new(Config.PlotSize, 1.5, 1.2), Vector3.new(0, 6, half - 0.6), plot.Color, Enum.Material.Neon)
-	plotPart(plot, model, Vector3.new(1.2, 1.5, 75), Vector3.new(-half + 0.6, 6, 17.5), plot.Color, Enum.Material.Neon)
-	plotPart(plot, model, Vector3.new(1.2, 1.5, 75), Vector3.new(half - 0.6, 6, 17.5), plot.Color, Enum.Material.Neon)
+	plotPart(plot, model, Vector3.new(Config.PlotSize, 1.5, 1.2), Vector3.new(0, 6, half - 0.6), VEX_RED, Enum.Material.SmoothPlastic)
+	plotPart(plot, model, Vector3.new(1.2, 1.5, 75), Vector3.new(-half + 0.6, 6, 17.5), VEX_RED, Enum.Material.SmoothPlastic)
+	plotPart(plot, model, Vector3.new(1.2, 1.5, 75), Vector3.new(half - 0.6, 6, 17.5), VEX_RED, Enum.Material.SmoothPlastic)
 end
 
 function itemBuilders.Assembly(plot, _, model)
@@ -1661,7 +1663,7 @@ function itemBuilders.Assembly(plot, _, model)
 		plotPart(plot, model, Vector3.new(0.6, 3, 0.6), Vector3.new(p[1], 2.5, p[2]), METAL, Enum.Material.Metal)
 	end
 	local monitor = plotPart(plot, model, Vector3.new(5, 3.2, 0.3), Vector3.new(-38, 6.3, 38.5), Color3.fromRGB(20, 20, 25))
-	surfaceText(monitor, Enum.NormalId.Front, "🤖 ROBOT LAB", Color3.fromRGB(90, 200, 255), Color3.fromRGB(10, 20, 35))
+	surfaceText(monitor, Enum.NormalId.Front, "ROBOT LAB", Color3.new(1, 1, 1), SIGN_BLACK)
 	-- tool rack
 	plotPart(plot, model, Vector3.new(0.6, 6, 0.6), Vector3.new(-47, 4, 36), METAL, Enum.Material.Metal)
 	plotPart(plot, model, Vector3.new(0.4, 0.4, 4), Vector3.new(-46, 6.5, 35) , Color3.fromRGB(240, 120, 30), Enum.Material.Metal)
@@ -1717,7 +1719,7 @@ function itemBuilders.Shelf(plot, _, model)
 		end
 	end
 	local sign = plotPart(plot, model, Vector3.new(0.4, 3, 14), Vector3.new(-half + 1.5, 12.5, -3), Color3.fromRGB(25, 28, 40))
-	local label = surfaceText(sign, Enum.NormalId.Right, "🏆 0 Trophies", Color3.fromRGB(255, 210, 70))
+	local label = surfaceText(sign, Enum.NormalId.Right, "0 TROPHIES", Color3.new(1, 1, 1))
 	label.Name = "TrophyLabel"
 end
 
@@ -1732,7 +1734,7 @@ function itemBuilders.Overclock(plot, _, model)
 	light.Range = 20
 	light.Brightness = 3
 	light.Parent = core
-	billboard(core, "⚡ OVERCLOCK", 8, 1.5, Vector3.new(0, 5, 0), Color3.fromRGB(80, 200, 255))
+	billboard(core, "Factory Overclock", 8, 1.5, Vector3.new(0, 5, 0), Color3.fromRGB(80, 200, 255))
 end
 
 function itemBuilders.Hall(plot, _, model)
@@ -1741,8 +1743,8 @@ function itemBuilders.Hall(plot, _, model)
 	plotPart(plot, model, Vector3.new(2, 18, 2), Vector3.new(-10, 10, -half + 2), gold, Enum.Material.Metal)
 	plotPart(plot, model, Vector3.new(2, 18, 2), Vector3.new(10, 10, -half + 2), gold, Enum.Material.Metal)
 	local top = plotPart(plot, model, Vector3.new(24, 4, 2), Vector3.new(0, 20, -half + 2), gold, Enum.Material.Metal)
-	surfaceText(top, Enum.NormalId.Front, "🏆 CHAMPIONS 🏆", Color3.fromRGB(60, 40, 0))
-	plotPart(plot, model, Vector3.new(16, 0.2, 30), Vector3.new(0, 1.02, -half + 16), gold, Enum.Material.Neon, { CanCollide = false, Transparency = 0.3 })
+	surfaceText(top, Enum.NormalId.Front, "CHAMPIONS", Color3.fromRGB(40, 30, 0))
+	plotPart(plot, model, Vector3.new(16, 0.2, 30), Vector3.new(0, 1.02, -half + 16), SIGN_BLACK, Enum.Material.SmoothPlastic, { CanCollide = false })
 end
 
 function WorldBuilder.BuildItem(plot, item)
@@ -1776,8 +1778,8 @@ function WorldBuilder.GetWorld()
 	world.Root = root
 	world.Hub = buildHub(root)
 	world.Fields = {
-		Practice = buildField(root, "Practice", Vector3.new(-62, 0, 0), "🎮 PRACTICE FIELD"),
-		Ranked = buildField(root, "Ranked", Vector3.new(62, 0, 0), "⚔️ RANKED 1v1 ARENA"),
+		Practice = buildField(root, "Practice", Vector3.new(-62, 0, 0), "PRACTICE FIELD"),
+		Ranked = buildField(root, "Ranked", Vector3.new(62, 0, 0), "RANKED  ·  1 V 1"),
 	}
 	buildScoreboard(world.Fields.Ranked)
 	world.Fields.Practice.Prompt = prompt(world.Fields.Practice.Kiosk, "Drive Your Robot", "Practice Field")
@@ -1852,7 +1854,7 @@ local function updateTrophyShelf(plot)
 	if model and data then
 		local label = model:FindFirstChild("TrophyLabel", true)
 		if label then
-			label.Text = "🏆 " .. Config.Format(data.Trophies) .. " Trophies"
+			label.Text = Config.Format(data.Trophies) .. " TROPHIES"
 		end
 	end
 end
@@ -1898,12 +1900,12 @@ local function refreshBays(plot)
 		local loadout = data.Garage[i]
 		if loadout then
 			local stats = Config.GetRobotStats(loadout)
-			local label = (i == data.Active and "⭐ " or "") .. "Robot #" .. i .. " (" .. stats.Rating .. ")"
+			local label = "Robot " .. i .. (i == data.Active and "  ·  Active" or "")
 			local robot = RobotBuilder.Build(loadout, {
 				Name = "BayRobot" .. i,
 				TeamColor = plot.Color,
 				Label = label,
-				SubLabel = "+" .. Config.Money(stats.Income * mult) .. "/s",
+				SubLabel = "Rating " .. stats.Rating .. "  ·  +" .. Config.Money(stats.Income * mult) .. "/s",
 			})
 			robot:PivotTo(pad.CFrame * CFrame.new(0, 0.15 + 1, 0) * CFrame.Angles(0, math.pi, 0))
 			robot.Parent = plot.Bays
@@ -2070,7 +2072,7 @@ function tryPurchase(player, item)
 		refreshBays(plot)
 	end
 	if item.Type == "Assembly" then
-		notify(player, "Robot Lab unlocked! Use the 🤖 button or the workbench to design robots.", "success")
+		notify(player, "Robot Lab unlocked. Open Lab from the dock or use the workbench.", "success")
 	else
 		notify(player, "Built " .. item.Name .. "!", "success")
 	end
@@ -2562,7 +2564,7 @@ local function showOnlineLeaderboard(rows)
 	end)
 	for i, row in ipairs(rows) do
 		local entry = list[i]
-		row.Text = entry and string.format("  #%d  %s - %s 🏆", i, entry.Name, Config.Format(entry.Value)) or string.format("  #%d  ---", i)
+		row.Text = entry and string.format("  %d    %s    %s", i, entry.Name, Config.Format(entry.Value)) or string.format("  %d    —", i)
 	end
 end
 
@@ -2597,9 +2599,9 @@ local function refreshLeaderboard()
 				name = success and result or ("User " .. tostring(userId))
 				nameCache[userId] = name
 			end
-			row.Text = string.format("  #%d  %s - %s 🏆", i, name, Config.Format(entry.value))
+			row.Text = string.format("  %d    %s    %s", i, name, Config.Format(entry.value))
 		else
-			row.Text = string.format("  #%d  ---", i)
+			row.Text = string.format("  %d    —", i)
 		end
 	end
 end
@@ -2967,7 +2969,7 @@ local function giveRewards(player, result, opponentRating)
 		data.Stats.MatchesWon += 1
 		local cash = DataManager.AddCash(player, Config.Match.WinCashBase + opponentRating * Config.Match.WinCashPerRating, true)
 		DataManager.AddTrophies(player, Config.Match.WinTrophies)
-		notify(player, "🏆 VICTORY! +" .. Config.Money(cash) .. " and +" .. Config.Match.WinTrophies .. " trophies", "success")
+		notify(player, "Victory. +" .. Config.Money(cash) .. " and +" .. Config.Match.WinTrophies .. " trophies", "success")
 	elseif result == "Tie" then
 		local cash = DataManager.AddCash(player, Config.Match.LoseCash * 2, true)
 		DataManager.AddTrophies(player, Config.Match.TieTrophies)
@@ -3064,7 +3066,7 @@ local function runMatch(m)
 		if s then
 			m.Scores[side] += s.Stats.Auton
 			if s.Stats.Auton > 0 then
-				notify(m[side], "🧠 Autonomous bonus: +" .. s.Stats.Auton .. " points!", "success")
+				notify(m[side], "Autonomous bonus: +" .. s.Stats.Auton .. " points", "success")
 			end
 			releaseRobot(s)
 		end
@@ -3139,7 +3141,7 @@ function tryStartMatch()
 	end
 
 	for _, p in ipairs({ red, blue }) do
-		notify(p, "⚔️ Ranked match! Score in your " .. (p == red and "RED" or "BLUE") .. " goal. Jumping out forfeits!", "info")
+		notify(p, "Ranked match. Score in your " .. (p == red and "RED" or "BLUE") .. " goal. Leaving your robot forfeits.", "info")
 	end
 	updateQueueAttributes()
 	task.spawn(runMatch, m)
@@ -3313,14 +3315,13 @@ table.insert(files, { Class = "LocalScript", Service = "StarterPlayer", Sub = "S
 --[[
 	MainUI (LocalScript)  ->  StarterPlayer.StarterPlayerScripts.MainUI
 
-	The complete interface, built in code:
-	  * HUD: rolling cash counter with +$ popups, trophies, season, next-goal bar
-	  * Side menu with alert badges
-	  * Robot Lab with a live spinning 3D robot preview + stat bars
-	  * Garage cards with 3D previews, Competitions, Drive, Season, Shop
-	  * Animated tournament results, match HUD, countdown, match results
-	  * Slide-in notifications
-	Everything auto-scales for phone, tablet and desktop.
+	The whole interface, built in code. Design language:
+	  * Builder Sans, fixed type scale (no auto-scaled text)
+	  * Graphite dark palette, VEX red as the single accent
+	  * Grouped lists with hairline separators, segmented controls,
+	    capsule buttons, a floating dock, banner notifications
+	  * Subtle fades only
+	Everything scales to fit phones, tablets and desktops.
 ]]
 
 local Players = game:GetService("Players")
@@ -3341,73 +3342,77 @@ local ArenaState = Remotes:WaitForChild("ArenaState")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
-local State = nil -- latest snapshot from the server
+local State = nil
 local Arena = { Mode = "None" }
-local cooldownEnds = {} -- [compId] = os.clock() when ready again
+local cooldownEnds = {}
 
 ---------------------------------------------------------------------
--- Theme
+-- Design tokens
 ---------------------------------------------------------------------
 local C = {
-	Bg = Color3.fromRGB(14, 16, 26),
-	Panel = Color3.fromRGB(22, 25, 38),
-	Panel2 = Color3.fromRGB(30, 34, 52),
-	Card = Color3.fromRGB(36, 41, 62),
-	Line = Color3.fromRGB(66, 72, 100),
-	Text = Color3.fromRGB(245, 247, 255),
-	Muted = Color3.fromRGB(150, 158, 186),
-	Dark = Color3.fromRGB(20, 22, 30),
-	Red = Color3.fromRGB(232, 56, 66),
-	Blue = Color3.fromRGB(56, 132, 244),
-	Green = Color3.fromRGB(46, 196, 110),
-	Gold = Color3.fromRGB(255, 196, 60),
-	Purple = Color3.fromRGB(150, 90, 230),
-	Orange = Color3.fromRGB(245, 130, 40),
-	Cyan = Color3.fromRGB(40, 200, 220),
-	Disabled = Color3.fromRGB(58, 63, 84),
+	Base = Color3.fromRGB(0, 0, 0),
+	Sheet = Color3.fromRGB(28, 28, 30), -- window background
+	Group = Color3.fromRGB(44, 44, 46), -- grouped list / card
+	Fill = Color3.fromRGB(58, 58, 60), -- controls, tracks
+	FillHi = Color3.fromRGB(72, 72, 74),
+	Separator = Color3.fromRGB(64, 64, 67),
+	Label = Color3.fromRGB(255, 255, 255),
+	Secondary = Color3.fromRGB(152, 152, 159),
+	Tertiary = Color3.fromRGB(99, 99, 104),
+	Accent = Color3.fromRGB(226, 35, 42), -- VEX red
+	Green = Color3.fromRGB(48, 209, 88),
+	TeamRed = Color3.fromRGB(255, 69, 58),
+	TeamBlue = Color3.fromRGB(10, 132, 255),
 }
-local TIER = { Color3.fromRGB(150, 158, 175), C.Green, C.Blue, C.Purple, C.Orange, C.Gold, C.Red }
-local SLOT_COLOR = { Drivetrain = C.Red, Intake = C.Green, Lift = C.Blue, Brain = C.Purple }
-local STAT_STYLE = {
-	{ Key = "Speed", Icon = "⚡", Color = C.Cyan },
-	{ Key = "Power", Icon = "💪", Color = C.Red },
-	{ Key = "Control", Icon = "🎯", Color = C.Purple },
-	{ Key = "Scoring", Icon = "🏀", Color = C.Gold },
-}
-local FONT = Enum.Font.GothamBold
-local FONT_BLACK = Enum.Font.GothamBlack
-local FONT_MED = Enum.Font.GothamMedium
-local CENTER = Enum.TextXAlignment.Center
-local RIGHT = Enum.TextXAlignment.Right
 
--- highest possible value of each stat (for stat bars)
+local FAMILY = "rbxasset://fonts/families/BuilderSans.json"
+local F = {
+	Regular = Font.new(FAMILY, Enum.FontWeight.Regular),
+	Medium = Font.new(FAMILY, Enum.FontWeight.Medium),
+	Semi = Font.new(FAMILY, Enum.FontWeight.SemiBold),
+	Bold = Font.new(FAMILY, Enum.FontWeight.Bold),
+}
+
+-- type scale: { font, size }
+local TYPE = {
+	Display = { F.Bold, 34 },
+	Title = { F.Bold, 28 },
+	Title2 = { F.Bold, 22 },
+	Headline = { F.Semi, 17 },
+	Body = { F.Regular, 16 },
+	Callout = { F.Medium, 15 },
+	Subhead = { F.Regular, 14 },
+	Footnote = { F.Regular, 13 },
+	Caption = { F.Semi, 12 },
+}
+
+local LEFT, CENTER, RIGHT = Enum.TextXAlignment.Left, Enum.TextXAlignment.Center, Enum.TextXAlignment.Right
+local EASE = TweenInfo.new(0.22, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+
+local STATS = { "Speed", "Power", "Control", "Scoring" }
 local STAT_MAX = {}
-for _, style in ipairs(STAT_STYLE) do
+for _, key in ipairs(STATS) do
 	local total = 0
 	for _, slot in ipairs(Config.ModuleSlots) do
 		local best = 0
 		for _, def in ipairs(Config.Modules[slot]) do
-			best = math.max(best, def[style.Key] or 0)
+			best = math.max(best, def[key] or 0)
 		end
 		total += best
 	end
-	STAT_MAX[style.Key] = math.max(total, 1)
+	STAT_MAX[key] = math.max(total, 1)
 end
 
 ---------------------------------------------------------------------
--- UI toolkit
+-- Toolkit
 ---------------------------------------------------------------------
-local function tween(obj, time, props, style, direction)
-	local t = TweenService:Create(obj, TweenInfo.new(time, style or Enum.EasingStyle.Quad, direction or Enum.EasingDirection.Out), props)
+local function tween(obj, props, info)
+	local t = TweenService:Create(obj, info or EASE, props)
 	t:Play()
 	return t
 end
 
-local function shade(color, factor)
-	return Color3.new(math.clamp(color.R * factor, 0, 1), math.clamp(color.G * factor, 0, 1), math.clamp(color.B * factor, 0, 1))
-end
-
-local function new(className, props, children)
+local function new(className, props)
 	local inst = Instance.new(className)
 	local parent = nil
 	for key, value in pairs(props or {}) do
@@ -3417,265 +3422,283 @@ local function new(className, props, children)
 			inst[key] = value
 		end
 	end
-	for _, child in ipairs(children or {}) do
-		child.Parent = inst
-	end
 	if parent then
 		inst.Parent = parent
 	end
 	return inst
 end
 
-local function corner(radius)
-	return new("UICorner", { CornerRadius = UDim.new(0, radius or 10) })
+local function corner(inst, radius)
+	new("UICorner", { Parent = inst, CornerRadius = radius == "pill" and UDim.new(1, 0) or UDim.new(0, radius or 12) })
 end
 
-local function stroke(color, thickness, transparency)
-	return new("UIStroke", { Color = color or C.Line, Thickness = thickness or 1.5, Transparency = transparency or 0, ApplyStrokeMode = Enum.ApplyStrokeMode.Border })
+local function hairline(inst, transparency)
+	return new("UIStroke", { Parent = inst, Color = Color3.new(1, 1, 1), Thickness = 1, Transparency = transparency or 0.9, ApplyStrokeMode = Enum.ApplyStrokeMode.Border })
 end
 
-local function gradient(c1, c2, rotation)
-	return new("UIGradient", { Color = ColorSequence.new(c1, c2), Rotation = rotation or 90 })
-end
-
-local SHADE_TOP, SHADE_BOTTOM = Color3.new(1, 1, 1), Color3.fromRGB(200, 202, 212)
-
-local function vlist(gap, hAlign)
-	return new("UIListLayout", { Padding = UDim.new(0, gap or 8), SortOrder = Enum.SortOrder.LayoutOrder, HorizontalAlignment = hAlign or Enum.HorizontalAlignment.Left })
-end
-
-local function hlist(gap, hAlign)
-	return new("UIListLayout", {
-		Padding = UDim.new(0, gap or 8),
-		FillDirection = Enum.FillDirection.Horizontal,
-		SortOrder = Enum.SortOrder.LayoutOrder,
-		VerticalAlignment = Enum.VerticalAlignment.Center,
-		HorizontalAlignment = hAlign or Enum.HorizontalAlignment.Left,
-	})
-end
-
-local function Text(p)
-	local label = new("TextLabel", {
-		Name = p.Name or "Text",
-		BackgroundTransparency = 1,
-		Font = p.Font or FONT,
-		TextColor3 = p.Color or C.Text,
-		TextScaled = true,
-		TextWrapped = true,
-		RichText = true,
-		Text = p.Text or "",
-		TextXAlignment = p.AlignX or Enum.TextXAlignment.Left,
-		TextYAlignment = p.AlignY or Enum.TextYAlignment.Center,
-		Size = p.Size or UDim2.new(1, 0, 0, 20),
-		Position = p.Position or UDim2.new(),
-		AnchorPoint = p.Anchor or Vector2.zero,
-		LayoutOrder = p.Order or 0,
-		Visible = p.Visible ~= false,
-	}, {
-		new("UITextSizeConstraint", { MaxTextSize = p.Max or 18, MinTextSize = p.Min or 7 }),
-	})
-	label.Parent = p.Parent
-	return label
-end
-
-local function Box(p, children)
+local function Frame(p)
 	local f = new("Frame", {
-		Name = p.Name or "Box",
+		Name = p.Name or "Frame",
 		BorderSizePixel = 0,
-		BackgroundColor3 = p.Color or C.Card,
-		BackgroundTransparency = p.Transparency or 0,
+		BackgroundColor3 = p.Color or C.Group,
+		BackgroundTransparency = p.Transparency or (p.Color and 0 or 1),
 		Size = p.Size or UDim2.fromScale(1, 1),
 		Position = p.Position or UDim2.new(),
 		AnchorPoint = p.Anchor or Vector2.zero,
 		LayoutOrder = p.Order or 0,
 		Visible = p.Visible ~= false,
-		ZIndex = p.Z or 1,
-	}, children)
-	if p.Radius ~= false then
-		corner(p.Radius or 12).Parent = f
+		AutomaticSize = p.AutoSize or Enum.AutomaticSize.None,
+		ClipsDescendants = p.Clip == true,
+		Parent = p.Parent,
+	})
+	if p.Radius then
+		corner(f, p.Radius)
 	end
-	if p.Stroke then
-		stroke(p.Stroke, p.StrokeThickness or 1.5, p.StrokeTransparency or 0).Parent = f
+	if p.Hairline then
+		hairline(f, p.Hairline ~= true and p.Hairline or nil)
 	end
-	if p.Gradient then
-		gradient(p.Gradient[1], p.Gradient[2], p.Gradient[3]).Parent = f
-	end
-	f.Parent = p.Parent
 	return f
 end
 
+local function Text(p)
+	local style = TYPE[p.Style or "Body"]
+	return new("TextLabel", {
+		Name = p.Name or "Text",
+		BackgroundTransparency = 1,
+		FontFace = p.Font or style[1],
+		TextSize = p.TextSize or style[2],
+		TextColor3 = p.Color or C.Label,
+		Text = p.Text or "",
+		RichText = true,
+		TextWrapped = p.Wrap ~= false,
+		TextTruncate = p.Wrap == false and Enum.TextTruncate.AtEnd or Enum.TextTruncate.None,
+		TextXAlignment = p.AlignX or LEFT,
+		TextYAlignment = p.AlignY or Enum.TextYAlignment.Center,
+		Size = p.Size or UDim2.new(1, 0, 0, style[2] + 6),
+		Position = p.Position or UDim2.new(),
+		AnchorPoint = p.Anchor or Vector2.zero,
+		LayoutOrder = p.Order or 0,
+		Visible = p.Visible ~= false,
+		Parent = p.Parent,
+	})
+end
+
+-- Button kinds: primary (VEX red), secondary (gray), get (App Store style), plain (text only)
+local KIND = {
+	primary = { Bg = C.Accent, Text = C.Label, Transparency = 0 },
+	secondary = { Bg = C.Fill, Text = C.Label, Transparency = 0 },
+	get = { Bg = C.Fill, Text = C.Accent, Transparency = 0 },
+	plain = { Bg = C.Fill, Text = C.Accent, Transparency = 1 },
+	disabled = { Bg = C.Fill, Text = C.Tertiary, Transparency = 0.4 },
+}
+
+local function applyKind(b, kind)
+	local k = KIND[kind] or KIND.secondary
+	b.BackgroundColor3 = k.Bg
+	b.BackgroundTransparency = k.Transparency
+	b.Label.TextColor3 = k.Text
+	b:SetAttribute("Kind", kind)
+	b:SetAttribute("Enabled", kind ~= "disabled")
+end
+
 local function Button(p, onClick)
-	local color = p.Color or C.Blue
 	local b = new("TextButton", {
 		Name = p.Name or "Button",
 		AutoButtonColor = false,
 		Text = "",
 		BorderSizePixel = 0,
-		BackgroundColor3 = color,
-		Size = p.Size or UDim2.new(0, 120, 0, 40),
+		Size = p.Size or UDim2.new(0, 120, 0, 36),
 		Position = p.Position or UDim2.new(),
 		AnchorPoint = p.Anchor or Vector2.zero,
 		LayoutOrder = p.Order or 0,
 		Visible = p.Visible ~= false,
+		Parent = p.Parent,
 	})
-	corner(p.Radius or 10).Parent = b
-	gradient(SHADE_TOP, SHADE_BOTTOM, 90).Parent = b
-	local outline = stroke(shade(color, 1.3), 1.5, 0.4)
-	outline.Name = "Outline"
-	outline.Parent = b
-	local scale = new("UIScale", { Parent = b })
-	local label = Text({ Parent = b, Name = "Label", Text = p.Text or "", Font = FONT_BLACK, Max = p.Max or 16, AlignX = CENTER, Color = p.TextColor or C.Text, Size = UDim2.new(1, -12, 1, -8), Position = UDim2.new(0, 6, 0, 4) })
-	local enabled = p.Enabled ~= false
-	b:SetAttribute("Enabled", enabled)
-	b:SetAttribute("BaseColor", color)
-	if not enabled then
-		label.TextTransparency = 0.45
-	end
+	corner(b, p.Radius or "pill")
+	Text({ Parent = b, Name = "Label", Text = p.Text or "", Font = p.Font or F.Semi, TextSize = p.TextSize or 15, AlignX = CENTER, Wrap = false, Size = UDim2.new(1, -16, 1, 0), Position = UDim2.new(0, 8, 0, 0) })
+	applyKind(b, p.Kind or "secondary")
 	b.MouseEnter:Connect(function()
-		if b:GetAttribute("Enabled") then
-			tween(b, 0.12, { BackgroundColor3 = shade(b:GetAttribute("BaseColor"), 1.15) })
+		local kind = b:GetAttribute("Kind")
+		if b:GetAttribute("Enabled") and kind ~= "plain" then
+			tween(b, { BackgroundTransparency = KIND[kind].Transparency + 0.12 })
 		end
 	end)
 	b.MouseLeave:Connect(function()
-		tween(b, 0.12, { BackgroundColor3 = b:GetAttribute("BaseColor") })
-		tween(scale, 0.1, { Scale = 1 })
+		local k = KIND[b:GetAttribute("Kind")]
+		if k then
+			tween(b, { BackgroundTransparency = k.Transparency })
+		end
+		tween(b.Label, { TextTransparency = 0 })
 	end)
 	b.MouseButton1Down:Connect(function()
 		if b:GetAttribute("Enabled") then
-			tween(scale, 0.06, { Scale = 0.94 })
+			tween(b.Label, { TextTransparency = 0.4 }, TweenInfo.new(0.05))
 		end
 	end)
 	b.MouseButton1Up:Connect(function()
-		tween(scale, 0.18, { Scale = 1 }, Enum.EasingStyle.Back)
+		tween(b.Label, { TextTransparency = 0 })
 	end)
 	b.Activated:Connect(function()
 		if b:GetAttribute("Enabled") and onClick then
 			onClick(b)
 		end
 	end)
-	b.Parent = p.Parent
 	return b
 end
 
-local function setButton(b, text, color, enabled)
+local function setButton(b, text, kind)
 	if text then
 		b.Label.Text = text
 	end
-	if color then
-		b:SetAttribute("BaseColor", color)
-		b.BackgroundColor3 = color
-		b.Outline.Color = shade(color, 1.3)
+	if kind then
+		applyKind(b, kind)
 	end
-	if enabled ~= nil then
-		b:SetAttribute("Enabled", enabled)
-		b.Label.TextTransparency = enabled and 0 or 0.45
-	end
-end
-
-local function Pill(parent, text, color, width, order, textColor)
-	local pill = Box({ Parent = parent, Order = order, Size = UDim2.new(0, width, 0, 22), Color = color, Radius = 11 })
-	Text({ Parent = pill, Text = text, Max = 12, AlignX = CENTER, Font = FONT_BLACK, Color = textColor or C.Text, Size = UDim2.new(1, -10, 1, -6), Position = UDim2.new(0, 5, 0, 3) })
-	return pill
 end
 
 local function Scroll(p)
 	local s = new("ScrollingFrame", {
-		Name = p.Name or "List",
+		Name = p.Name or "Scroll",
 		BackgroundTransparency = 1,
 		BorderSizePixel = 0,
-		ScrollBarThickness = 5,
-		ScrollBarImageColor3 = C.Line,
+		ScrollBarThickness = 3,
+		ScrollBarImageColor3 = C.Secondary,
+		ScrollBarImageTransparency = 0.4,
 		CanvasSize = UDim2.new(),
 		AutomaticCanvasSize = Enum.AutomaticSize.Y,
 		ScrollingDirection = Enum.ScrollingDirection.Y,
 		Size = p.Size or UDim2.fromScale(1, 1),
 		Position = p.Position or UDim2.new(),
+		Parent = p.Parent,
 	})
 	if p.Grid then
-		new("UIGridLayout", { Parent = s, CellSize = p.Grid, CellPadding = UDim2.new(0, 12, 0, 12), SortOrder = Enum.SortOrder.LayoutOrder })
+		new("UIGridLayout", { Parent = s, CellSize = p.Grid, CellPadding = UDim2.new(0, 14, 0, 14), SortOrder = Enum.SortOrder.LayoutOrder })
 	else
-		vlist(p.Gap or 8).Parent = s
+		new("UIListLayout", { Parent = s, Padding = UDim.new(0, p.Gap or 0), SortOrder = Enum.SortOrder.LayoutOrder })
 	end
-	new("UIPadding", { Parent = s, PaddingTop = UDim.new(0, 2), PaddingLeft = UDim.new(0, 2), PaddingBottom = UDim.new(0, 6) })
-	s.Parent = p.Parent
+	new("UIPadding", { Parent = s, PaddingRight = UDim.new(0, 8), PaddingBottom = UDim.new(0, 8) })
 	return s
 end
 
-local function Keycap(parent, key, position)
-	local cap = Box({ Parent = parent, Size = UDim2.new(0, 34, 0, 30), Position = position, Color = C.Panel2, Radius = 8, Stroke = C.Line })
-	Box({ Parent = cap, Size = UDim2.new(1, 0, 0, 3), Position = UDim2.new(0, 0, 1, -3), Color = C.Line, Radius = 2 })
-	Text({ Parent = cap, Text = key, Font = FONT_BLACK, Max = 14, AlignX = CENTER, Size = UDim2.new(1, -4, 1, -6), Position = UDim2.new(0, 2, 0, 1) })
+-- Inset grouped list: one rounded container, rows separated by hairlines
+local function Group(parent, props)
+	props = props or {}
+	local g = Frame({ Parent = parent, Name = "Group", Color = C.Group, Radius = 14, Size = props.Size or UDim2.new(1, 0, 0, 0), Position = props.Position, AutoSize = Enum.AutomaticSize.Y, Order = props.Order })
+	new("UIListLayout", { Parent = g, SortOrder = Enum.SortOrder.LayoutOrder })
+	g:SetAttribute("Rows", 0)
+	return g
+end
+
+local function Row(group, height)
+	local index = group:GetAttribute("Rows") + 1
+	group:SetAttribute("Rows", index)
+	local r = Frame({ Parent = group, Name = "Row" .. index, Size = UDim2.new(1, 0, 0, height), Order = index })
+	if index > 1 then
+		Frame({ Parent = r, Name = "Separator", Color = C.Separator, Size = UDim2.new(1, -16, 0, 1), Position = UDim2.new(0, 16, 0, 0) })
+	end
+	return r
+end
+
+local function Section(parent, text, position)
+	return Text({ Parent = parent, Text = string.upper(text), Style = "Footnote", Color = C.Secondary, Position = position, Size = UDim2.new(1, -16, 0, 28), AlignY = Enum.TextYAlignment.Bottom })
+end
+
+local function Progress(parent, position, size, fraction, color)
+	local track = Frame({ Parent = parent, Color = C.Fill, Radius = "pill", Position = position, Size = size })
+	local fill = Frame({ Parent = track, Color = color or C.Label, Radius = "pill", Size = UDim2.new(0, 0, 1, 0) })
+	tween(fill, { Size = UDim2.new(math.clamp(fraction, 0, 1), 0, 1, 0) }, TweenInfo.new(0.5, Enum.EasingStyle.Quint))
+	return track, fill
+end
+
+local function Segmented(parent, items, selected, onSelect, position, size)
+	local track = Frame({ Parent = parent, Color = C.Fill, Transparency = 0.2, Radius = 9, Position = position, Size = size })
+	local n = #items
+	for i, item in ipairs(items) do
+		local active = item == selected
+		local seg = new("TextButton", {
+			Parent = track,
+			AutoButtonColor = false,
+			Text = item,
+			FontFace = active and F.Semi or F.Medium,
+			TextSize = 14,
+			TextColor3 = C.Label,
+			BackgroundColor3 = C.FillHi,
+			BackgroundTransparency = active and 0 or 1,
+			Position = UDim2.new((i - 1) / n, 2, 0, 2),
+			Size = UDim2.new(1 / n, -4, 1, -4),
+		})
+		corner(seg, 7)
+		if active then
+			hairline(seg, 0.92)
+		end
+		seg.Activated:Connect(function()
+			if not active then
+				onSelect(item)
+			end
+		end)
+	end
+	return track
+end
+
+local function Keycap(parent, key, position, width)
+	local cap = Frame({ Parent = parent, Color = C.Fill, Radius = 6, Position = position, Size = UDim2.new(0, width or 28, 0, 26) })
+	Text({ Parent = cap, Text = key, Font = F.Semi, TextSize = 12, AlignX = CENTER, Size = UDim2.fromScale(1, 1) })
 	return cap
 end
 
 ---------------------------------------------------------------------
--- Screens + auto scaling
+-- Screens + scaling
 ---------------------------------------------------------------------
 local mainGui = new("ScreenGui", { Name = "VexUI", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling, DisplayOrder = 1, Parent = playerGui })
 local modalGui = new("ScreenGui", { Name = "VexModal", ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling, DisplayOrder = 10, Parent = playerGui })
 
 local scalers = {}
-local currentScale = 1
+local uiScale = 1
 local function autoScale(guiObject)
-	local s = new("UIScale", { Parent = guiObject, Scale = currentScale })
-	table.insert(scalers, s)
-	return s
+	table.insert(scalers, new("UIScale", { Parent = guiObject, Scale = uiScale }))
 end
-
 local function updateScale()
 	local camera = workspace.CurrentCamera
 	if not camera then
 		return
 	end
 	local vp = camera.ViewportSize
-	currentScale = math.clamp(math.min(vp.X / 1366, vp.Y / 800), 0.5, 1.2)
+	uiScale = math.clamp(math.min(vp.X / 1400, vp.Y / 820), 0.5, 1.15)
 	for _, s in ipairs(scalers) do
-		s.Scale = currentScale
+		s.Scale = uiScale
 	end
 end
 
 ---------------------------------------------------------------------
--- Live robot previews (ViewportFrames)
+-- 3D robot previews ("product shots")
 ---------------------------------------------------------------------
 local previews = {}
-local previewAngle = 0
+local previewAngle = 0.6
 
 local function RobotPreview(parent, loadout, size, position, background)
 	local vp = new("ViewportFrame", {
-		BackgroundColor3 = background or C.Bg,
+		BackgroundColor3 = background or C.Group,
 		BorderSizePixel = 0,
 		Size = size,
 		Position = position or UDim2.new(),
-		Ambient = Color3.fromRGB(150, 150, 165),
-		LightColor = Color3.fromRGB(255, 250, 240),
-		LightDirection = Vector3.new(-0.6, -1, -0.4),
+		Ambient = Color3.fromRGB(140, 140, 150),
+		LightColor = Color3.fromRGB(255, 255, 255),
+		LightDirection = Vector3.new(-0.5, -1, -0.6),
+		Parent = parent,
 	})
-	corner(14).Parent = vp
-	local camera = new("Camera", { FieldOfView = 34 })
-	camera.CFrame = CFrame.lookAt(Vector3.new(10, 8, -14), Vector3.new(0, 1.2, 0))
-	camera.Parent = vp
+	corner(vp, 14)
+	local camera = new("Camera", { FieldOfView = 30, CFrame = CFrame.lookAt(Vector3.new(11, 7, -15), Vector3.new(0, 1, 0)), Parent = vp })
 	vp.CurrentCamera = camera
-	new("Part", {
-		Anchored = true,
-		Shape = Enum.PartType.Cylinder,
-		Size = Vector3.new(0.3, 13, 13),
-		CFrame = CFrame.new(0, -1.15, 0) * CFrame.Angles(0, 0, math.rad(90)),
-		Color = Color3.fromRGB(58, 62, 84),
-		Material = Enum.Material.SmoothPlastic,
-		Parent = vp,
-	})
 	local ok, model = pcall(RobotBuilder.Build, loadout, { NoNameplate = true })
 	if ok and model then
 		model:PivotTo(CFrame.Angles(0, previewAngle, 0))
 		model.Parent = vp
 		table.insert(previews, model)
 	end
-	vp.Parent = parent
 	return vp
 end
 
 RunService.RenderStepped:Connect(function(dt)
-	previewAngle = (previewAngle + dt * 0.7) % (math.pi * 2)
+	previewAngle = (previewAngle + dt * 0.35) % (math.pi * 2)
 	for i = #previews, 1, -1 do
 		local model = previews[i]
 		if model.Parent == nil then
@@ -3687,7 +3710,7 @@ RunService.RenderStepped:Connect(function(dt)
 end)
 
 ---------------------------------------------------------------------
--- Cash / state helpers
+-- Helpers
 ---------------------------------------------------------------------
 local function cash()
 	local stats = player:FindFirstChild("leaderstats")
@@ -3695,7 +3718,6 @@ local function cash()
 	return value and value.Value or (State and State.Cash or 0)
 end
 
--- things inside the open panel that update without a full re-render
 local live = { Cash = {}, Tick = {} }
 local function onCash(fn)
 	table.insert(live.Cash, fn)
@@ -3706,52 +3728,74 @@ local function onTick(fn)
 	fn()
 end
 
----------------------------------------------------------------------
--- Notifications (slide in from the right)
----------------------------------------------------------------------
-local toastHost = Box({ Parent = mainGui, Transparency = 1, Radius = false, Anchor = Vector2.new(1, 0), Position = UDim2.new(1, -14, 0, 120), Size = UDim2.new(0, 340, 0, 420) }, { vlist(8, Enum.HorizontalAlignment.Right) })
-autoScale(toastHost)
+local function isDriving()
+	return Arena.Mode == "Practice" or Arena.Mode == "Ranked"
+end
 
-local TOAST_STYLE = {
-	success = { C.Green, "✓" },
-	error = { C.Red, "✕" },
-	cash = { C.Gold, "$" },
-	info = { C.Blue, "i" },
-}
-local toastCount = 0
+---------------------------------------------------------------------
+-- Banners (notifications)
+---------------------------------------------------------------------
+local bannerHost = Frame({ Parent = mainGui, Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 96), Size = UDim2.new(0, 420, 0, 200) })
+new("UIListLayout", { Parent = bannerHost, Padding = UDim.new(0, 8), HorizontalAlignment = Enum.HorizontalAlignment.Center, SortOrder = Enum.SortOrder.LayoutOrder })
+autoScale(bannerHost)
+
+local DOT = { success = C.Green, error = C.Accent, cash = C.Green, info = C.Secondary }
+local bannerCount = 0
 
 local function toast(text, kind)
 	if type(text) ~= "string" or text == "" then
 		return
 	end
-	local style = TOAST_STYLE[kind] or TOAST_STYLE.info
-	toastCount += 1
-	local holder = Box({ Parent = toastHost, Transparency = 1, Radius = false, Size = UDim2.new(1, 0, 0, 56), Order = toastCount })
-	local card = Box({ Parent = holder, Color = C.Panel, Transparency = 0.04, Radius = 12, Stroke = style[1], StrokeTransparency = 0.5, Position = UDim2.new(0, 360, 0, 0), Size = UDim2.fromScale(1, 1) })
-	Box({ Parent = card, Color = style[1], Radius = 3, Size = UDim2.new(0, 5, 1, -16), Position = UDim2.new(0, 7, 0, 8) })
-	local icon = Box({ Parent = card, Color = style[1], Radius = 15, Size = UDim2.new(0, 30, 0, 30), Position = UDim2.new(0, 20, 0.5, 0), Anchor = Vector2.new(0, 0.5), Gradient = { SHADE_TOP, SHADE_BOTTOM, 90 } })
-	Text({ Parent = icon, Text = style[2], Font = FONT_BLACK, Max = 16, AlignX = CENTER, Size = UDim2.fromScale(1, 1) })
-	Text({ Parent = card, Text = text, Max = 15, Font = FONT, Size = UDim2.new(1, -70, 1, -12), Position = UDim2.new(0, 60, 0, 6) })
-	tween(card, 0.35, { Position = UDim2.new(0, 0, 0, 0) }, Enum.EasingStyle.Back)
+	bannerCount += 1
+	local banner = Frame({ Parent = bannerHost, Color = C.Group, Radius = "pill", Hairline = 0.9, Order = bannerCount, Size = UDim2.new(0, 0, 0, 44), AutoSize = Enum.AutomaticSize.X })
+	new("UIPadding", { Parent = banner, PaddingLeft = UDim.new(0, 16), PaddingRight = UDim.new(0, 20) })
+	new("UIListLayout", { Parent = banner, FillDirection = Enum.FillDirection.Horizontal, VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(0, 10), SortOrder = Enum.SortOrder.LayoutOrder })
+	local dot = Frame({ Parent = banner, Color = DOT[kind] or C.Secondary, Radius = "pill", Size = UDim2.new(0, 8, 0, 8), Order = 1 })
+	local label = new("TextLabel", {
+		Parent = banner,
+		BackgroundTransparency = 1,
+		FontFace = F.Medium,
+		TextSize = 15,
+		TextColor3 = C.Label,
+		Text = text,
+		TextTruncate = Enum.TextTruncate.AtEnd,
+		AutomaticSize = Enum.AutomaticSize.X,
+		Size = UDim2.new(0, 0, 1, 0),
+		LayoutOrder = 2,
+	})
+	new("UISizeConstraint", { Parent = label, MaxSize = Vector2.new(360, 44) })
 
-	local frames = {}
-	for _, child in ipairs(toastHost:GetChildren()) do
+	banner.BackgroundTransparency = 1
+	label.TextTransparency = 1
+	dot.BackgroundTransparency = 1
+	tween(banner, { BackgroundTransparency = 0.04 })
+	tween(label, { TextTransparency = 0 })
+	tween(dot, { BackgroundTransparency = 0 })
+
+	local banners = {}
+	for _, child in ipairs(bannerHost:GetChildren()) do
 		if child:IsA("Frame") then
-			table.insert(frames, child)
+			table.insert(banners, child)
 		end
 	end
-	if #frames > 5 then
-		table.sort(frames, function(a, b)
+	if #banners > 3 then
+		table.sort(banners, function(a, b)
 			return a.LayoutOrder < b.LayoutOrder
 		end)
-		frames[1]:Destroy()
+		banners[1]:Destroy()
 	end
 
-	task.delay(3.8, function()
-		if card.Parent then
-			tween(card, 0.3, { Position = UDim2.new(0, 360, 0, 0) }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-			task.wait(0.32)
-			holder:Destroy()
+	task.delay(3.2, function()
+		if banner.Parent then
+			tween(banner, { BackgroundTransparency = 1 })
+			tween(label, { TextTransparency = 1 })
+			tween(dot, { BackgroundTransparency = 1 })
+			local stroke = banner:FindFirstChildOfClass("UIStroke")
+			if stroke then
+				tween(stroke, { Transparency = 1 })
+			end
+			task.wait(0.25)
+			banner:Destroy()
 		end
 	end)
 end
@@ -3770,7 +3814,7 @@ local function request(remote, ...)
 	local ok, a, b = pcall(remote.InvokeServer, remote, ...)
 	busy = false
 	if not ok then
-		return false, "Connection problem, try again"
+		return false, "Connection problem. Try again."
 	end
 	return a, b
 end
@@ -3784,31 +3828,48 @@ local function act(action, ...)
 end
 
 ---------------------------------------------------------------------
--- HUD
+-- Status capsule (top center)
 ---------------------------------------------------------------------
-local hudHost = Box({ Parent = mainGui, Transparency = 1, Radius = false, Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 10), Size = UDim2.new(0, 580, 0, 100) })
-autoScale(hudHost)
-local chipRow = Box({ Parent = hudHost, Transparency = 1, Radius = false, Size = UDim2.new(1, 0, 0, 58) }, { hlist(10, Enum.HorizontalAlignment.Center) })
+local statusHost = Frame({ Parent = mainGui, Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 12), Size = UDim2.new(0, 520, 0, 76) })
+autoScale(statusHost)
+local capsule = Frame({ Parent = statusHost, Color = C.Sheet, Transparency = 0.08, Radius = "pill", Hairline = 0.9, Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 0), Size = UDim2.new(0, 470, 0, 44) })
 
-local function Chip(order, width, accent, icon)
-	local chip = Box({ Parent = chipRow, Order = order, Size = UDim2.new(0, width, 0, 58), Color = C.Panel, Transparency = 0.06, Radius = 16, Stroke = accent, StrokeTransparency = 0.5 })
-	local iconBox = Box({ Parent = chip, Size = UDim2.new(0, 42, 0, 42), Position = UDim2.new(0, 8, 0.5, 0), Anchor = Vector2.new(0, 0.5), Color = accent, Radius = 12, Gradient = { SHADE_TOP, Color3.fromRGB(165, 165, 175), 90 } })
-	Text({ Parent = iconBox, Text = icon, AlignX = CENTER, Max = 22, Size = UDim2.fromScale(1, 1) })
-	local main = Text({ Parent = chip, Font = FONT_BLACK, Max = 24, Position = UDim2.new(0, 58, 0, 7), Size = UDim2.new(1, -66, 0, 26) })
-	local sub = Text({ Parent = chip, Font = FONT_MED, Color = C.Muted, Max = 13, Position = UDim2.new(0, 58, 0, 33), Size = UDim2.new(1, -66, 0, 16) })
-	return chip, main, sub
+local function Segment(x, width)
+	local seg = Frame({ Parent = capsule, Position = UDim2.new(0, x, 0, 0), Size = UDim2.new(0, width, 1, 0) })
+	return Text({ Parent = seg, Style = "Headline", Wrap = false, AlignX = CENTER, Size = UDim2.fromScale(1, 1) })
+end
+local function Divider(x)
+	Frame({ Parent = capsule, Color = C.Separator, Position = UDim2.new(0, x, 0.5, 0), Anchor = Vector2.new(0, 0.5), Size = UDim2.new(0, 1, 0, 20) })
 end
 
-local cashChip, cashMain, cashSub = Chip(1, 250, C.Green, "💵")
-local _, trophyMain, trophySub = Chip(2, 150, C.Gold, "🏆")
-local _, seasonMain, seasonSub = Chip(3, 150, C.Purple, "🔄")
-trophySub.Text = "trophies"
+local cashText = Segment(0, 220)
+Divider(220)
+local trophyText = Segment(221, 120)
+Divider(341)
+local seasonText = Segment(342, 128)
 
--- next goal bar
-local goalBar = Box({ Parent = hudHost, Color = C.Panel, Transparency = 0.1, Radius = 13, Stroke = C.Line, StrokeTransparency = 0.5, Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 66), Size = UDim2.new(0, 400, 0, 26) })
-local goalFill = Box({ Parent = goalBar, Color = Color3.new(1, 1, 1), Radius = 13, Size = UDim2.new(0, 0, 1, 0), Gradient = { C.Green, shade(C.Green, 0.6), 0 } })
-local goalName = Text({ Parent = goalBar, Font = FONT_BLACK, Max = 13, Position = UDim2.new(0, 12, 0, 0), Size = UDim2.new(0.62, -12, 1, 0) })
-local goalValue = Text({ Parent = goalBar, Font = FONT_BLACK, Max = 13, AlignX = RIGHT, Position = UDim2.new(0.62, 0, 0, 0), Size = UDim2.new(0.38, -12, 1, 0) })
+local goalText = Text({ Parent = statusHost, Style = "Footnote", Color = C.Secondary, AlignX = CENTER, Wrap = false, Position = UDim2.new(0, 0, 0, 50), Size = UDim2.new(1, 0, 0, 16) })
+local goalTrack = Frame({ Parent = statusHost, Color = C.Fill, Transparency = 0.3, Radius = "pill", Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 70), Size = UDim2.new(0, 180, 0, 3) })
+local goalFill = Frame({ Parent = goalTrack, Color = C.Label, Radius = "pill", Size = UDim2.new(0, 0, 1, 0) })
+
+local cashDisplay = new("NumberValue", { Value = 0 })
+local function renderCashText()
+	local income = State and State.RobotIncome or 0
+	local incomeText = income > 0 and ('  <font color="#98989F" size="13">+' .. Config.Money(income) .. "/s</font>") or ""
+	cashText.Text = Config.Money(cashDisplay.Value) .. incomeText
+end
+cashDisplay.Changed:Connect(renderCashText)
+
+local lastCash = nil
+local function setCash(value)
+	if lastCash == nil then
+		cashDisplay.Value = value
+		renderCashText()
+	else
+		tween(cashDisplay, { Value = value }, TweenInfo.new(0.45, Enum.EasingStyle.Quint))
+	end
+	lastCash = value
+end
 
 local function nextGoal()
 	if not State then
@@ -3825,341 +3886,233 @@ local function nextGoal()
 	if best then
 		return best.Name, best.Cost
 	end
-	return "New Season", Config.GetSeasonCost(State.Season)
+	return "Season " .. (State.Season + 1), Config.GetSeasonCost(State.Season)
 end
 
 local function updateGoal(money)
 	local name, cost = nextGoal()
+	local show = name ~= nil and not isDriving()
+	goalText.Visible = show
+	goalTrack.Visible = show
 	if not name then
-		goalBar.Visible = false
 		return
 	end
-	goalBar.Visible = Arena.Mode ~= "Practice" and Arena.Mode ~= "Ranked"
-	goalName.Text = "🎯 NEXT: " .. string.upper(name)
-	local progress = cost > 0 and math.clamp(money / cost, 0, 1) or 1
-	goalValue.Text = progress >= 1 and "READY! ✓" or (Config.Money(money) .. " / " .. Config.Money(cost))
-	goalValue.TextColor3 = progress >= 1 and C.Gold or C.Text
-	tween(goalFill, 0.3, { Size = UDim2.new(math.max(progress, 0.04), 0, 1, 0) })
+	local done = money >= cost
+	goalText.Text = done and ("Next  " .. name .. "  ·  Ready") or ("Next  " .. name .. "  ·  " .. Config.Money(money) .. " of " .. Config.Money(cost))
+	local fraction = cost > 0 and math.clamp(money / cost, 0, 1) or 1
+	tween(goalFill, { Size = UDim2.new(fraction, 0, 1, 0) })
 end
 
--- rolling cash number + "+$" popups
-local cashDisplay = new("NumberValue", { Value = 0 })
-cashDisplay.Changed:Connect(function(v)
-	cashMain.Text = Config.Money(v)
-end)
-local lastCash = nil
-local pendingGain = 0
-local popupQueued = false
-
-local function popup(amount)
-	pendingGain += amount
-	if popupQueued then
-		return
-	end
-	popupQueued = true
-	task.delay(0.35, function()
-		popupQueued = false
-		local gained = pendingGain
-		pendingGain = 0
-		local pop = Text({ Parent = cashChip, Text = "+" .. Config.Money(gained), Font = FONT_BLACK, Color = C.Green, Max = 20, AlignX = CENTER, Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.6, 0, 1, -6), Size = UDim2.new(0.8, 0, 0, 24) })
-		pop.TextStrokeTransparency = 0.4
-		tween(pop, 1.1, { Position = UDim2.new(0.6, 0, 1, 22), TextTransparency = 1, TextStrokeTransparency = 1 })
-		task.delay(1.15, function()
-			pop:Destroy()
-		end)
-	end)
-end
-
-local function setCash(value)
-	if lastCash == nil then
-		cashDisplay.Value = value
-		cashMain.Text = Config.Money(value)
-	else
-		local delta = value - lastCash
-		if delta > 0 then
-			popup(delta)
-		end
-		tween(cashDisplay, 0.4, { Value = value })
-	end
-	lastCash = value
-end
-
-local function updateHud()
+local function updateStatus()
 	if not State then
 		return
 	end
-	cashSub.Text = "robots +" .. Config.Money(State.RobotIncome) .. "/s"
-	trophyMain.Text = Config.Format(State.Trophies)
-	seasonMain.Text = "Season " .. State.Season
-	seasonSub.Text = string.format("x%.1f cash", State.Multiplier)
+	renderCashText()
+	trophyText.Text = Config.Format(State.Trophies) .. '  <font color="#98989F" size="13">Trophies</font>'
+	seasonText.Text = "Season " .. State.Season .. '  <font color="#98989F" size="13">' .. string.format("%.1f×", State.Multiplier) .. "</font>"
 	updateGoal(cash())
 end
 
 ---------------------------------------------------------------------
--- Window
+-- Sheet (window)
 ---------------------------------------------------------------------
 local panels = {}
 local openName = nil
 
-local windowHost = Box({ Parent = mainGui, Transparency = 1, Radius = false, Anchor = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 40, 0.5, 34), Size = UDim2.new(0, 840, 0, 560), Visible = false })
-autoScale(windowHost)
-local windowWrap = Box({ Parent = windowHost, Transparency = 1, Radius = false })
-local windowScale = new("UIScale", { Parent = windowWrap })
-Box({ Parent = windowWrap, Color = Color3.new(0, 0, 0), Transparency = 0.55, Radius = 22, Position = UDim2.new(0, 0, 0, 10), Z = 0 })
-local windowBody = Box({ Parent = windowWrap, Color = C.Panel, Radius = 20, Stroke = C.Line, StrokeTransparency = 0.3, Z = 1 })
+local sheetHost = Frame({ Parent = mainGui, Anchor = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.5, 6), Size = UDim2.new(0, 860, 0, 580), Visible = false })
+autoScale(sheetHost)
+local sheet = Frame({ Parent = sheetHost, Color = C.Sheet, Transparency = 0.02, Radius = 22, Hairline = 0.9 })
+local sheetTitle = Text({ Parent = sheet, Style = "Title", Wrap = false, Position = UDim2.new(0, 28, 0, 22), Size = UDim2.new(1, -120, 0, 34) })
+local sheetSubtitle = Text({ Parent = sheet, Style = "Subhead", Color = C.Secondary, Wrap = false, Position = UDim2.new(0, 28, 0, 56), Size = UDim2.new(1, -120, 0, 20) })
+local body = Frame({ Parent = sheet, Position = UDim2.new(0, 28, 0, 96), Size = UDim2.new(1, -56, 1, -120) })
 
-local header = Box({ Parent = windowBody, Color = Color3.new(1, 1, 1), Radius = 20, Size = UDim2.new(1, 0, 0, 76) })
-local headerFill = Box({ Parent = windowBody, Color = Color3.new(1, 1, 1), Radius = false, Size = UDim2.new(1, 0, 0, 30), Position = UDim2.new(0, 0, 0, 46) })
-local headerGradient = gradient(C.Red, C.Panel, 0)
-headerGradient.Parent = header
-local headerFillGradient = gradient(C.Red, C.Panel, 0)
-headerFillGradient.Parent = headerFill
-local headerIcon = Box({ Parent = windowBody, Size = UDim2.new(0, 50, 0, 50), Position = UDim2.new(0, 16, 0, 13), Color = C.Red, Radius = 14, Gradient = { SHADE_TOP, Color3.fromRGB(160, 160, 170), 90 }, Stroke = Color3.new(1, 1, 1), StrokeTransparency = 0.6 })
-local headerIconText = Text({ Parent = headerIcon, AlignX = CENTER, Max = 26, Size = UDim2.fromScale(1, 1) })
-local headerTitle = Text({ Parent = windowBody, Font = FONT_BLACK, Max = 28, Position = UDim2.new(0, 80, 0, 12), Size = UDim2.new(1, -160, 0, 30) })
-local headerSub = Text({ Parent = windowBody, Font = FONT_MED, Color = Color3.fromRGB(215, 220, 240), Max = 14, Position = UDim2.new(0, 80, 0, 44), Size = UDim2.new(1, -160, 0, 18) })
-local accentLine = Box({ Parent = windowBody, Color = C.Red, Radius = false, Size = UDim2.new(1, 0, 0, 3), Position = UDim2.new(0, 0, 0, 76) })
-new("UIGradient", { Parent = accentLine, Transparency = NumberSequence.new(0, 1) })
-local content = Box({ Parent = windowBody, Transparency = 1, Radius = false, Position = UDim2.new(0, 20, 0, 92), Size = UDim2.new(1, -40, 1, -108) })
-
-local closeWindow -- forward
-
-Button({ Parent = windowBody, Text = "✕", Color = C.Red, Radius = 20, Max = 18, Anchor = Vector2.new(1, 0), Position = UDim2.new(1, -16, 0, 18), Size = UDim2.new(0, 40, 0, 40) }, function()
-	closeWindow()
+local closeSheet -- forward
+local closeButton = Button({ Parent = sheet, Text = "×", Font = F.Medium, TextSize = 22, Kind = "secondary", Anchor = Vector2.new(1, 0), Position = UDim2.new(1, -20, 0, 22), Size = UDim2.new(0, 32, 0, 32) }, function()
+	closeSheet()
 end)
+closeButton.Label.TextColor3 = C.Secondary
 
-local menuTiles = {}
+local dockItems = {}
 
-local function updateMenuIndicators()
-	for key, tile in pairs(menuTiles) do
-		tile.Indicator.Visible = key == openName
+local function updateDock()
+	for key, item in pairs(dockItems) do
+		local active = key == openName
+		tween(item.Pill, { BackgroundTransparency = active and 0 or 1 })
+		item.Label.TextColor3 = active and C.Label or C.Secondary
 	end
 end
 
 local function renderOpen()
-	if not openName or not windowHost.Visible then
+	if not openName or not sheetHost.Visible then
 		return
 	end
 	local panel = panels[openName]
-	local savedScroll = {}
-	for _, d in ipairs(content:GetDescendants()) do
+	local saved = {}
+	for _, d in ipairs(body:GetDescendants()) do
 		if d:IsA("ScrollingFrame") then
-			savedScroll[d.Name] = d.CanvasPosition
+			saved[d.Name] = d.CanvasPosition
 		end
 	end
-	content:ClearAllChildren()
-	live.Cash = {}
-	live.Tick = {}
-
-	headerTitle.Text = panel.Title
-	headerSub.Text = panel.Subtitle
-	headerIconText.Text = panel.Icon
-	headerIcon.BackgroundColor3 = panel.Color
-	headerGradient.Color = ColorSequence.new(shade(panel.Color, 0.55), C.Panel)
-	headerFillGradient.Color = ColorSequence.new(shade(panel.Color, 0.55), C.Panel)
-	accentLine.BackgroundColor3 = panel.Color
-
-	panel.Render(content)
-
+	body:ClearAllChildren()
+	live.Cash, live.Tick = {}, {}
+	sheetTitle.Text = panel.Title
+	sheetSubtitle.Text = panel.Subtitle
+	panel.Render(body)
 	task.defer(function()
-		for _, d in ipairs(content:GetDescendants()) do
-			if d:IsA("ScrollingFrame") and savedScroll[d.Name] then
-				d.CanvasPosition = savedScroll[d.Name]
+		for _, d in ipairs(body:GetDescendants()) do
+			if d:IsA("ScrollingFrame") and saved[d.Name] then
+				d.CanvasPosition = saved[d.Name]
 			end
 		end
 	end)
 end
 
-local function openWindow(name)
-	if openName == name and windowHost.Visible then
-		closeWindow()
+local function openSheet(name)
+	if openName == name and sheetHost.Visible then
+		closeSheet()
 		return
 	end
-	local wasOpen = windowHost.Visible
+	local wasOpen = sheetHost.Visible
 	openName = name
-	windowHost.Visible = true
+	sheetHost.Visible = true
 	renderOpen()
-	updateMenuIndicators()
+	updateDock()
 	if not wasOpen then
-		windowScale.Scale = 0.88
-		tween(windowScale, 0.28, { Scale = 1 }, Enum.EasingStyle.Back)
+		sheetHost.Position = UDim2.new(0.5, 0, 0.5, 22)
+		tween(sheetHost, { Position = UDim2.new(0.5, 0, 0.5, 6) }, TweenInfo.new(0.3, Enum.EasingStyle.Quint))
+		sheet.BackgroundTransparency = 1
+		tween(sheet, { BackgroundTransparency = 0.02 })
 	end
 end
 
-function closeWindow()
-	if not windowHost.Visible then
+function closeSheet()
+	if not sheetHost.Visible then
 		return
 	end
 	openName = nil
-	live.Cash = {}
-	live.Tick = {}
-	updateMenuIndicators()
-	local t = tween(windowScale, 0.12, { Scale = 0.9 }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-	t.Completed:Connect(function()
-		if openName == nil then
-			windowHost.Visible = false
-			content:ClearAllChildren()
-		end
-	end)
+	live.Cash, live.Tick = {}, {}
+	updateDock()
+	sheetHost.Visible = false
+	body:ClearAllChildren()
 end
 
-local function emptyState(parent, icon, title, body, buttonText, onClick)
-	local holder = Box({ Parent = parent, Transparency = 1, Radius = false, Anchor = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.45), Size = UDim2.new(0, 460, 0, 240) })
-	local circle = Box({ Parent = holder, Color = C.Panel2, Radius = 45, Size = UDim2.new(0, 90, 0, 90), Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 0), Stroke = C.Line })
-	Text({ Parent = circle, Text = icon, AlignX = CENTER, Max = 44, Size = UDim2.fromScale(1, 1) })
-	Text({ Parent = holder, Text = title, Font = FONT_BLACK, Max = 22, AlignX = CENTER, Position = UDim2.new(0, 0, 0, 102), Size = UDim2.new(1, 0, 0, 28) })
-	Text({ Parent = holder, Text = body, Color = C.Muted, Max = 15, AlignX = CENTER, Position = UDim2.new(0, 0, 0, 132), Size = UDim2.new(1, 0, 0, 40) })
+local function emptyState(parent, title, message, buttonText, onClick)
+	local holder = Frame({ Parent = parent, Anchor = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.42), Size = UDim2.new(0, 420, 0, 150) })
+	Text({ Parent = holder, Text = title, Style = "Title2", AlignX = CENTER, Size = UDim2.new(1, 0, 0, 30) })
+	Text({ Parent = holder, Text = message, Style = "Body", Color = C.Secondary, AlignX = CENTER, AlignY = Enum.TextYAlignment.Top, Position = UDim2.new(0, 0, 0, 38), Size = UDim2.new(1, 0, 0, 44) })
 	if buttonText then
-		Button({ Parent = holder, Text = buttonText, Color = C.Blue, Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 184), Size = UDim2.new(0, 200, 0, 44) }, onClick)
+		Button({ Parent = holder, Text = buttonText, Kind = "primary", Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 98), Size = UDim2.new(0, 180, 0, 38) }, onClick)
 	end
 end
 
 ---------------------------------------------------------------------
--- Robot Lab
+-- Lab
 ---------------------------------------------------------------------
 local labSlot = "Drivetrain"
 
-local function StatBar(parent, style, value, y)
-	local rowFrame = Box({ Parent = parent, Transparency = 1, Radius = false, Position = UDim2.new(0, 12, 0, y), Size = UDim2.new(1, -24, 0, 22) })
-	Text({ Parent = rowFrame, Text = style.Icon .. " " .. style.Key, Font = FONT, Max = 13, Size = UDim2.new(0, 92, 1, 0) })
-	local track = Box({ Parent = rowFrame, Color = C.Panel2, Radius = 6, Position = UDim2.new(0, 96, 0.5, 0), Anchor = Vector2.new(0, 0.5), Size = UDim2.new(1, -136, 0, 10) })
-	local fill = Box({ Parent = track, Color = Color3.new(1, 1, 1), Radius = 6, Size = UDim2.new(0, 0, 1, 0), Gradient = { style.Color, shade(style.Color, 0.65), 0 } })
-	tween(fill, 0.5, { Size = UDim2.new(math.clamp(value / STAT_MAX[style.Key], 0.03, 1), 0, 1, 0) })
-	Text({ Parent = rowFrame, Text = tostring(value), Font = FONT_BLACK, Max = 14, AlignX = RIGHT, Position = UDim2.new(1, -36, 0, 0), Size = UDim2.new(0, 36, 1, 0), Color = style.Color })
+local function moduleDetail(def)
+	local parts = {}
+	for _, key in ipairs(STATS) do
+		local v = def[key] or 0
+		if v > 0 then
+			table.insert(parts, key .. " " .. v)
+		end
+	end
+	if def.Slot == "Intake" then
+		table.insert(parts, "Holds " .. def.Capacity)
+	elseif def.Slot == "Lift" then
+		table.insert(parts, def.Points .. " pts per ball")
+	elseif def.Slot == "Brain" then
+		table.insert(parts, "Auton +" .. def.Auton)
+	elseif def.Strafe then
+		table.insert(parts, "Strafes")
+	end
+	return table.concat(parts, "  ·  ")
 end
 
 panels.Lab = {
 	Title = "Robot Lab",
-	Subtitle = "Unlock parts, design your robot, then build it",
-	Icon = "🤖",
-	Color = C.Red,
+	Subtitle = "Choose parts, then build your design.",
 	Render = function(root)
 		if not State then
 			return
 		end
 		if not State.Purchased.assembly then
-			emptyState(root, "🔧", "Robot Lab is locked", "Buy the Robot Assembly Station button in your workshop to start building robots.")
+			emptyState(root, "Robot Lab", "Buy the Robot Assembly Station in your workshop to start designing robots.")
 			return
 		end
 
-		local left = Box({ Parent = root, Transparency = 1, Radius = false, Size = UDim2.new(1, -316, 1, 0) })
-		local right = Box({ Parent = root, Color = C.Bg, Radius = 16, Stroke = C.Line, StrokeTransparency = 0.6, Anchor = Vector2.new(1, 0), Position = UDim2.new(1, 0, 0, 0), Size = UDim2.new(0, 300, 1, 0) })
+		local left = Frame({ Parent = root, Size = UDim2.new(1, -340, 1, 0) })
+		local right = Frame({ Parent = root, Anchor = Vector2.new(1, 0), Position = UDim2.new(1, 0, 0, 0), Size = UDim2.new(0, 316, 1, 0) })
 
-		-- slot tabs
-		local tabs = Box({ Parent = left, Color = C.Bg, Radius = 14, Size = UDim2.new(1, 0, 0, 46) })
-		for i, slot in ipairs(Config.ModuleSlots) do
-			local active = slot == labSlot
-			Button({
-				Parent = tabs,
-				Text = Config.SlotInfo[slot].Icon .. " " .. slot,
-				Color = active and SLOT_COLOR[slot] or C.Panel2,
-				TextColor = active and C.Text or C.Muted,
-				Max = 14,
-				Radius = 10,
-				Position = UDim2.new((i - 1) / 4, 4, 0, 5),
-				Size = UDim2.new(0.25, -8, 1, -10),
-			}, function()
-				labSlot = slot
-				renderOpen()
-			end)
-		end
-		Text({ Parent = left, Text = Config.SlotInfo[labSlot].Desc, Font = FONT_MED, Color = C.Muted, Max = 13, Position = UDim2.new(0, 4, 0, 52), Size = UDim2.new(1, -8, 0, 18) })
+		Segmented(left, Config.ModuleSlots, labSlot, function(slot)
+			labSlot = slot
+			renderOpen()
+		end, UDim2.new(), UDim2.new(1, 0, 0, 32))
+		Text({ Parent = left, Text = Config.SlotInfo[labSlot].Desc, Style = "Footnote", Color = C.Secondary, Wrap = false, Position = UDim2.new(0, 4, 0, 40), Size = UDim2.new(1, -8, 0, 20) })
 
-		local scroll = Scroll({ Parent = left, Name = "Modules", Position = UDim2.new(0, 0, 0, 76), Size = UDim2.new(1, 0, 1, -76) })
-		local slotColor = SLOT_COLOR[labSlot]
-		for index, def in ipairs(Config.Modules[labSlot]) do
+		local scroll = Scroll({ Parent = left, Name = "Modules", Position = UDim2.new(0, 0, 0, 68), Size = UDim2.new(1, 0, 1, -68) })
+		local group = Group(scroll)
+		for _, def in ipairs(Config.Modules[labSlot]) do
 			local owned = State.Modules[def.Id] == true
 			local equipped = State.Loadout[labSlot] == def.Id
 			local locked = (def.Season or 0) > State.Season
-			local tierColor = TIER[math.min(index, #TIER)]
+			local r = Row(group, 68)
+			Text({ Parent = r, Text = def.Name, Style = "Headline", Wrap = false, Position = UDim2.new(0, 16, 0, 12), Size = UDim2.new(1, -170, 0, 22) })
+			Text({ Parent = r, Text = moduleDetail(def), Style = "Footnote", Color = C.Secondary, Wrap = false, Position = UDim2.new(0, 16, 0, 36), Size = UDim2.new(1, -170, 0, 18) })
 
-			local card = Box({
-				Parent = scroll,
-				Order = index,
-				Size = UDim2.new(1, -10, 0, 80),
-				Color = equipped and C.Panel2 or C.Card,
-				Radius = 14,
-				Stroke = equipped and slotColor or C.Line,
-				StrokeTransparency = equipped and 0 or 0.65,
-				StrokeThickness = equipped and 2 or 1,
-			})
-			Box({ Parent = card, Color = tierColor, Radius = 3, Size = UDim2.new(0, 6, 1, -20), Position = UDim2.new(0, 10, 0, 10) })
-			Text({ Parent = card, Text = def.Name, Font = FONT_BLACK, Max = 17, Position = UDim2.new(0, 26, 0, 8), Size = UDim2.new(1, -190, 0, 22) })
-
-			local pills = Box({ Parent = card, Transparency = 1, Radius = false, Position = UDim2.new(0, 26, 0, 33), Size = UDim2.new(1, -190, 0, 22) }, { hlist(5) })
-			local order = 0
-			for _, style in ipairs(STAT_STYLE) do
-				local v = def[style.Key] or 0
-				if v > 0 then
-					order += 1
-					Pill(pills, style.Icon .. " +" .. v, shade(style.Color, 0.35), 54, order)
-				end
-			end
-			local extra = nil
-			if def.Slot == "Intake" then
-				extra = "holds " .. def.Capacity
-			elseif def.Slot == "Lift" then
-				extra = def.Points .. " pts / ball"
-			elseif def.Slot == "Brain" then
-				extra = "auton +" .. def.Auton
-			elseif def.Strafe then
-				extra = "🔀 STRAFE"
-			end
-			if extra then
-				Pill(pills, extra, shade(C.Gold, 0.4), 86, 10, C.Gold)
-			end
-			Text({ Parent = card, Text = def.Desc or "", Font = FONT_MED, Color = C.Muted, Max = 12, Position = UDim2.new(0, 26, 0, 58), Size = UDim2.new(1, -190, 0, 15) })
-
-			local btnProps = { Parent = card, Anchor = Vector2.new(1, 0.5), Position = UDim2.new(1, -12, 0.5, 0), Size = UDim2.new(0, 146, 0, 44), Max = 14 }
+			local accessory = { Parent = r, Anchor = Vector2.new(1, 0.5), Position = UDim2.new(1, -14, 0.5, 0), Size = UDim2.new(0, 104, 0, 30), TextSize = 14 }
 			if equipped then
-				btnProps.Text, btnProps.Color, btnProps.Enabled = "✓ EQUIPPED", shade(slotColor, 0.5), false
-				Button(btnProps)
+				Text({ Parent = r, Text = "Equipped", Font = F.Semi, TextSize = 15, Color = C.Accent, AlignX = RIGHT, Anchor = Vector2.new(1, 0.5), Position = UDim2.new(1, -16, 0.5, 0), Size = UDim2.new(0, 120, 0, 20) })
 			elseif owned then
-				btnProps.Text, btnProps.Color = "EQUIP", C.Blue
-				Button(btnProps, function()
+				accessory.Text, accessory.Kind = "Equip", "secondary"
+				Button(accessory, function()
 					act("EquipModule", def.Id)
 				end)
 			elseif locked then
-				btnProps.Text, btnProps.Color, btnProps.Enabled = "🔒 SEASON " .. def.Season, C.Disabled, false
-				Button(btnProps)
+				Text({ Parent = r, Text = "Season " .. def.Season, Style = "Subhead", Color = C.Tertiary, AlignX = RIGHT, Anchor = Vector2.new(1, 0.5), Position = UDim2.new(1, -16, 0.5, 0), Size = UDim2.new(0, 120, 0, 20) })
 			else
-				btnProps.Text, btnProps.Color = "UNLOCK", C.Green
-				local b = Button(btnProps, function()
+				accessory.Kind = "get"
+				local b = Button(accessory, function()
 					act("UnlockModule", def.Id)
 				end)
 				onCash(function(money)
-					local afford = money >= def.Cost
-					setButton(b, (afford and "UNLOCK " or "💰 ") .. Config.Money(def.Cost), afford and C.Green or C.Disabled, afford)
+					setButton(b, Config.Money(def.Cost), money >= def.Cost and "get" or "disabled")
 				end)
 			end
 		end
 
-		-- design summary
+		-- design card
 		local stats = Config.GetRobotStats(State.Loadout)
-		local preview = RobotPreview(right, State.Loadout, UDim2.new(1, -24, 0, 176), UDim2.new(0, 12, 0, 12), C.Panel2)
-		Pill(preview, "RATING " .. stats.Rating, C.Gold, 104, 0, C.Dark).Position = UDim2.new(0, 10, 0, 10)
-		Text({ Parent = preview, Text = "CURRENT DESIGN", Font = FONT_BLACK, Color = C.Muted, Max = 11, AlignX = RIGHT, Position = UDim2.new(1, -130, 0, 12), Size = UDim2.new(0, 120, 0, 16) })
-		for i, style in ipairs(STAT_STYLE) do
-			StatBar(right, style, stats[style.Key], 198 + (i - 1) * 27)
+		local card = Frame({ Parent = right, Color = C.Group, Radius = 18 })
+		RobotPreview(card, State.Loadout, UDim2.new(1, 0, 0, 200), UDim2.new(), C.Group)
+		Text({ Parent = card, Text = "CURRENT DESIGN", Style = "Caption", Color = C.Secondary, Position = UDim2.new(0, 18, 0, 14), Size = UDim2.new(1, -36, 0, 16) })
+		Text({ Parent = card, Text = tostring(stats.Rating), Style = "Display", Position = UDim2.new(0, 18, 0, 30), Size = UDim2.new(0, 120, 0, 40) })
+		Text({ Parent = card, Text = "Rating", Style = "Footnote", Color = C.Secondary, Position = UDim2.new(0, 18, 0, 68), Size = UDim2.new(0, 120, 0, 16) })
+
+		for i, key in ipairs(STATS) do
+			local y = 212 + (i - 1) * 26
+			Text({ Parent = card, Text = key, Style = "Subhead", Position = UDim2.new(0, 18, 0, y), Size = UDim2.new(0, 74, 0, 20) })
+			Progress(card, UDim2.new(0, 96, 0, y + 9), UDim2.new(1, -150, 0, 4), stats[key] / STAT_MAX[key])
+			Text({ Parent = card, Text = tostring(stats[key]), Font = F.Semi, TextSize = 14, AlignX = RIGHT, Position = UDim2.new(1, -46, 0, y), Size = UDim2.new(0, 28, 0, 20) })
 		end
-		local info = {
-			string.format("🏀 Holds <b>%d</b> • <b>%d</b> pts each", stats.Capacity, stats.PointsPerBall),
-			string.format("🧠 Auton <b>+%d</b> • 🔀 Strafe %s", stats.Auton, stats.Strafe and "<font color='#2EC46E'>✓</font>" or "—"),
-			string.format("💵 <font color='#2EC46E'>+%s/s</font> • 🏠 Bays %d/%d", Config.Money(stats.Income * State.Multiplier), #State.Garage, State.GarageSlots),
+		local details = {
+			"Holds " .. stats.Capacity .. "  ·  " .. stats.PointsPerBall .. " pts per ball",
+			"Auton +" .. stats.Auton .. "  ·  " .. (stats.Strafe and "Strafes" or "No strafe"),
+			"Earns " .. Config.Money(stats.Income * State.Multiplier) .. "/s  ·  Bays " .. #State.Garage .. " of " .. State.GarageSlots,
 		}
-		for i, line in ipairs(info) do
-			Text({ Parent = right, Text = line, Font = FONT_MED, Max = 13, Position = UDim2.new(0, 14, 0, 312 + (i - 1) * 21), Size = UDim2.new(1, -28, 0, 19) })
+		for i, line in ipairs(details) do
+			Text({ Parent = card, Text = line, Style = "Footnote", Color = C.Secondary, Wrap = false, Position = UDim2.new(0, 18, 0, 324 + (i - 1) * 19), Size = UDim2.new(1, -36, 0, 18) })
 		end
 		local full = #State.Garage >= State.GarageSlots
-		local buildButton = Button({ Parent = right, Text = "BUILD", Color = C.Green, Max = 17, Radius = 12, Anchor = Vector2.new(0, 1), Position = UDim2.new(0, 12, 1, -12), Size = UDim2.new(1, -24, 0, 50) }, function()
+		local build = Button({ Parent = card, Kind = "primary", Text = "Build", TextSize = 16, Anchor = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -16), Size = UDim2.new(1, -32, 0, 44) }, function()
 			act("BuildRobot")
 		end)
 		onCash(function(money)
 			if full then
-				setButton(buildButton, "🏠 ALL BAYS FULL", C.Disabled, false)
+				setButton(build, "All Bays Full", "disabled")
 			else
-				local afford = money >= stats.BuildCost
-				setButton(buildButton, "🔧 BUILD ROBOT • " .. Config.Money(stats.BuildCost), afford and C.Green or C.Disabled, afford)
+				setButton(build, "Build Robot  ·  " .. Config.Money(stats.BuildCost), money >= stats.BuildCost and "primary" or "disabled")
 			end
 		end)
 	end,
@@ -4169,56 +4122,55 @@ panels.Lab = {
 -- Garage
 ---------------------------------------------------------------------
 panels.Garage = {
-	Title = "Robot Garage",
-	Subtitle = "Robots in bays earn cash every second • ⭐ = competition & driving robot",
-	Icon = "🏠",
-	Color = C.Blue,
+	Title = "Garage",
+	Subtitle = "Robots in bays earn money every second.",
 	Render = function(root)
 		if not State then
 			return
 		end
 		if State.GarageSlots == 0 then
-			emptyState(root, "🏠", "No robot bays yet", "Buy the Robot Assembly Station to get your first bay.")
+			emptyState(root, "No Bays Yet", "Buy the Robot Assembly Station to get your first robot bay.")
 			return
 		end
-		local scroll = Scroll({ Parent = root, Name = "Robots", Grid = UDim2.new(0, 384, 0, 160) })
+		local scroll = Scroll({ Parent = root, Name = "Robots", Grid = UDim2.new(0, 255, 0, 252) })
 		for i = 1, State.GarageSlots do
 			local robot = State.Garage[i]
+			local card = Frame({ Parent = scroll, Color = C.Group, Radius = 18, Order = i })
 			if robot then
 				local stats, defs = Config.GetRobotStats(robot)
 				local active = State.Active == i
-				local card = Box({ Parent = scroll, Order = i, Color = C.Card, Radius = 16, Stroke = active and C.Gold or C.Line, StrokeTransparency = active and 0 or 0.6, StrokeThickness = active and 2 or 1 })
-				RobotPreview(card, robot, UDim2.new(0, 140, 0, 140), UDim2.new(0, 10, 0, 10), C.Panel2)
-				Text({ Parent = card, Text = "Robot #" .. i, Font = FONT_BLACK, Max = 19, Position = UDim2.new(0, 162, 0, 10), Size = UDim2.new(1, -250, 0, 24) })
+				RobotPreview(card, robot, UDim2.new(1, 0, 0, 138), UDim2.new(), C.Group)
+				Text({ Parent = card, Text = "Robot " .. i, Style = "Headline", Wrap = false, Position = UDim2.new(0, 16, 0, 144), Size = UDim2.new(1, -100, 0, 22) })
 				if active then
-					Pill(card, "⭐ ACTIVE", C.Gold, 78, 0, C.Dark).Position = UDim2.new(1, -90, 0, 12)
+					Text({ Parent = card, Text = "Active", Font = F.Semi, TextSize = 13, Color = C.Accent, AlignX = RIGHT, Position = UDim2.new(1, -96, 0, 144), Size = UDim2.new(0, 80, 0, 22) })
 				end
-				Text({ Parent = card, Text = string.format("Rating <b>%d</b>  •  <font color='#2EC46E'>+%s/s</font>", stats.Rating, Config.Money(stats.Income * State.Multiplier)), Font = FONT, Color = C.Gold, Max = 14, Position = UDim2.new(0, 162, 0, 36), Size = UDim2.new(1, -172, 0, 18) })
-				Text({ Parent = card, Text = defs.Drivetrain.Name .. "\n" .. defs.Intake.Name .. " • " .. defs.Lift.Name .. "\n" .. defs.Brain.Name, Font = FONT_MED, Color = C.Muted, Max = 11, AlignY = Enum.TextYAlignment.Top, Position = UDim2.new(0, 162, 0, 58), Size = UDim2.new(1, -172, 0, 46) })
-				Button({ Parent = card, Text = active and "ACTIVE" or "SET ACTIVE", Color = active and shade(C.Gold, 0.55) or C.Blue, Enabled = not active, Max = 13, Position = UDim2.new(0, 162, 1, -46), Size = UDim2.new(0, 104, 0, 36) }, function()
+				Text({ Parent = card, Text = "Rating " .. stats.Rating .. "  ·  " .. Config.Money(stats.Income * State.Multiplier) .. "/s", Style = "Footnote", Color = C.Secondary, Wrap = false, Position = UDim2.new(0, 16, 0, 166), Size = UDim2.new(1, -32, 0, 18) })
+				Text({ Parent = card, Text = defs.Drivetrain.Name, Style = "Footnote", Color = C.Tertiary, Wrap = false, Position = UDim2.new(0, 16, 0, 184), Size = UDim2.new(1, -32, 0, 18) })
+				Button({ Parent = card, Text = active and "Active" or "Use This Robot", Kind = active and "disabled" or "secondary", TextSize = 14, Position = UDim2.new(0, 16, 1, -44), Size = UDim2.new(0, 140, 0, 30) }, function()
 					act("SetActive", i)
 				end)
 				local refund = math.floor(stats.BuildCost * Config.ScrapRefund)
-				Button({ Parent = card, Text = "SCRAP +" .. Config.Money(refund), Color = C.Red, Max = 12, Position = UDim2.new(0, 274, 1, -46), Size = UDim2.new(0, 100, 0, 36) }, function(b)
+				Button({ Parent = card, Text = "Scrap", Kind = "plain", TextSize = 14, Anchor = Vector2.new(1, 0), Position = UDim2.new(1, -8, 1, -44), Size = UDim2.new(0, 76, 0, 30) }, function(b)
 					if b:GetAttribute("Confirm") then
 						act("ScrapRobot", i)
 					else
 						b:SetAttribute("Confirm", true)
-						setButton(b, "SURE?", shade(C.Red, 1.2))
+						setButton(b, "+" .. Config.Money(refund) .. "?")
 						task.delay(3, function()
 							if b.Parent then
 								b:SetAttribute("Confirm", false)
-								setButton(b, "SCRAP +" .. Config.Money(refund), C.Red)
+								setButton(b, "Scrap")
 							end
 						end)
 					end
 				end)
 			else
-				local card = Box({ Parent = scroll, Order = i, Color = C.Panel2, Transparency = 0.3, Radius = 16, Stroke = C.Line, StrokeTransparency = 0.4 })
-				Text({ Parent = card, Text = "＋", Font = FONT_BLACK, Color = C.Line, Max = 46, AlignX = CENTER, Position = UDim2.new(0, 0, 0, 14), Size = UDim2.new(1, 0, 0, 50) })
-				Text({ Parent = card, Text = "Empty Bay #" .. i, Font = FONT_BLACK, Max = 17, AlignX = CENTER, Position = UDim2.new(0, 0, 0, 66), Size = UDim2.new(1, 0, 0, 22) })
-				Button({ Parent = card, Text = "🤖 OPEN ROBOT LAB", Color = C.Red, Max = 13, Anchor = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -14), Size = UDim2.new(0, 190, 0, 38) }, function()
-					openWindow("Lab")
+				card.BackgroundTransparency = 0.6
+				hairline(card, 0.9)
+				Text({ Parent = card, Text = "Bay " .. i, Style = "Headline", AlignX = CENTER, Position = UDim2.new(0, 0, 0, 86), Size = UDim2.new(1, 0, 0, 22) })
+				Text({ Parent = card, Text = "Empty", Style = "Footnote", Color = C.Secondary, AlignX = CENTER, Position = UDim2.new(0, 0, 0, 110), Size = UDim2.new(1, 0, 0, 18) })
+				Button({ Parent = card, Text = "Open Robot Lab", Kind = "plain", TextSize = 14, Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 140), Size = UDim2.new(0, 150, 0, 30) }, function()
+					openSheet("Lab")
 				end)
 			end
 		end
@@ -4226,97 +4178,85 @@ panels.Garage = {
 }
 
 ---------------------------------------------------------------------
--- Competition results modal
+-- Competition results sheet
 ---------------------------------------------------------------------
-local overlay = Box({ Parent = modalGui, Color = Color3.new(0, 0, 0), Transparency = 0.45, Radius = false, Visible = false })
-overlay.Active = true
-local compHost = Box({ Parent = modalGui, Transparency = 1, Radius = false, Anchor = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.new(0, 560, 0, 440), Visible = false })
-autoScale(compHost)
-local compScale = new("UIScale", { Parent = Box({ Parent = compHost, Transparency = 1, Radius = false, Name = "Wrap" }) })
-local compCard = Box({ Parent = compHost.Wrap, Color = C.Panel, Radius = 20, Stroke = C.Gold, StrokeThickness = 2 })
-local compTitle = Text({ Parent = compCard, Font = FONT_BLACK, Max = 28, AlignX = CENTER, Position = UDim2.new(0, 20, 0, 18), Size = UDim2.new(1, -40, 0, 34) })
-Text({ Parent = compCard, Text = "TOURNAMENT RESULTS", Font = FONT_BLACK, Color = C.Muted, Max = 13, AlignX = CENTER, Position = UDim2.new(0, 20, 0, 54), Size = UDim2.new(1, -40, 0, 16) })
-local roundsHolder = Box({ Parent = compCard, Transparency = 1, Radius = false, Position = UDim2.new(0, 24, 0, 84), Size = UDim2.new(1, -48, 0, 236) }, { vlist(10) })
-local finalBanner = Box({ Parent = compCard, Color = Color3.new(1, 1, 1), Radius = 14, Position = UDim2.new(0, 24, 0, 312), Size = UDim2.new(1, -48, 0, 50), Visible = false })
-local finalGradient = gradient(C.Gold, C.Orange, 0)
-finalGradient.Parent = finalBanner
-local finalText = Text({ Parent = finalBanner, Font = FONT_BLACK, Max = 18, AlignX = CENTER, Color = C.Dark, Position = UDim2.new(0, 12, 0, 4), Size = UDim2.new(1, -24, 1, -8) })
-local compToken = 0
+local dim = Frame({ Parent = modalGui, Color = C.Base, Transparency = 0.5, Visible = false })
+dim.Active = true
 
-local compContinue = Button({ Parent = compCard, Text = "CONTINUE", Color = C.Green, Max = 16, Anchor = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -16), Size = UDim2.new(0, 200, 0, 44) }, function()
-	compToken += 1
-	overlay.Visible = false
-	compHost.Visible = false
+local resultHost = Frame({ Parent = modalGui, Anchor = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.new(0, 520, 0, 440), Visible = false })
+autoScale(resultHost)
+local resultSheet = Frame({ Parent = resultHost, Color = C.Sheet, Radius = 22, Hairline = 0.9 })
+local resultTitle = Text({ Parent = resultSheet, Style = "Title2", AlignX = CENTER, Wrap = false, Position = UDim2.new(0, 24, 0, 26), Size = UDim2.new(1, -48, 0, 28) })
+Text({ Parent = resultSheet, Text = "Tournament Results", Style = "Subhead", Color = C.Secondary, AlignX = CENTER, Position = UDim2.new(0, 24, 0, 56), Size = UDim2.new(1, -48, 0, 20) })
+local roundsGroup = nil
+local resultSummary = Text({ Parent = resultSheet, Style = "Title2", AlignX = CENTER, Position = UDim2.new(0, 24, 0, 300), Size = UDim2.new(1, -48, 0, 30) })
+local resultDetail = Text({ Parent = resultSheet, Style = "Subhead", Color = C.Secondary, AlignX = CENTER, Position = UDim2.new(0, 24, 0, 332), Size = UDim2.new(1, -48, 0, 20) })
+local resultToken = 0
+local resultDone = Button({ Parent = resultSheet, Text = "Done", Kind = "primary", TextSize = 16, Anchor = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -24), Size = UDim2.new(0, 200, 0, 42) }, function()
+	resultToken += 1
+	dim.Visible = false
+	resultHost.Visible = false
 end)
 
 local function showCompResult(result)
-	compToken += 1
-	local token = compToken
-	overlay.Visible = true
-	compHost.Visible = true
-	compContinue.Visible = false
-	finalBanner.Visible = false
-	for _, child in ipairs(roundsHolder:GetChildren()) do
-		if child:IsA("Frame") then
-			child:Destroy()
-		end
+	resultToken += 1
+	local token = resultToken
+	dim.Visible = true
+	resultHost.Visible = true
+	resultDone.Visible = false
+	resultTitle.Text = result.Competition
+	resultSummary.Text = ""
+	resultDetail.Text = ""
+	if roundsGroup then
+		roundsGroup:Destroy()
 	end
-	compTitle.Text = "🏆 " .. result.Competition
-	compScale.Scale = 0.85
-	tween(compScale, 0.3, { Scale = 1 }, Enum.EasingStyle.Back)
+	roundsGroup = Group(resultSheet, { Position = UDim2.new(0, 24, 0, 92), Size = UDim2.new(1, -48, 0, 0) })
 
 	task.spawn(function()
-		for i, r in ipairs(result.Rounds) do
-			task.wait(0.75)
-			if token ~= compToken then
+		for _, r in ipairs(result.Rounds) do
+			task.wait(0.6)
+			if token ~= resultToken then
 				return
 			end
-			local color = r.Won and C.Green or C.Red
-			local roundCard = Box({ Parent = roundsHolder, Order = i, Color = C.Card, Radius = 14, Stroke = color, StrokeTransparency = 0.3, Size = UDim2.new(1, 0, 0, 64) })
-			local s = new("UIScale", { Parent = roundCard, Scale = 0.6 })
-			Text({ Parent = roundCard, Text = string.upper(r.Round), Font = FONT_BLACK, Max = 16, Position = UDim2.new(0, 16, 0, 10), Size = UDim2.new(0.4, 0, 0, 22) })
-			Text({ Parent = roundCard, Text = "vs Team " .. r.OppTeam, Font = FONT_MED, Color = C.Muted, Max = 13, Position = UDim2.new(0, 16, 0, 34), Size = UDim2.new(0.4, 0, 0, 18) })
-			Text({ Parent = roundCard, Text = r.You .. "  –  " .. r.Opp, Font = FONT_BLACK, Max = 28, AlignX = CENTER, Position = UDim2.new(0.4, 0, 0, 0), Size = UDim2.new(0.3, 0, 1, 0) })
-			Pill(roundCard, r.Won and "WIN" or "LOSS", color, 80, 0).Position = UDim2.new(1, -96, 0.5, -11)
-			tween(s, 0.3, { Scale = 1 }, Enum.EasingStyle.Back)
+			local row = Row(roundsGroup, 58)
+			local name = Text({ Parent = row, Text = r.Round, Style = "Headline", Position = UDim2.new(0, 16, 0, 9), Size = UDim2.new(0.5, 0, 0, 22) })
+			local opp = Text({ Parent = row, Text = "vs " .. r.OppTeam, Style = "Footnote", Color = C.Secondary, Position = UDim2.new(0, 16, 0, 31), Size = UDim2.new(0.5, 0, 0, 18) })
+			local score = Text({ Parent = row, Text = r.You .. " – " .. r.Opp, Font = F.Semi, TextSize = 17, AlignX = RIGHT, Position = UDim2.new(0.5, 0, 0, 9), Size = UDim2.new(0.5, -16, 0, 22) })
+			local outcome = Text({ Parent = row, Text = r.Won and "Won" or "Lost", Font = F.Semi, TextSize = 13, Color = r.Won and C.Green or C.Accent, AlignX = RIGHT, Position = UDim2.new(0.5, 0, 0, 31), Size = UDim2.new(0.5, -16, 0, 18) })
+			for _, t in ipairs({ name, opp, score, outcome }) do
+				t.TextTransparency = 1
+				tween(t, { TextTransparency = 0 }, TweenInfo.new(0.35))
+			end
 		end
-		task.wait(0.7)
-		if token ~= compToken then
+		task.wait(0.6)
+		if token ~= resultToken then
 			return
 		end
 		if result.Champion then
-			finalGradient.Color = ColorSequence.new(C.Gold, C.Orange)
-			finalText.Text = "🏆 CHAMPIONS!  +" .. Config.Money(result.Prize) .. "  •  +" .. result.Trophies .. " trophies"
+			resultSummary.Text = "Champions"
+			resultDetail.Text = "+" .. Config.Money(result.Prize) .. "  ·  +" .. result.Trophies .. " trophies"
 		elseif result.Reached == 2 then
-			finalGradient.Color = ColorSequence.new(Color3.fromRGB(215, 220, 235), Color3.fromRGB(150, 158, 180))
-			finalText.Text = "🥈 FINALIST  +" .. Config.Money(result.Prize) .. "  •  +" .. result.Trophies .. " trophies"
+			resultSummary.Text = "Finalist"
+			resultDetail.Text = "+" .. Config.Money(result.Prize) .. "  ·  +" .. result.Trophies .. " trophies"
 		elseif result.Reached == 1 then
-			finalGradient.Color = ColorSequence.new(Color3.fromRGB(230, 160, 100), Color3.fromRGB(170, 100, 60))
-			finalText.Text = "🥉 SEMIFINALIST  +" .. Config.Money(result.Prize)
+			resultSummary.Text = "Semifinalist"
+			resultDetail.Text = "+" .. Config.Money(result.Prize)
 		else
-			finalGradient.Color = ColorSequence.new(Color3.fromRGB(120, 126, 150), Color3.fromRGB(80, 86, 108))
-			finalText.Text = "Knocked out early - upgrade your robot!"
+			resultSummary.Text = "Eliminated"
+			resultDetail.Text = "Improve your robot's rating and try again."
 		end
-		finalBanner.Visible = true
-		compContinue.Visible = true
-		-- shimmer for champions
-		if result.Champion then
-			while token == compToken and finalBanner.Visible do
-				finalGradient.Rotation = (finalGradient.Rotation + 4) % 360
-				task.wait(0.03)
-			end
-		end
+		resultSummary.TextTransparency = 1
+		tween(resultSummary, { TextTransparency = 0 }, TweenInfo.new(0.4))
+		resultDone.Visible = true
 	end)
 end
 
 ---------------------------------------------------------------------
--- Competitions
+-- Compete
 ---------------------------------------------------------------------
 panels.Compete = {
 	Title = "Competitions",
-	Subtitle = "Tournaments are decided by your active robot's rating",
-	Icon = "🏆",
-	Color = C.Gold,
+	Subtitle = "Results are decided by your active robot's rating.",
 	Render = function(root)
 		if not State then
 			return
@@ -4324,33 +4264,32 @@ panels.Compete = {
 		local robot = State.Garage[State.Active]
 		local rating = robot and Config.GetRobotStats(robot).Rating or 0
 
-		local banner = Box({ Parent = root, Color = C.Card, Radius = 14, Stroke = C.Gold, StrokeTransparency = 0.5, Size = UDim2.new(1, 0, 0, 66) })
+		local summary = Frame({ Parent = root, Color = C.Group, Radius = 14, Size = UDim2.new(1, 0, 0, 72) })
 		if robot then
-			RobotPreview(banner, robot, UDim2.new(0, 54, 0, 54), UDim2.new(0, 6, 0, 6), C.Panel2)
-			Text({ Parent = banner, Text = "Competing with ⭐ Robot #" .. State.Active, Font = FONT_BLACK, Max = 17, Position = UDim2.new(0, 72, 0, 10), Size = UDim2.new(1, -220, 0, 22) })
-			Text({ Parent = banner, Text = "Win all 3 rounds for the full prize + trophies", Font = FONT_MED, Color = C.Muted, Max = 13, Position = UDim2.new(0, 72, 0, 34), Size = UDim2.new(1, -220, 0, 18) })
-			Pill(banner, "RATING " .. rating, C.Gold, 120, 0, C.Dark).Position = UDim2.new(1, -134, 0.5, -11)
+			RobotPreview(summary, robot, UDim2.new(0, 72, 0, 72), UDim2.new(), C.Group)
+			Text({ Parent = summary, Text = "Robot " .. State.Active, Style = "Headline", Position = UDim2.new(0, 84, 0, 14), Size = UDim2.new(1, -220, 0, 22) })
+			Text({ Parent = summary, Text = "Win all three rounds for the full prize.", Style = "Footnote", Color = C.Secondary, Position = UDim2.new(0, 84, 0, 38), Size = UDim2.new(1, -220, 0, 18) })
+			Text({ Parent = summary, Text = tostring(rating), Style = "Title", AlignX = RIGHT, Anchor = Vector2.new(1, 0), Position = UDim2.new(1, -18, 0, 10), Size = UDim2.new(0, 100, 0, 32) })
+			Text({ Parent = summary, Text = "Rating", Style = "Footnote", Color = C.Secondary, AlignX = RIGHT, Anchor = Vector2.new(1, 0), Position = UDim2.new(1, -18, 0, 42), Size = UDim2.new(0, 100, 0, 16) })
 		else
-			Text({ Parent = banner, Text = "You need a robot to compete!", Font = FONT_BLACK, Color = C.Red, Max = 17, Position = UDim2.new(0, 16, 0, 0), Size = UDim2.new(1, -220, 1, 0) })
-			Button({ Parent = banner, Text = "🤖 ROBOT LAB", Color = C.Red, Max = 14, Anchor = Vector2.new(1, 0.5), Position = UDim2.new(1, -12, 0.5, 0), Size = UDim2.new(0, 160, 0, 42) }, function()
-				openWindow("Lab")
+			Text({ Parent = summary, Text = "Build a robot to compete.", Style = "Headline", Position = UDim2.new(0, 18, 0, 0), Size = UDim2.new(1, -200, 1, 0) })
+			Button({ Parent = summary, Text = "Open Robot Lab", Kind = "primary", TextSize = 14, Anchor = Vector2.new(1, 0.5), Position = UDim2.new(1, -16, 0.5, 0), Size = UDim2.new(0, 150, 0, 34) }, function()
+				openSheet("Lab")
 			end)
 		end
 
-		local scroll = Scroll({ Parent = root, Name = "Comps", Position = UDim2.new(0, 0, 0, 78), Size = UDim2.new(1, 0, 1, -78) })
-		for index, comp in ipairs(Config.Competitions) do
-			local tierColor = TIER[math.min(index, #TIER)]
+		local scroll = Scroll({ Parent = root, Name = "Comps", Position = UDim2.new(0, 0, 0, 84), Size = UDim2.new(1, 0, 1, -84) })
+		local group = Group(scroll)
+		for _, comp in ipairs(Config.Competitions) do
 			local meets = robot ~= nil and rating >= comp.MinRating
-			local card = Box({ Parent = scroll, Order = index, Size = UDim2.new(1, -10, 0, 80), Color = C.Card, Radius = 14, Stroke = C.Line, StrokeTransparency = 0.65 })
-			local icon = Box({ Parent = card, Color = tierColor, Radius = 26, Size = UDim2.new(0, 52, 0, 52), Position = UDim2.new(0, 14, 0.5, 0), Anchor = Vector2.new(0, 0.5), Gradient = { SHADE_TOP, Color3.fromRGB(150, 150, 160), 90 } })
-			Text({ Parent = icon, Text = "🏆", AlignX = CENTER, Max = 26, Size = UDim2.fromScale(1, 1) })
-			Text({ Parent = card, Text = comp.Name, Font = FONT_BLACK, Max = 18, Position = UDim2.new(0, 80, 0, 8), Size = UDim2.new(1, -250, 0, 22) })
-			local pills = Box({ Parent = card, Transparency = 1, Radius = false, Position = UDim2.new(0, 80, 0, 33), Size = UDim2.new(1, -250, 0, 22) }, { hlist(6) })
-			Pill(pills, (meets and "✓ " or "✕ ") .. "Rating " .. comp.MinRating .. "+", meets and shade(C.Green, 0.45) or shade(C.Red, 0.45), 104, 1)
-			Pill(pills, "🎟 " .. (comp.Fee > 0 and Config.Money(comp.Fee) or "FREE"), C.Panel2, 84, 2)
-			Text({ Parent = card, Text = "Champion: <b>" .. Config.Money(comp.Prize * State.Multiplier) .. "</b> + " .. comp.Trophies .. " 🏆", Font = FONT_MED, Color = C.Gold, Max = 13, Position = UDim2.new(0, 80, 0, 58), Size = UDim2.new(1, -250, 0, 16) })
-
-			local b = Button({ Parent = card, Text = "ENTER", Color = C.Green, Max = 15, Anchor = Vector2.new(1, 0.5), Position = UDim2.new(1, -12, 0.5, 0), Size = UDim2.new(0, 150, 0, 46) }, function()
+			local r = Row(group, 64)
+			Text({ Parent = r, Text = comp.Name, Style = "Headline", Wrap = false, Position = UDim2.new(0, 16, 0, 11), Size = UDim2.new(1, -330, 0, 22) })
+			local requirement = meets and ("Rating " .. comp.MinRating .. "+") or ('<font color="#E2232A">Requires rating ' .. comp.MinRating .. "</font>")
+			local fee = comp.Fee > 0 and ("Entry " .. Config.Money(comp.Fee)) or "Free entry"
+			Text({ Parent = r, Text = requirement .. "  ·  " .. fee, Style = "Footnote", Color = C.Secondary, Wrap = false, Position = UDim2.new(0, 16, 0, 35), Size = UDim2.new(1, -330, 0, 18) })
+			Text({ Parent = r, Text = Config.Money(comp.Prize * State.Multiplier), Font = F.Semi, TextSize = 16, AlignX = RIGHT, Anchor = Vector2.new(1, 0), Position = UDim2.new(1, -140, 0, 11), Size = UDim2.new(0, 160, 0, 22) })
+			Text({ Parent = r, Text = comp.Trophies .. " trophies", Style = "Footnote", Color = C.Secondary, AlignX = RIGHT, Anchor = Vector2.new(1, 0), Position = UDim2.new(1, -140, 0, 35), Size = UDim2.new(0, 160, 0, 18) })
+			local b = Button({ Parent = r, Text = "Enter", Kind = "primary", TextSize = 14, Anchor = Vector2.new(1, 0.5), Position = UDim2.new(1, -14, 0.5, 0), Size = UDim2.new(0, 108, 0, 32) }, function()
 				local ok, result = request(RequestRemote, "EnterCompetition", comp.Id)
 				if ok and type(result) == "table" then
 					cooldownEnds[comp.Id] = os.clock() + comp.Cooldown
@@ -4362,13 +4301,13 @@ panels.Compete = {
 			local function update()
 				local remaining = math.ceil((cooldownEnds[comp.Id] or 0) - os.clock())
 				if not meets then
-					setButton(b, "🔒 LOCKED", C.Disabled, false)
+					setButton(b, "Locked", "disabled")
 				elseif remaining > 0 then
-					setButton(b, "⏳ " .. remaining .. "s", C.Disabled, false)
+					setButton(b, string.format("%d:%02d", math.floor(remaining / 60), remaining % 60), "disabled")
 				elseif cash() < comp.Fee then
-					setButton(b, "💰 NEED " .. Config.Money(comp.Fee), C.Disabled, false)
+					setButton(b, "Enter", "disabled")
 				else
-					setButton(b, "ENTER", C.Green, true)
+					setButton(b, "Enter", "primary")
 				end
 			end
 			onTick(update)
@@ -4386,26 +4325,24 @@ local function arena(action)
 		toast(msg, ok and "info" or "error")
 	end
 	if ok and action == "Practice" then
-		closeWindow()
+		closeSheet()
 	end
 	task.defer(renderOpen)
 end
 
-local function ModeCard(parent, x, color, icon, title, lines)
-	local card = Box({ Parent = parent, Color = Color3.new(1, 1, 1), Radius = 18, Gradient = { color, shade(color, 0.4), 120 }, Position = UDim2.new(x, x > 0 and 8 or 0, 0, 0), Size = UDim2.new(0.5, -8, 0, 214) })
-	Text({ Parent = card, Text = icon, Max = 44, AlignX = RIGHT, Position = UDim2.new(1, -86, 0, 12), Size = UDim2.new(0, 70, 0, 56) })
-	Text({ Parent = card, Text = title, Font = FONT_BLACK, Max = 24, Position = UDim2.new(0, 18, 0, 16), Size = UDim2.new(1, -110, 0, 30) })
+local function ModeTile(parent, x, eyebrow, title, lines)
+	local tile = Frame({ Parent = parent, Color = C.Group, Radius = 18, Position = UDim2.new(x, x > 0 and 7 or 0, 0, 0), Size = UDim2.new(0.5, -7, 0, 206) })
+	Text({ Parent = tile, Text = eyebrow, Style = "Caption", Color = C.Accent, Position = UDim2.new(0, 20, 0, 18), Size = UDim2.new(1, -40, 0, 16) })
+	Text({ Parent = tile, Text = title, Style = "Title2", Wrap = false, Position = UDim2.new(0, 20, 0, 36), Size = UDim2.new(1, -40, 0, 28) })
 	for i, line in ipairs(lines) do
-		Text({ Parent = card, Text = line, Font = FONT, Color = Color3.fromRGB(230, 235, 250), Max = 14, Position = UDim2.new(0, 18, 0, 52 + (i - 1) * 22), Size = UDim2.new(1, -36, 0, 20) })
+		Text({ Parent = tile, Text = line, Style = "Subhead", Color = C.Secondary, Wrap = false, Position = UDim2.new(0, 20, 0, 72 + (i - 1) * 20), Size = UDim2.new(1, -40, 0, 20) })
 	end
-	return card
+	return tile
 end
 
 panels.Drive = {
-	Title = "Drive Your Robot",
-	Subtitle = "Practice for cash or battle other players in ranked 1v1",
-	Icon = "🎮",
-	Color = C.Green,
+	Title = "Drive",
+	Subtitle = "Practice on your own, or play ranked matches against other teams.",
 	Render = function(root)
 		if not State then
 			return
@@ -4417,62 +4354,53 @@ panels.Drive = {
 		local matchLive = Remotes:GetAttribute("MatchLive") == true
 
 		if driving then
-			local card = Box({ Parent = root, Color = C.Card, Radius = 18, Stroke = C.Green, Size = UDim2.new(1, 0, 0, 120) })
-			Text({ Parent = card, Text = "🎮 You're driving!", Font = FONT_BLACK, Max = 24, Position = UDim2.new(0, 20, 0, 18), Size = UDim2.new(1, -240, 0, 30) })
-			Text({ Parent = card, Text = "Leaving a ranked match forfeits it.", Font = FONT_MED, Color = C.Muted, Max = 14, Position = UDim2.new(0, 20, 0, 54), Size = UDim2.new(1, -240, 0, 20) })
-			Button({ Parent = card, Text = "🛑 STOP DRIVING", Color = C.Red, Max = 16, Anchor = Vector2.new(1, 0.5), Position = UDim2.new(1, -20, 0.5, 0), Size = UDim2.new(0, 200, 0, 52) }, function()
+			local tile = Frame({ Parent = root, Color = C.Group, Radius = 18, Size = UDim2.new(1, 0, 0, 96) })
+			Text({ Parent = tile, Text = "You're driving.", Style = "Title2", Position = UDim2.new(0, 20, 0, 20), Size = UDim2.new(1, -220, 0, 28) })
+			Text({ Parent = tile, Text = "Leaving a ranked match counts as a forfeit.", Style = "Subhead", Color = C.Secondary, Position = UDim2.new(0, 20, 0, 52), Size = UDim2.new(1, -220, 0, 20) })
+			Button({ Parent = tile, Text = "Stop Driving", Kind = "primary", Anchor = Vector2.new(1, 0.5), Position = UDim2.new(1, -20, 0.5, 0), Size = UDim2.new(0, 160, 0, 38) }, function()
 				arena("Stop")
 			end)
 		else
-			local practice = ModeCard(root, 0, C.Blue, "🎮", "PRACTICE FIELD", {
-				"Free drive, no opponents",
-				"Earn " .. Config.Money(Config.Practice.CashPerPoint * State.Multiplier) .. " per point scored",
-				"Great for learning the controls",
+			local practice = ModeTile(root, 0, "PRACTICE", "Practice Field", {
+				"Drive freely with no opponents.",
+				Config.Money(Config.Practice.CashPerPoint * State.Multiplier) .. " for every point you score.",
 			})
-			Button({ Parent = practice, Text = robot and "DRIVE NOW" or "BUILD A ROBOT FIRST", Color = Color3.fromRGB(240, 244, 255), TextColor = C.Dark, Enabled = robot ~= nil, Max = 16, Anchor = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -16), Size = UDim2.new(1, -36, 0, 48) }, function()
+			Button({ Parent = practice, Text = robot and "Start Driving" or "Build a Robot First", Kind = robot and "primary" or "disabled", Position = UDim2.new(0, 20, 1, -58), Size = UDim2.new(0, 170, 0, 38) }, function()
 				arena("Practice")
 			end)
 
-			local ranked = ModeCard(root, 0.5, C.Red, "⚔️", "RANKED 1v1", {
-				Config.Match.Duration .. "s matches • Brain gives auton points",
-				"Win: +" .. Config.Match.WinTrophies .. " 🏆 and big cash",
-				matchLive and "🔴 Match in progress - go watch!" or ("👥 " .. queueSize .. " player" .. (queueSize == 1 and "" or "s") .. " in queue"),
+			local status = matchLive and "A match is being played now." or (queueSize == 1 and "1 team waiting." or (queueSize .. " teams waiting."))
+			local ranked = ModeTile(root, 0.5, "RANKED", "1v1 Match", {
+				Config.Match.Duration .. " seconds. Win for +" .. Config.Match.WinTrophies .. " trophies.",
+				status,
 			})
-			Button({
-				Parent = ranked,
-				Text = not robot and "BUILD A ROBOT FIRST" or (inQueue and "LEAVE QUEUE" or "JOIN QUEUE"),
-				Color = inQueue and C.Dark or Color3.fromRGB(240, 244, 255),
-				TextColor = inQueue and C.Text or C.Dark,
-				Enabled = robot ~= nil,
-				Max = 16,
-				Anchor = Vector2.new(0.5, 1),
-				Position = UDim2.new(0.5, 0, 1, -16),
-				Size = UDim2.new(1, -36, 0, 48),
-			}, function()
+			Button({ Parent = ranked, Text = not robot and "Build a Robot First" or (inQueue and "Leave Queue" or "Join Queue"), Kind = not robot and "disabled" or (inQueue and "secondary" or "primary"), Position = UDim2.new(0, 20, 1, -58), Size = UDim2.new(0, 170, 0, 38) }, function()
 				arena("Queue")
 			end)
 		end
 
-		local controlsY = driving and 136 or 230
-		local controls = Box({ Parent = root, Color = C.Card, Radius = 16, Stroke = C.Line, StrokeTransparency = 0.6, Position = UDim2.new(0, 0, 0, controlsY), Size = UDim2.new(1, 0, 1, -controlsY) })
-		Text({ Parent = controls, Text = "CONTROLS", Font = FONT_BLACK, Color = C.Muted, Max = 13, Position = UDim2.new(0, 16, 0, 10), Size = UDim2.new(1, -32, 0, 16) })
+		local top = driving and 108 or 220
+		Section(root, "Controls", UDim2.new(0, 16, 0, top - 4))
+		local controls = Frame({ Parent = root, Color = C.Group, Radius = 14, Position = UDim2.new(0, 0, 0, top + 28), Size = UDim2.new(1, 0, 0, 132) })
 		local entries = {
-			{ { "W", "S" }, "Drive forward / back" },
-			{ { "A", "D" }, "Turn left / right" },
-			{ { "Q", "E" }, "Strafe (Mecanum & X-Drive)" },
-			{ { "F" }, "Score held balls in a goal zone" },
-			{ { "SPC" }, "Jump - exit the robot" },
-			{ { "🧲" }, "Intake grabs balls automatically" },
+			{ { "W", "S" }, "Drive forward and back" },
+			{ { "A", "D" }, "Turn" },
+			{ { "Q", "E" }, "Strafe (Mecanum, X-Drive)" },
+			{ { "F" }, "Score held balls in a goal" },
+			{ { "Space" }, "Leave the robot" },
+			{ { "Auto" }, "Intake picks up balls" },
 		}
 		for i, entry in ipairs(entries) do
-			local column = (i - 1) % 2
+			local col = (i - 1) % 2
 			local rowIndex = math.floor((i - 1) / 2)
-			local x = column == 0 and 16 or 0
-			local holder = Box({ Parent = controls, Transparency = 1, Radius = false, Position = UDim2.new(column * 0.5, x, 0, 36 + rowIndex * 40), Size = UDim2.new(0.5, -24, 0, 34) })
-			for k, key in ipairs(entry[1]) do
-				Keycap(holder, key, UDim2.new(0, (k - 1) * 40, 0, 2))
+			local holder = Frame({ Parent = controls, Position = UDim2.new(col * 0.5, 16, 0, 12 + rowIndex * 38), Size = UDim2.new(0.5, -32, 0, 30) })
+			local x = 0
+			for _, key in ipairs(entry[1]) do
+				local w = #key > 1 and 52 or 28
+				Keycap(holder, key, UDim2.new(0, x, 0, 2), w)
+				x += w + 6
 			end
-			Text({ Parent = holder, Text = entry[2], Font = FONT, Max = 14, Position = UDim2.new(0, 88, 0, 0), Size = UDim2.new(1, -88, 1, 0) })
+			Text({ Parent = holder, Text = entry[2], Style = "Subhead", Wrap = false, Position = UDim2.new(0, 72, 0, 0), Size = UDim2.new(1, -72, 1, 0) })
 		end
 	end,
 }
@@ -4481,10 +4409,8 @@ panels.Drive = {
 -- Season
 ---------------------------------------------------------------------
 panels.Season = {
-	Title = "New Season",
-	Subtitle = "Rebirth for a permanent cash multiplier and new parts",
-	Icon = "🔄",
-	Color = C.Purple,
+	Title = "Season",
+	Subtitle = "Start a new season to permanently multiply your earnings.",
 	Render = function(root)
 		if not State then
 			return
@@ -4493,84 +4419,78 @@ panels.Season = {
 		local nowMult = Config.GetMultiplier(State.Season, false)
 		local nextMult = Config.GetMultiplier(State.Season + 1, false)
 
-		local hero = Box({ Parent = root, Color = Color3.new(1, 1, 1), Radius = 18, Gradient = { C.Purple, shade(C.Purple, 0.35), 120 }, Size = UDim2.new(1, 0, 0, 112) })
-		Text({ Parent = hero, Text = "SEASON " .. State.Season .. "  ➜  " .. (State.Season + 1), Font = FONT_BLACK, Max = 34, Position = UDim2.new(0, 24, 0, 14), Size = UDim2.new(0.6, 0, 0, 44) })
-		Text({ Parent = hero, Text = "Permanent cash multiplier", Font = FONT_MED, Color = Color3.fromRGB(225, 215, 250), Max = 14, Position = UDim2.new(0, 24, 0, 66), Size = UDim2.new(0.5, 0, 0, 20) })
-		local multRow = Box({ Parent = hero, Transparency = 1, Radius = false, Anchor = Vector2.new(1, 0.5), Position = UDim2.new(1, -24, 0.5, 0), Size = UDim2.new(0, 260, 0, 50) }, { hlist(10, Enum.HorizontalAlignment.Right) })
-		local nowPill = Box({ Parent = multRow, Order = 1, Color = C.Dark, Transparency = 0.3, Radius = 14, Size = UDim2.new(0, 100, 0, 50) })
-		Text({ Parent = nowPill, Text = string.format("x%.1f", nowMult), Font = FONT_BLACK, Max = 24, AlignX = CENTER, Size = UDim2.fromScale(1, 1) })
-		local arrow = Text({ Parent = multRow, Order = 2, Text = "➜", Font = FONT_BLACK, Max = 24, AlignX = CENTER, Size = UDim2.new(0, 30, 0, 50) })
-		arrow.LayoutOrder = 2
-		local nextPill = Box({ Parent = multRow, Order = 3, Color = C.Gold, Radius = 14, Size = UDim2.new(0, 100, 0, 50) })
-		Text({ Parent = nextPill, Text = string.format("x%.1f", nextMult), Font = FONT_BLACK, Max = 24, AlignX = CENTER, Color = C.Dark, Size = UDim2.fromScale(1, 1) })
-
-		local bar = Box({ Parent = root, Color = C.Bg, Radius = 14, Stroke = C.Line, StrokeTransparency = 0.5, Position = UDim2.new(0, 0, 0, 124), Size = UDim2.new(1, 0, 0, 32) })
-		local fill = Box({ Parent = bar, Color = Color3.new(1, 1, 1), Radius = 14, Size = UDim2.new(0, 0, 1, 0), Gradient = { C.Green, shade(C.Green, 0.6), 0 } })
-		local barText = Text({ Parent = bar, Font = FONT_BLACK, Max = 15, AlignX = CENTER, Size = UDim2.fromScale(1, 1) })
-
-		local nextParts = {}
-		for _, slot in ipairs(Config.ModuleSlots) do
-			for _, def in ipairs(Config.Modules[slot]) do
-				if def.Season == State.Season + 1 then
-					table.insert(nextParts, "★ " .. def.Name)
-				end
-			end
-		end
-		if #nextParts == 0 then
-			table.insert(nextParts, "Bigger multiplier!")
-		end
-		local columns = {
-			{ "RESETS", C.Red, { "✕ Cash", "✕ Workshop", "✕ Robot parts", "✕ Robots" } },
-			{ "KEEPS", C.Green, { "✓ Trophies", "✓ Stats", "✓ Season bonus" } },
-			{ "UNLOCKS", C.Gold, nextParts },
-		}
-		for i, col in ipairs(columns) do
-			local box = Box({ Parent = root, Color = C.Card, Radius = 14, Stroke = col[2], StrokeTransparency = 0.6, Position = UDim2.new((i - 1) / 3, i > 1 and 6 or 0, 0, 166), Size = UDim2.new(1 / 3, -8, 0, 130) })
-			Text({ Parent = box, Text = col[1], Font = FONT_BLACK, Color = col[2], Max = 13, Position = UDim2.new(0, 14, 0, 10), Size = UDim2.new(1, -28, 0, 16) })
-			for k, line in ipairs(col[3]) do
-				if k <= 4 then
-					Text({ Parent = box, Text = line, Font = FONT, Max = 13, Position = UDim2.new(0, 14, 0, 30 + (k - 1) * 23), Size = UDim2.new(1, -28, 0, 20) })
-				end
-			end
-		end
-
-		local startButton = Button({ Parent = root, Text = "START", Color = C.Purple, Max = 17, Radius = 12, Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 306), Size = UDim2.new(0, 380, 0, 50) }, function(b)
+		Text({ Parent = root, Text = "Season " .. State.Season, Style = "Display", TextSize = 40, Position = UDim2.new(0, 2, 0, 0), Size = UDim2.new(0.6, 0, 0, 46) })
+		Text({ Parent = root, Text = string.format("Earnings %.1f× now, %.1f× next season.", nowMult, nextMult), Style = "Body", Color = C.Secondary, Position = UDim2.new(0, 2, 0, 48), Size = UDim2.new(0.6, 0, 0, 22) })
+		local _, fill = Progress(root, UDim2.new(0, 2, 0, 88), UDim2.new(0.6, -2, 0, 6), 0)
+		local progressText = Text({ Parent = root, Style = "Footnote", Color = C.Secondary, Position = UDim2.new(0, 2, 0, 98), Size = UDim2.new(0.6, 0, 0, 18) })
+		local start = Button({ Parent = root, Kind = "primary", Text = "Start", TextSize = 16, Anchor = Vector2.new(1, 0), Position = UDim2.new(1, 0, 0, 30), Size = UDim2.new(0, 230, 0, 44) }, function(b)
 			if b:GetAttribute("Confirm") then
 				act("Rebirth")
 			else
 				b:SetAttribute("Confirm", true)
-				setButton(b, "⚠️ CLICK AGAIN TO CONFIRM", C.Red)
+				setButton(b, "Tap Again to Confirm")
 				task.delay(3, function()
 					if b.Parent then
 						b:SetAttribute("Confirm", false)
-						setButton(b, "🔄 START SEASON " .. (State.Season + 1), C.Purple)
+						setButton(b, "Start Season " .. (State.Season + 1))
 					end
 				end)
 			end
 		end)
 		onCash(function(money)
-			local progress = math.clamp(money / cost, 0, 1)
-			tween(fill, 0.3, { Size = UDim2.new(math.max(progress, 0.03), 0, 1, 0) })
-			barText.Text = Config.Money(money) .. " / " .. Config.Money(cost)
-			if not startButton:GetAttribute("Confirm") then
-				local afford = money >= cost
-				setButton(startButton, afford and ("🔄 START SEASON " .. (State.Season + 1)) or ("🔒 NEED " .. Config.Money(cost - money) .. " MORE"), afford and C.Purple or C.Disabled, afford)
+			local fraction = math.clamp(money / cost, 0, 1)
+			tween(fill, { Size = UDim2.new(fraction, 0, 1, 0) })
+			progressText.Text = Config.Money(money) .. " of " .. Config.Money(cost)
+			if not start:GetAttribute("Confirm") then
+				setButton(start, "Start Season " .. (State.Season + 1), money >= cost and "primary" or "disabled")
 			end
 		end)
 
+		local unlocks = {}
+		for _, slot in ipairs(Config.ModuleSlots) do
+			for _, def in ipairs(Config.Modules[slot]) do
+				if def.Season == State.Season + 1 then
+					table.insert(unlocks, def.Name)
+				end
+			end
+		end
+		if #unlocks == 0 then
+			unlocks = { "A higher multiplier" }
+		end
+		local columns = {
+			{ "Resets", { "Cash", "Workshop", "Robot parts", "Robots" } },
+			{ "Keeps", { "Trophies", "Stats", "Season multiplier" } },
+			{ "Unlocks", unlocks },
+		}
+		for i, col in ipairs(columns) do
+			local x = (i - 1) / 3
+			Section(root, col[1], UDim2.new(x, 16, 0, 128))
+			local group = Group(root, { Position = UDim2.new(x, i > 1 and 7 or 0, 0, 160), Size = UDim2.new(1 / 3, -10, 0, 0) })
+			for k, line in ipairs(col[2]) do
+				if k <= 4 then
+					local r = Row(group, 38)
+					Text({ Parent = r, Text = line, Style = "Callout", Wrap = false, Position = UDim2.new(0, 16, 0, 0), Size = UDim2.new(1, -32, 1, 0) })
+				end
+			end
+		end
+
 		local s = State.Stats
 		local tiles = {
-			{ s.CompWins .. "/" .. s.CompsEntered, "Tournaments won" },
-			{ s.MatchesWon .. "/" .. s.MatchesPlayed, "Ranked wins" },
+			{ s.CompWins .. " / " .. s.CompsEntered, "Tournaments won" },
+			{ s.MatchesWon .. " / " .. s.MatchesPlayed, "Ranked wins" },
 			{ Config.Format(s.BallsScored), "Balls scored" },
 			{ tostring(s.RobotsBuilt), "Robots built" },
-			{ Config.Money(s.TotalEarned), "Lifetime cash" },
+			{ Config.Money(s.TotalEarned), "Lifetime earnings" },
 		}
-		local statsRow = Box({ Parent = root, Transparency = 1, Radius = false, Position = UDim2.new(0, 0, 1, -60), Size = UDim2.new(1, 0, 0, 60) }, { hlist(8, Enum.HorizontalAlignment.Center) })
+		Section(root, "Your Team", UDim2.new(0, 16, 1, -100))
+		local statsBox = Frame({ Parent = root, Color = C.Group, Radius = 14, Position = UDim2.new(0, 0, 1, -66), Size = UDim2.new(1, 0, 0, 66) })
 		for i, tile in ipairs(tiles) do
-			local t = Box({ Parent = statsRow, Order = i, Color = C.Card, Radius = 12, Size = UDim2.new(0.2, -7, 1, 0) })
-			Text({ Parent = t, Text = tile[1], Font = FONT_BLACK, Max = 18, AlignX = CENTER, Position = UDim2.new(0, 6, 0, 8), Size = UDim2.new(1, -12, 0, 24) })
-			Text({ Parent = t, Text = tile[2], Font = FONT_MED, Color = C.Muted, Max = 11, AlignX = CENTER, Position = UDim2.new(0, 6, 0, 34), Size = UDim2.new(1, -12, 0, 16) })
+			local cell = Frame({ Parent = statsBox, Position = UDim2.new((i - 1) / 5, 0, 0, 0), Size = UDim2.new(0.2, 0, 1, 0) })
+			if i > 1 then
+				Frame({ Parent = cell, Color = C.Separator, Position = UDim2.new(0, 0, 0.5, 0), Anchor = Vector2.new(0, 0.5), Size = UDim2.new(0, 1, 0, 34) })
+			end
+			Text({ Parent = cell, Text = tile[1], Font = F.Semi, TextSize = 19, AlignX = CENTER, Wrap = false, Position = UDim2.new(0, 6, 0, 12), Size = UDim2.new(1, -12, 0, 24) })
+			Text({ Parent = cell, Text = tile[2], Style = "Caption", Color = C.Secondary, AlignX = CENTER, Wrap = false, Position = UDim2.new(0, 6, 0, 38), Size = UDim2.new(1, -12, 0, 16) })
 		end
 	end,
 }
@@ -4580,83 +4500,66 @@ panels.Season = {
 ---------------------------------------------------------------------
 panels.Shop = {
 	Title = "Shop",
-	Subtitle = "Game passes that supercharge your team",
-	Icon = "🛒",
-	Color = C.Orange,
+	Subtitle = "Upgrades for your team. Yours forever.",
 	Render = function(root)
 		if not State then
 			return
 		end
-		local scroll = Scroll({ Parent = root, Name = "Passes", Grid = UDim2.new(0, 384, 0, 204) })
-		for index, pass in ipairs(Config.GamePasses) do
+		local group = Group(root)
+		for _, pass in ipairs(Config.GamePasses) do
 			local owned = State.Passes[pass.Key] == true
-			local card = Box({ Parent = scroll, Order = index, Color = C.Card, Radius = 18, Stroke = owned and C.Green or C.Gold, StrokeTransparency = owned and 0.2 or 0.5 })
-			local icon = Box({ Parent = card, Color = owned and C.Green or C.Gold, Radius = 34, Size = UDim2.new(0, 68, 0, 68), Position = UDim2.new(0, 18, 0, 18), Gradient = { SHADE_TOP, Color3.fromRGB(150, 150, 160), 90 } })
-			Text({ Parent = icon, Text = pass.Icon, AlignX = CENTER, Max = 34, Size = UDim2.fromScale(1, 1) })
-			Text({ Parent = card, Text = pass.Name, Font = FONT_BLACK, Max = 21, Position = UDim2.new(0, 100, 0, 22), Size = UDim2.new(1, -116, 0, 28) })
-			Text({ Parent = card, Text = pass.Desc, Font = FONT_MED, Color = C.Muted, Max = 14, AlignY = Enum.TextYAlignment.Top, Position = UDim2.new(0, 100, 0, 54), Size = UDim2.new(1, -116, 0, 50) })
-			Button({ Parent = card, Text = owned and "✓ OWNED" or "BUY", Color = owned and shade(C.Green, 0.6) or C.Gold, TextColor = owned and C.Text or C.Dark, Enabled = not owned, Max = 17, Radius = 12, Anchor = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -16), Size = UDim2.new(1, -36, 0, 48) }, function()
-				act("PromptPass", pass.Key)
-			end)
+			local r = Row(group, 72)
+			Text({ Parent = r, Text = pass.Name, Style = "Headline", Wrap = false, Position = UDim2.new(0, 18, 0, 14), Size = UDim2.new(1, -160, 0, 22) })
+			Text({ Parent = r, Text = pass.Desc, Style = "Subhead", Color = C.Secondary, Wrap = false, Position = UDim2.new(0, 18, 0, 38), Size = UDim2.new(1, -160, 0, 20) })
+			if owned then
+				Text({ Parent = r, Text = "Owned", Font = F.Semi, TextSize = 15, Color = C.Secondary, AlignX = RIGHT, Anchor = Vector2.new(1, 0.5), Position = UDim2.new(1, -18, 0.5, 0), Size = UDim2.new(0, 100, 0, 20) })
+			else
+				Button({ Parent = r, Text = "Get", Kind = "get", Font = F.Bold, TextSize = 15, Anchor = Vector2.new(1, 0.5), Position = UDim2.new(1, -16, 0.5, 0), Size = UDim2.new(0, 76, 0, 30) }, function()
+					act("PromptPass", pass.Key)
+				end)
+			end
 		end
 	end,
 }
 
 ---------------------------------------------------------------------
--- Side menu
+-- Dock
 ---------------------------------------------------------------------
-local MENU = {
-	{ "Lab", "🤖", "Lab", C.Red },
-	{ "Garage", "🏠", "Garage", C.Blue },
-	{ "Compete", "🏆", "Compete", C.Gold },
-	{ "Drive", "🎮", "Drive", C.Green },
-	{ "Season", "🔄", "Season", C.Purple },
-	{ "Shop", "🛒", "Shop", C.Orange },
-}
+local DOCK = { "Lab", "Garage", "Compete", "Drive", "Season", "Shop" }
+local DOCK_LABEL = { Lab = "Robot Lab", Garage = "Garage", Compete = "Compete", Drive = "Drive", Season = "Season", Shop = "Shop" }
+local ITEM_W = 104
 
-local menuHost = Box({ Parent = mainGui, Transparency = 1, Radius = false, Anchor = Vector2.new(0, 0.5), Position = UDim2.new(0, 14, 0.5, 20), Size = UDim2.new(0, 90, 0, #MENU * 82) }, { vlist(10) })
-autoScale(menuHost)
+local dockHost = Frame({ Parent = mainGui, Anchor = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -18), Size = UDim2.new(0, #DOCK * ITEM_W + 12, 0, 52) })
+autoScale(dockHost)
+local dock = Frame({ Parent = dockHost, Color = C.Sheet, Transparency = 0.08, Radius = "pill", Hairline = 0.9 })
 
-for i, entry in ipairs(MENU) do
-	local key, icon, name, color = entry[1], entry[2], entry[3], entry[4]
-	local holder = Box({ Parent = menuHost, Transparency = 1, Radius = false, Order = i, Size = UDim2.new(0, 78, 0, 72) })
-	local tile = new("TextButton", { Parent = holder, AutoButtonColor = false, Text = "", BorderSizePixel = 0, BackgroundColor3 = C.Panel, BackgroundTransparency = 0.05, Size = UDim2.fromScale(1, 1) })
-	corner(18).Parent = tile
-	local tileStroke = stroke(color, 2, 0.55)
-	tileStroke.Parent = tile
-	local iconBox = Box({ Parent = tile, Transparency = 1, Radius = false, Size = UDim2.new(1, 0, 0, 44), Position = UDim2.new(0, 0, 0, 6) })
-	local iconScale = new("UIScale", { Parent = iconBox })
-	Text({ Parent = iconBox, Text = icon, AlignX = CENTER, Max = 30, Size = UDim2.fromScale(1, 1) })
-	Text({ Parent = tile, Text = name, Font = FONT_BLACK, Color = color, Max = 12, AlignX = CENTER, Position = UDim2.new(0, 2, 1, -22), Size = UDim2.new(1, -4, 0, 16) })
-	local indicator = Box({ Parent = holder, Color = color, Radius = 3, Size = UDim2.new(0, 5, 0, 36), Position = UDim2.new(0, -10, 0.5, 0), Anchor = Vector2.new(0, 0.5), Visible = false })
-	local badge = Box({ Parent = holder, Color = C.Red, Radius = 11, Size = UDim2.new(0, 22, 0, 22), Position = UDim2.new(1, -14, 0, -6), Stroke = C.Panel, StrokeThickness = 2, Visible = false })
-	Text({ Parent = badge, Text = "!", Font = FONT_BLACK, Max = 14, AlignX = CENTER, Size = UDim2.fromScale(1, 1) })
-
-	tile.MouseEnter:Connect(function()
-		tween(tileStroke, 0.15, { Transparency = 0 })
-		tween(iconScale, 0.18, { Scale = 1.15 }, Enum.EasingStyle.Back)
-		tween(tile, 0.15, { BackgroundColor3 = C.Panel2 })
+for i, key in ipairs(DOCK) do
+	local button = new("TextButton", { Parent = dock, AutoButtonColor = false, Text = "", BackgroundTransparency = 1, Position = UDim2.new(0, 6 + (i - 1) * ITEM_W, 0, 6), Size = UDim2.new(0, ITEM_W, 1, -12) })
+	local pill = Frame({ Parent = button, Color = C.Fill, Transparency = 1, Radius = "pill" })
+	local label = Text({ Parent = button, Text = DOCK_LABEL[key], Font = F.Semi, TextSize = 14, Color = C.Secondary, AlignX = CENTER, Wrap = false, Size = UDim2.fromScale(1, 1) })
+	local dot = Frame({ Parent = button, Color = C.Accent, Radius = "pill", Anchor = Vector2.new(1, 0), Position = UDim2.new(1, -10, 0, 7), Size = UDim2.new(0, 7, 0, 7), Visible = false })
+	button.MouseEnter:Connect(function()
+		if openName ~= key then
+			label.TextColor3 = C.Label
+		end
 	end)
-	tile.MouseLeave:Connect(function()
-		tween(tileStroke, 0.15, { Transparency = 0.55 })
-		tween(iconScale, 0.15, { Scale = 1 })
-		tween(tile, 0.15, { BackgroundColor3 = C.Panel })
+	button.MouseLeave:Connect(function()
+		if openName ~= key then
+			label.TextColor3 = C.Secondary
+		end
 	end)
-	tile.Activated:Connect(function()
-		iconScale.Scale = 0.85
-		tween(iconScale, 0.25, { Scale = 1 }, Enum.EasingStyle.Back)
-		openWindow(key)
+	button.Activated:Connect(function()
+		openSheet(key)
 	end)
-	menuTiles[key] = { Indicator = indicator, Badge = badge }
+	dockItems[key] = { Pill = pill, Label = label, Dot = dot }
 end
 
-local function refreshBadges()
+local function refreshDots()
 	if not State then
 		return
 	end
 	local money = cash()
 	local robot = State.Garage[State.Active]
-
 	local lab = false
 	if State.Purchased.assembly then
 		for _, slot in ipairs(Config.ModuleSlots) do
@@ -4670,7 +4573,6 @@ local function refreshBadges()
 			lab = true
 		end
 	end
-
 	local compete = false
 	if robot then
 		local rating = Config.GetRobotStats(robot).Rating
@@ -4680,210 +4582,150 @@ local function refreshBadges()
 			end
 		end
 	end
-
-	local queueSize = Remotes:GetAttribute("QueueSize") or 0
-	menuTiles.Lab.Badge.Visible = lab
-	menuTiles.Compete.Badge.Visible = compete
-	menuTiles.Season.Badge.Visible = money >= Config.GetSeasonCost(State.Season)
-	menuTiles.Drive.Badge.Visible = robot ~= nil and queueSize > 0 and not player:GetAttribute("InQueue")
+	dockItems.Lab.Dot.Visible = lab
+	dockItems.Compete.Dot.Visible = compete
+	dockItems.Season.Dot.Visible = money >= Config.GetSeasonCost(State.Season)
+	dockItems.Drive.Dot.Visible = robot ~= nil and (Remotes:GetAttribute("QueueSize") or 0) > 0 and not player:GetAttribute("InQueue")
 end
 
 ---------------------------------------------------------------------
--- Arena HUD
+-- Match HUD
 ---------------------------------------------------------------------
-local scoreHost = Box({ Parent = mainGui, Transparency = 1, Radius = false, Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 82), Size = UDim2.new(0, 540, 0, 84), Visible = false })
+local scoreHost = Frame({ Parent = mainGui, Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 66), Size = UDim2.new(0, 420, 0, 60), Visible = false })
 autoScale(scoreHost)
+local scoreCapsule = Frame({ Parent = scoreHost, Color = C.Sheet, Transparency = 0.08, Radius = "pill", Hairline = 0.9 })
 
-local function TeamBox(x, anchorX, color)
-	local box = Box({ Parent = scoreHost, Color = Color3.new(1, 1, 1), Radius = 16, Gradient = { color, shade(color, 0.45), 90 }, Stroke = Color3.new(1, 1, 1), StrokeTransparency = 0.7, Anchor = Vector2.new(anchorX, 0), Position = UDim2.new(x, 0, 0, 0), Size = UDim2.new(0, 196, 0, 78) })
-	local s = new("UIScale", { Parent = box })
-	local nameLabel = Text({ Parent = box, Font = FONT_BLACK, Max = 14, AlignX = CENTER, Position = UDim2.new(0, 8, 0, 6), Size = UDim2.new(1, -16, 0, 18) })
-	local scoreLabel = Text({ Parent = box, Font = FONT_BLACK, Max = 40, AlignX = CENTER, Position = UDim2.new(0, 8, 0, 24), Size = UDim2.new(1, -16, 0, 48) })
-	return box, nameLabel, scoreLabel, s
+local function TeamSide(onRight, color)
+	local side = Frame({ Parent = scoreCapsule, Position = UDim2.new(onRight and 0.62 or 0, 0, 0, 0), Size = UDim2.new(0.38, 0, 1, 0) })
+	local align = onRight and RIGHT or LEFT
+	Frame({ Parent = side, Color = color, Radius = "pill", Position = onRight and UDim2.new(1, -28, 0, 14) or UDim2.new(0, 22, 0, 14), Size = UDim2.new(0, 7, 0, 7) })
+	local name = Text({ Parent = side, Style = "Caption", Color = C.Secondary, Wrap = false, AlignX = align, Position = onRight and UDim2.new(0, 8, 0, 8) or UDim2.new(0, 36, 0, 8), Size = UDim2.new(1, -44, 0, 18) })
+	local score = Text({ Parent = side, Font = F.Bold, TextSize = 24, Wrap = false, AlignX = align, Position = onRight and UDim2.new(0, 8, 0, 26) or UDim2.new(0, 22, 0, 26), Size = UDim2.new(1, -30, 0, 28) })
+	return side, name, score
 end
 
-local redBox, redName, redScore, redScale = TeamBox(0, 0, C.Red)
-local blueBox, blueName, blueScore, blueScale = TeamBox(1, 1, C.Blue)
-local timerBox = Box({ Parent = scoreHost, Color = C.Panel, Radius = 16, Stroke = C.Line, Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 6), Size = UDim2.new(0, 124, 0, 66) })
-local timerText = Text({ Parent = timerBox, Font = FONT_BLACK, Max = 30, AlignX = CENTER, Position = UDim2.new(0, 6, 0, 6), Size = UDim2.new(1, -12, 0, 34) })
-local timerSub = Text({ Parent = timerBox, Font = FONT_BLACK, Color = C.Muted, Max = 11, AlignX = CENTER, Position = UDim2.new(0, 6, 0, 42), Size = UDim2.new(1, -12, 0, 16) })
+local redSide, redName, redScore = TeamSide(false, C.TeamRed)
+local blueSide, blueName, blueScore = TeamSide(true, C.TeamBlue)
+local clock = Text({ Parent = scoreCapsule, Font = F.Semi, TextSize = 22, AlignX = CENTER, Wrap = false, Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 8), Size = UDim2.new(0.24, 0, 0, 28) })
+local clockSub = Text({ Parent = scoreCapsule, Style = "Caption", Color = C.Secondary, AlignX = CENTER, Wrap = false, Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 36), Size = UDim2.new(0.24, 0, 0, 14) })
 
-local practiceBox = Box({ Parent = scoreHost, Color = Color3.new(1, 1, 1), Radius = 16, Gradient = { C.Blue, shade(C.Blue, 0.45), 90 }, Anchor = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 0), Size = UDim2.new(0, 280, 0, 78), Visible = false })
-local practiceScale = new("UIScale", { Parent = practiceBox })
-Text({ Parent = practiceBox, Text = "PRACTICE • POINTS", Font = FONT_BLACK, Max = 14, AlignX = CENTER, Position = UDim2.new(0, 8, 0, 6), Size = UDim2.new(1, -16, 0, 18) })
-local practiceScore = Text({ Parent = practiceBox, Font = FONT_BLACK, Max = 40, AlignX = CENTER, Position = UDim2.new(0, 8, 0, 24), Size = UDim2.new(1, -16, 0, 48) })
-
-local intakeHost = Box({ Parent = mainGui, Transparency = 1, Radius = false, Anchor = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -22), Size = UDim2.new(0, 480, 0, 100), Visible = false })
+local intakeHost = Frame({ Parent = mainGui, Anchor = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -20), Size = UDim2.new(0, 520, 0, 80), Visible = false })
 autoScale(intakeHost)
-local intakeCard = Box({ Parent = intakeHost, Color = C.Panel, Transparency = 0.05, Radius = 18, Stroke = C.Green, StrokeTransparency = 0.5 })
-Text({ Parent = intakeCard, Text = "INTAKE", Font = FONT_BLACK, Color = C.Muted, Max = 12, Position = UDim2.new(0, 18, 0, 12), Size = UDim2.new(0, 70, 0, 16) })
-local pipRow = Box({ Parent = intakeCard, Transparency = 1, Radius = false, Position = UDim2.new(0, 18, 0, 30), Size = UDim2.new(1, -150, 0, 30) }, { hlist(6) })
-local pointsPill = Box({ Parent = intakeCard, Color = shade(C.Gold, 0.4), Radius = 12, Anchor = Vector2.new(1, 0), Position = UDim2.new(1, -16, 0, 26), Size = UDim2.new(0, 110, 0, 34) })
-local pointsText = Text({ Parent = pointsPill, Font = FONT_BLACK, Color = C.Gold, Max = 15, AlignX = CENTER, Size = UDim2.new(1, -8, 1, -6), Position = UDim2.new(0, 4, 0, 3) })
-local hintText = Text({ Parent = intakeCard, Font = FONT, Color = C.Muted, Max = 13, AlignX = CENTER, Position = UDim2.new(0, 12, 1, -30), Size = UDim2.new(1, -24, 0, 20) })
+local hint = Text({ Parent = intakeHost, Style = "Footnote", Color = C.Secondary, AlignX = CENTER, Wrap = false, Size = UDim2.new(1, 0, 0, 18) })
+local intakeCapsule = Frame({ Parent = intakeHost, Color = C.Sheet, Transparency = 0.08, Radius = "pill", Hairline = 0.9, Anchor = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, 0), Size = UDim2.new(0, 330, 0, 48) })
+local dots = Frame({ Parent = intakeCapsule, Position = UDim2.new(0, 22, 0, 0), Size = UDim2.new(0, 120, 1, 0) })
+new("UIListLayout", { Parent = dots, FillDirection = Enum.FillDirection.Horizontal, VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder })
+local intakeText = Text({ Parent = intakeCapsule, Style = "Callout", Wrap = false, AlignX = RIGHT, Position = UDim2.new(0, 140, 0, 0), Size = UDim2.new(1, -162, 1, 0) })
 
-local exitHost = Box({ Parent = mainGui, Transparency = 1, Radius = false, Anchor = Vector2.new(0, 1), Position = UDim2.new(0, 16, 1, -22), Size = UDim2.new(0, 160, 0, 50), Visible = false })
+local exitHost = Frame({ Parent = mainGui, Anchor = Vector2.new(0, 1), Position = UDim2.new(0, 20, 1, -20), Size = UDim2.new(0, 140, 0, 40), Visible = false })
 autoScale(exitHost)
-Button({ Parent = exitHost, Text = "⏏ EXIT ROBOT", Color = C.Red, Max = 15, Radius = 14, Size = UDim2.fromScale(1, 1) }, function()
+Button({ Parent = exitHost, Text = "Exit Robot", Kind = "secondary", Size = UDim2.fromScale(1, 1) }, function()
 	arena("Stop")
 end)
 
-local countdownHost = Box({ Parent = modalGui, Transparency = 1, Radius = false, Anchor = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.42), Size = UDim2.new(0, 420, 0, 200), Visible = false })
+local countdownHost = Frame({ Parent = modalGui, Anchor = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.4), Size = UDim2.new(0, 400, 0, 180), Visible = false })
 autoScale(countdownHost)
-local countdownText = Text({ Parent = countdownHost, Font = FONT_BLACK, Max = 140, AlignX = CENTER, Color = C.Gold, Size = UDim2.fromScale(1, 1) })
-local countdownStroke = stroke(C.Dark, 4, 0)
-countdownStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual
-countdownStroke.Parent = countdownText
-local countdownScale = new("UIScale", { Parent = countdownText })
+local countdownText = Text({ Parent = countdownHost, Font = F.Bold, TextSize = 132, AlignX = CENTER, Wrap = false, Size = UDim2.fromScale(1, 1) })
 
-local matchHost = Box({ Parent = modalGui, Transparency = 1, Radius = false, Anchor = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.48), Size = UDim2.new(0, 500, 0, 300), Visible = false })
+local matchHost = Frame({ Parent = modalGui, Anchor = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.48), Size = UDim2.new(0, 460, 0, 290), Visible = false })
 autoScale(matchHost)
-local matchWrap = Box({ Parent = matchHost, Transparency = 1, Radius = false })
-local matchScale = new("UIScale", { Parent = matchWrap })
-local matchCard = Box({ Parent = matchWrap, Color = C.Panel, Radius = 22, Stroke = C.Gold, StrokeThickness = 3 })
-local matchStroke = matchCard:FindFirstChildOfClass("UIStroke")
-local matchTitle = Text({ Parent = matchCard, Font = FONT_BLACK, Max = 52, AlignX = CENTER, Position = UDim2.new(0, 20, 0, 20), Size = UDim2.new(1, -40, 0, 64) })
-local matchScoreRow = Box({ Parent = matchCard, Transparency = 1, Radius = false, Position = UDim2.new(0, 24, 0, 100), Size = UDim2.new(1, -48, 0, 90) })
-local function ResultSide(x, color)
-	local side = Box({ Parent = matchScoreRow, Color = Color3.new(1, 1, 1), Radius = 14, Gradient = { color, shade(color, 0.45), 90 }, Position = UDim2.new(x, x > 0 and 8 or 0, 0, 0), Size = UDim2.new(0.5, -8, 1, 0) })
-	local n = Text({ Parent = side, Font = FONT_BLACK, Max = 14, AlignX = CENTER, Position = UDim2.new(0, 8, 0, 8), Size = UDim2.new(1, -16, 0, 18) })
-	local sc = Text({ Parent = side, Font = FONT_BLACK, Max = 40, AlignX = CENTER, Position = UDim2.new(0, 8, 0, 28), Size = UDim2.new(1, -16, 0, 54) })
-	return n, sc
-end
-local resultRedName, resultRedScore = ResultSide(0, C.Red)
-local resultBlueName, resultBlueScore = ResultSide(0.5, C.Blue)
-Text({ Parent = matchCard, Text = "Rewards were added to your wallet", Font = FONT_MED, Color = C.Muted, Max = 13, AlignX = CENTER, Position = UDim2.new(0, 20, 0, 198), Size = UDim2.new(1, -40, 0, 18) })
-Button({ Parent = matchCard, Text = "CONTINUE", Color = C.Green, Max = 16, Anchor = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -18), Size = UDim2.new(0, 200, 0, 46) }, function()
+local matchSheet = Frame({ Parent = matchHost, Color = C.Sheet, Radius = 22, Hairline = 0.9 })
+local matchTitle = Text({ Parent = matchSheet, Style = "Display", TextSize = 40, AlignX = CENTER, Wrap = false, Position = UDim2.new(0, 20, 0, 30), Size = UDim2.new(1, -40, 0, 48) })
+local matchScore = Text({ Parent = matchSheet, Style = "Title2", AlignX = CENTER, Wrap = false, Position = UDim2.new(0, 20, 0, 98), Size = UDim2.new(1, -40, 0, 30) })
+local matchNames = Text({ Parent = matchSheet, Style = "Subhead", Color = C.Secondary, AlignX = CENTER, Wrap = false, Position = UDim2.new(0, 20, 0, 132), Size = UDim2.new(1, -40, 0, 20) })
+Text({ Parent = matchSheet, Text = "Rewards have been added to your account.", Style = "Footnote", Color = C.Tertiary, AlignX = CENTER, Position = UDim2.new(0, 20, 0, 172), Size = UDim2.new(1, -40, 0, 18) })
+Button({ Parent = matchSheet, Text = "Done", Kind = "primary", TextSize = 16, Anchor = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -24), Size = UDim2.new(0, 200, 0, 42) }, function()
 	matchHost.Visible = false
-	overlay.Visible = false
+	dim.Visible = false
 end)
 
-local lastCountdown = nil
-local lastMatchState = nil
-local lastScores = { Red = 0, Blue = 0, Practice = 0 }
-local lastHeld = 0
+local lastCountdown, lastMatchState = nil, nil
 
-local function pulse(scaleObj)
-	scaleObj.Scale = 1.18
-	tween(scaleObj, 0.35, { Scale = 1 }, Enum.EasingStyle.Back)
-end
-
-local function showCountdown(text, color)
+local function flashCount(text)
 	countdownHost.Visible = true
 	countdownText.Text = text
-	countdownText.TextColor3 = color
 	countdownText.TextTransparency = 0
-	countdownScale.Scale = 1.8
-	tween(countdownScale, 0.4, { Scale = 1 }, Enum.EasingStyle.Back)
+	tween(countdownText, { TextTransparency = 1 }, TweenInfo.new(0.9, Enum.EasingStyle.Quad, Enum.EasingDirection.In))
 end
 
-local function buildPips(held, capacity)
-	for _, child in ipairs(pipRow:GetChildren()) do
+local function buildDots(held, capacity)
+	for _, child in ipairs(dots:GetChildren()) do
 		if child:IsA("Frame") then
 			child:Destroy()
 		end
 	end
 	for i = 1, capacity do
-		local filled = i <= held
-		local pip = Box({ Parent = pipRow, Order = i, Color = filled and C.Green or C.Bg, Radius = 14, Size = UDim2.new(0, 28, 0, 28), Stroke = filled and Color3.fromRGB(160, 255, 190) or C.Line, StrokeTransparency = filled and 0.3 or 0 })
-		if filled then
-			gradient(SHADE_TOP, Color3.fromRGB(150, 160, 150), 90).Parent = pip
-			if i == held and held > lastHeld then
-				local s = new("UIScale", { Parent = pip, Scale = 1.5 })
-				tween(s, 0.3, { Scale = 1 }, Enum.EasingStyle.Back)
-			end
-		end
+		Frame({ Parent = dots, Order = i, Color = i <= held and C.Label or C.Fill, Radius = "pill", Size = UDim2.new(0, 10, 0, 10) })
 	end
 end
 
 local function renderArena()
 	local mode = Arena.Mode
-	local driving = mode == "Practice" or mode == "Ranked"
+	local driving = isDriving()
 	intakeHost.Visible = driving
 	exitHost.Visible = driving
 	scoreHost.Visible = driving
-	menuHost.Visible = not driving
-	goalBar.Visible = not driving
+	dockHost.Visible = not driving
+	if State then
+		updateGoal(cash())
+	end
+
 	if driving then
-		closeWindow()
+		closeSheet()
 		local held, capacity = Arena.Held or 0, Arena.Capacity or 1
-		buildPips(held, capacity)
-		lastHeld = held
-		pointsText.Text = "×" .. (Arena.PointsPerBall or 1) .. " PTS"
-		intakeCard.UIStroke.Color = held >= capacity and C.Gold or C.Green
+		buildDots(held, capacity)
+		intakeText.Text = held .. " of " .. capacity .. '  <font color="#98989F">·  ' .. (Arena.PointsPerBall or 1) .. " pts each</font>"
 	end
 
 	if mode == "Practice" then
-		practiceBox.Visible = true
-		redBox.Visible, blueBox.Visible, timerBox.Visible = false, false, false
-		local points = Arena.Points or 0
-		practiceScore.Text = tostring(points)
-		if points > lastScores.Practice then
-			pulse(practiceScale)
-		end
-		lastScores.Practice = points
-		hintText.Text = "WASD drive" .. (Arena.Strafe and " • Q/E strafe" or "") .. " • F score in any goal • Space exit"
+		redSide.Visible, blueSide.Visible = true, false
+		redName.Text = "PRACTICE"
+		redScore.Text = tostring(Arena.Points or 0)
+		clock.Text = "—"
+		clockSub.Text = "POINTS"
+		hint.Text = "W A S D  drive" .. (Arena.Strafe and "   ·   Q E  strafe" or "") .. "   ·   F  score   ·   Space  exit"
 		countdownHost.Visible = false
 	elseif mode == "Ranked" and Arena.Match then
 		local m = Arena.Match
-		practiceBox.Visible = false
-		redBox.Visible, blueBox.Visible, timerBox.Visible = true, true, true
-		redName.Text = (m.Side == "Red" and "⭐ " or "") .. string.upper(m.RedName)
-		blueName.Text = (m.Side == "Blue" and "⭐ " or "") .. string.upper(m.BlueName)
+		redSide.Visible, blueSide.Visible = true, true
+		redName.Text = string.upper(m.RedName) .. (m.Side == "Red" and "  ·  YOU" or "")
+		blueName.Text = (m.Side == "Blue" and "YOU  ·  " or "") .. string.upper(m.BlueName)
 		redScore.Text = tostring(m.Red)
 		blueScore.Text = tostring(m.Blue)
-		if m.Red > lastScores.Red then
-			pulse(redScale)
-		end
-		if m.Blue > lastScores.Blue then
-			pulse(blueScale)
-		end
-		lastScores.Red, lastScores.Blue = m.Red, m.Blue
-		hintText.Text = "Score in the " .. string.upper(m.Side or "?") .. " goal • F to score • Jumping out forfeits!"
+		hint.Text = "Score in the " .. (m.Side == "Red" and "red" or "blue") .. " goal   ·   F  score   ·   Leaving forfeits"
 		if m.State == "Countdown" then
-			timerText.Text = "0:" .. string.format("%02d", m.Countdown or 0)
-			timerSub.Text = "GET READY"
+			clock.Text = string.format("0:%02d", m.Countdown or 0)
+			clockSub.Text = "STARTING"
+			clock.TextColor3 = C.Label
 			if m.Countdown ~= lastCountdown then
-				showCountdown(tostring(m.Countdown or ""), C.Gold)
+				flashCount(tostring(m.Countdown or ""))
 			end
 			lastCountdown = m.Countdown
 		else
-			timerText.Text = string.format("%d:%02d", math.floor((m.Time or 0) / 60), (m.Time or 0) % 60)
-			timerSub.Text = "LIVE"
-			timerText.TextColor3 = (m.Time or 0) <= 10 and C.Red or C.Text
+			local t = m.Time or 0
+			clock.Text = string.format("%d:%02d", math.floor(t / 60), t % 60)
+			clockSub.Text = "LIVE"
+			clock.TextColor3 = t <= 10 and C.Accent or C.Label
 			if lastMatchState == "Countdown" then
-				showCountdown("GO!", C.Green)
-				task.delay(0.7, function()
-					tween(countdownText, 0.3, { TextTransparency = 1 })
-					task.wait(0.3)
-					if Arena.Match and Arena.Match.State == "Live" then
-						countdownHost.Visible = false
-					end
-				end)
+				flashCount("Go")
 			end
 		end
 		lastMatchState = m.State
 	else
 		countdownHost.Visible = false
 		lastMatchState, lastCountdown = nil, nil
-		lastScores = { Red = 0, Blue = 0, Practice = 0 }
 	end
 
 	if mode == "Result" then
-		local titles = { Win = "🏆 VICTORY!", Loss = "DEFEAT", Tie = "TIE GAME", Forfeit = "FORFEIT" }
-		local colors = { Win = C.Gold, Loss = C.Red, Tie = C.Blue, Forfeit = C.Red }
-		local color = colors[Arena.Result] or C.Gold
-		matchTitle.Text = titles[Arena.Result] or "MATCH OVER"
-		matchTitle.TextColor3 = color
-		matchStroke.Color = color
-		resultRedName.Text = string.upper(Arena.RedName or "RED")
-		resultBlueName.Text = string.upper(Arena.BlueName or "BLUE")
-		resultRedScore.Text = tostring(Arena.Red or 0)
-		resultBlueScore.Text = tostring(Arena.Blue or 0)
-		overlay.Visible = true
+		local titles = { Win = "Victory", Loss = "Defeat", Tie = "Tie", Forfeit = "Forfeit" }
+		matchTitle.Text = titles[Arena.Result] or "Match Over"
+		matchTitle.TextColor3 = Arena.Result == "Win" and C.Label or C.Secondary
+		matchScore.Text = '<font color="#FF453A">' .. (Arena.Red or 0) .. "</font>  –  " .. '<font color="#0A84FF">' .. (Arena.Blue or 0) .. "</font>"
+		matchNames.Text = (Arena.RedName or "Red") .. "  vs  " .. (Arena.BlueName or "Blue")
+		dim.Visible = true
 		matchHost.Visible = true
-		matchScale.Scale = 0.8
-		tween(matchScale, 0.35, { Scale = 1 }, Enum.EasingStyle.Back)
+		matchSheet.BackgroundTransparency = 1
+		tween(matchSheet, { BackgroundTransparency = 0 })
 		Arena = { Mode = "None" }
 	end
 end
@@ -4901,14 +4743,14 @@ DataUpdate.OnClientEvent:Connect(function(snapshot)
 	for compId, remaining in pairs(snapshot.Cooldowns or {}) do
 		cooldownEnds[compId] = os.clock() + remaining
 	end
-	updateHud()
-	refreshBadges()
+	updateStatus()
+	refreshDots()
 	renderOpen()
 end)
 
 OpenUIRemote.OnClientEvent:Connect(function(name)
-	if panels[name] and Arena.Mode ~= "Practice" and Arena.Mode ~= "Ranked" and openName ~= name then
-		openWindow(name)
+	if panels[name] and not isDriving() and openName ~= name then
+		openSheet(name)
 	end
 end)
 
@@ -4927,23 +4769,15 @@ task.spawn(function()
 	end)
 end)
 
-player:GetAttributeChangedSignal("InQueue"):Connect(function()
-	refreshBadges()
+local function rerenderDrive()
+	refreshDots()
 	if openName == "Drive" then
 		renderOpen()
 	end
-end)
-player:GetAttributeChangedSignal("Driving"):Connect(function()
-	if openName == "Drive" then
-		renderOpen()
-	end
-end)
-Remotes:GetAttributeChangedSignal("QueueSize"):Connect(function()
-	refreshBadges()
-	if openName == "Drive" then
-		renderOpen()
-	end
-end)
+end
+player:GetAttributeChangedSignal("InQueue"):Connect(rerenderDrive)
+player:GetAttributeChangedSignal("Driving"):Connect(rerenderDrive)
+Remotes:GetAttributeChangedSignal("QueueSize"):Connect(rerenderDrive)
 
 task.spawn(function()
 	while true do
@@ -4951,32 +4785,29 @@ task.spawn(function()
 		for _, fn in ipairs(live.Tick) do
 			fn()
 		end
-		refreshBadges()
+		refreshDots()
 	end
 end)
 
-local camera = workspace.CurrentCamera
-if camera then
-	camera:GetPropertyChangedSignal("ViewportSize"):Connect(updateScale)
-end
-workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
-	local cam = workspace.CurrentCamera
+local function hookCamera(cam)
 	if cam then
 		cam:GetPropertyChangedSignal("ViewportSize"):Connect(updateScale)
-		updateScale()
 	end
+	updateScale()
+end
+hookCamera(workspace.CurrentCamera)
+workspace:GetPropertyChangedSignal("CurrentCamera"):Connect(function()
+	hookCamera(workspace.CurrentCamera)
 end)
-updateScale()
 
--- initial data
 task.spawn(function()
 	for _ = 1, 20 do
 		local ok, snapshot = pcall(RequestRemote.InvokeServer, RequestRemote, "GetData")
 		if ok and type(snapshot) == "table" then
 			if not State then
 				State = snapshot
-				updateHud()
-				refreshBadges()
+				updateStatus()
+				refreshDots()
 			end
 			return
 		end
@@ -5033,13 +4864,13 @@ end
 
 local function bindControls(model)
 	ContextActionService:BindAction("VexScore", onScore, true, Enum.KeyCode.F, Enum.KeyCode.ButtonX)
-	ContextActionService:SetTitle("VexScore", "SCORE")
+	ContextActionService:SetTitle("VexScore", "Score")
 	ContextActionService:SetPosition("VexScore", UDim2.new(1, -200, 1, -140))
 	if model:GetAttribute("Strafe") then
 		ContextActionService:BindAction("VexStrafeLeft", onStrafe, true, Enum.KeyCode.Q, Enum.KeyCode.ButtonL1)
 		ContextActionService:BindAction("VexStrafeRight", onStrafe, true, Enum.KeyCode.E, Enum.KeyCode.ButtonR1)
-		ContextActionService:SetTitle("VexStrafeLeft", "◀")
-		ContextActionService:SetTitle("VexStrafeRight", "▶")
+		ContextActionService:SetTitle("VexStrafeLeft", "Left")
+		ContextActionService:SetTitle("VexStrafeRight", "Right")
 		ContextActionService:SetPosition("VexStrafeLeft", UDim2.new(1, -270, 1, -80))
 		ContextActionService:SetPosition("VexStrafeRight", UDim2.new(1, -200, 1, -60))
 	end

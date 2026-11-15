@@ -352,7 +352,7 @@ local function giveRewards(player, result, opponentRating)
 		data.Stats.MatchesWon += 1
 		local cash = DataManager.AddCash(player, Config.Match.WinCashBase + opponentRating * Config.Match.WinCashPerRating, true)
 		DataManager.AddTrophies(player, Config.Match.WinTrophies)
-		notify(player, "🏆 VICTORY! +" .. Config.Money(cash) .. " and +" .. Config.Match.WinTrophies .. " trophies", "success")
+		notify(player, "Victory. +" .. Config.Money(cash) .. " and +" .. Config.Match.WinTrophies .. " trophies", "success")
 	elseif result == "Tie" then
 		local cash = DataManager.AddCash(player, Config.Match.LoseCash * 2, true)
 		DataManager.AddTrophies(player, Config.Match.TieTrophies)
@@ -449,7 +449,7 @@ local function runMatch(m)
 		if s then
 			m.Scores[side] += s.Stats.Auton
 			if s.Stats.Auton > 0 then
-				notify(m[side], "🧠 Autonomous bonus: +" .. s.Stats.Auton .. " points!", "success")
+				notify(m[side], "Autonomous bonus: +" .. s.Stats.Auton .. " points", "success")
 			end
 			releaseRobot(s)
 		end
@@ -524,7 +524,7 @@ function tryStartMatch()
 	end
 
 	for _, p in ipairs({ red, blue }) do
-		notify(p, "⚔️ Ranked match! Score in your " .. (p == red and "RED" or "BLUE") .. " goal. Jumping out forfeits!", "info")
+		notify(p, "Ranked match. Score in your " .. (p == red and "RED" or "BLUE") .. " goal. Leaving your robot forfeits.", "info")
 	end
 	updateQueueAttributes()
 	task.spawn(runMatch, m)

@@ -18,6 +18,10 @@ local WorldBuilder = {}
 local world = nil
 
 local SMOOTH = Enum.SurfaceType.Smooth
+local FONT_BOLD = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+local FONT_SEMI = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.SemiBold)
+local SIGN_BLACK = Color3.fromRGB(16, 16, 18)
+local VEX_RED = Color3.fromRGB(226, 35, 42)
 local METAL = Color3.fromRGB(196, 198, 204)
 local WHITE = Color3.fromRGB(240, 240, 240)
 
@@ -65,7 +69,7 @@ local function surfaceText(part, face, text, textColor, bgColor, font)
 	label.BackgroundTransparency = bgColor and 0 or 1
 	label.BackgroundColor3 = bgColor or Color3.new(0, 0, 0)
 	label.TextScaled = true
-	label.Font = font or Enum.Font.GothamBlack
+	label.FontFace = font or FONT_BOLD
 	label.TextColor3 = textColor or Color3.new(1, 1, 1)
 	label.Text = text
 	label.Parent = gui
@@ -87,74 +91,73 @@ local function billboard(adornee, text, studsWidth, studsHeight, offset, color)
 	gui.Parent = adornee
 	local card = Instance.new("Frame")
 	card.Size = UDim2.fromScale(1, 1)
-	card.BackgroundColor3 = Color3.fromRGB(18, 20, 30)
-	card.BackgroundTransparency = 0.25
+	card.BackgroundColor3 = SIGN_BLACK
+	card.BackgroundTransparency = 0.2
 	card.Parent = gui
 	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0.2, 0)
+	corner.CornerRadius = UDim.new(0.5, 0)
 	corner.Parent = card
 	local stroke = Instance.new("UIStroke")
-	stroke.Color = color or Color3.new(1, 1, 1)
-	stroke.Thickness = 2
-	stroke.Transparency = 0.2
+	stroke.Color = Color3.new(1, 1, 1)
+	stroke.Thickness = 1
+	stroke.Transparency = 0.85
 	stroke.Parent = card
 	local label = Instance.new("TextLabel")
 	label.Position = UDim2.fromScale(0.05, 0.1)
 	label.Size = UDim2.fromScale(0.9, 0.8)
 	label.BackgroundTransparency = 1
 	label.TextScaled = true
-	label.Font = Enum.Font.GothamBlack
-	label.TextColor3 = color or Color3.new(1, 1, 1)
+	label.FontFace = FONT_SEMI
+	label.TextColor3 = Color3.new(1, 1, 1)
 	label.Text = text
 	label.Parent = card
 	return label
 end
 
 -- two-line "shop tag" used above tycoon buttons
-local function priceTag(adornee, name, price, isFree)
+local function priceTag(adornee, name, price)
 	local gui = Instance.new("BillboardGui")
-	gui.Size = UDim2.new(9, 0, 3, 0)
-	gui.StudsOffset = Vector3.new(0, 3.2, 0)
+	gui.Size = UDim2.new(8, 0, 2.2, 0)
+	gui.StudsOffset = Vector3.new(0, 3, 0)
 	gui.MaxDistance = 80
 	gui.LightInfluence = 0
 	gui.Parent = adornee
 	local card = Instance.new("Frame")
-	card.Size = UDim2.fromScale(1, 0.62)
-	card.BackgroundColor3 = Color3.fromRGB(18, 20, 30)
+	card.Size = UDim2.fromScale(1, 1)
+	card.BackgroundColor3 = SIGN_BLACK
 	card.BackgroundTransparency = 0.15
 	card.Parent = gui
 	local corner = Instance.new("UICorner")
 	corner.CornerRadius = UDim.new(0.3, 0)
 	corner.Parent = card
 	local nameLabel = Instance.new("TextLabel")
-	nameLabel.Position = UDim2.fromScale(0.05, 0.12)
-	nameLabel.Size = UDim2.fromScale(0.9, 0.76)
+	nameLabel.Position = UDim2.fromScale(0.06, 0.1)
+	nameLabel.Size = UDim2.fromScale(0.88, 0.48)
 	nameLabel.BackgroundTransparency = 1
 	nameLabel.TextScaled = true
-	nameLabel.Font = Enum.Font.GothamBlack
+	nameLabel.FontFace = FONT_BOLD
 	nameLabel.TextColor3 = Color3.new(1, 1, 1)
 	nameLabel.Text = name
 	nameLabel.Parent = card
-	local pill = Instance.new("Frame")
-	pill.AnchorPoint = Vector2.new(0.5, 0)
-	pill.Position = UDim2.fromScale(0.5, 0.64)
-	pill.Size = UDim2.fromScale(0.5, 0.36)
-	pill.BackgroundColor3 = isFree and Color3.fromRGB(245, 190, 50) or Color3.fromRGB(46, 190, 100)
-	pill.Parent = gui
-	local pillCorner = Instance.new("UICorner")
-	pillCorner.CornerRadius = UDim.new(0.5, 0)
-	pillCorner.Parent = pill
 	local priceLabel = Instance.new("TextLabel")
 	priceLabel.Name = "Price"
-	priceLabel.Position = UDim2.fromScale(0.08, 0.1)
-	priceLabel.Size = UDim2.fromScale(0.84, 0.8)
+	priceLabel.Position = UDim2.fromScale(0.06, 0.58)
+	priceLabel.Size = UDim2.fromScale(0.88, 0.32)
 	priceLabel.BackgroundTransparency = 1
 	priceLabel.TextScaled = true
-	priceLabel.Font = Enum.Font.GothamBlack
-	priceLabel.TextColor3 = Color3.fromRGB(15, 20, 25)
+	priceLabel.FontFace = FONT_SEMI
+	priceLabel.TextColor3 = Color3.fromRGB(170, 170, 178)
 	priceLabel.Text = price
-	priceLabel.Parent = pill
-	return pill
+	priceLabel.Parent = card
+	return card
+end
+
+-- black VEX-style sign with a red accent bar along the bottom
+local function vexSign(parent, size, cf, text)
+	local sign = newPart(parent, { Size = size, CFrame = cf, Color = SIGN_BLACK })
+	newPart(parent, { Size = Vector3.new(size.X, 0.4, size.Z + 0.1), CFrame = cf * CFrame.new(0, -size.Y / 2 + 0.2, 0), Color = VEX_RED })
+	surfaceText(sign, Enum.NormalId.Front, text, Color3.new(1, 1, 1))
+	return sign
 end
 
 local function setupLighting()
@@ -177,9 +180,9 @@ local function setupLighting()
 		end
 	end
 	ensure("Atmosphere", { Density = 0.28, Offset = 0.2, Color = Color3.fromRGB(200, 215, 235), Decay = Color3.fromRGB(110, 120, 150), Glare = 0.1, Haze = 1 })
-	ensure("BloomEffect", { Intensity = 0.5, Size = 28, Threshold = 1.4 })
-	ensure("ColorCorrectionEffect", { Saturation = 0.12, Contrast = 0.06, Brightness = 0.01 })
-	ensure("SunRaysEffect", { Intensity = 0.06, Spread = 0.6 })
+	ensure("BloomEffect", { Intensity = 0.2, Size = 20, Threshold = 2 })
+	ensure("ColorCorrectionEffect", { Saturation = 0.03, Contrast = 0.04, Brightness = 0 })
+	ensure("SunRaysEffect", { Intensity = 0.03, Spread = 0.5 })
 end
 
 local function prompt(parent, actionText, objectText, holdTime)
@@ -241,8 +244,8 @@ local function buildHub(root)
 	spawn.Neutral = true
 	spawn.Size = Vector3.new(12, 1, 12)
 	spawn.CFrame = CFrame.new(0, 0.5, 72)
-	spawn.Color = Color3.fromRGB(220, 50, 50)
-	spawn.Material = Enum.Material.Neon
+	spawn.Color = Color3.fromRGB(40, 40, 44)
+	spawn.Material = Enum.Material.SmoothPlastic
 	spawn.Duration = 0
 	spawn.TopSurface = SMOOTH
 	spawn.Parent = hubFolder
@@ -252,17 +255,18 @@ local function buildHub(root)
 		Name = "Title",
 		Size = Vector3.new(60, 10, 1),
 		CFrame = CFrame.new(0, 30, 0),
-		Color = Color3.fromRGB(25, 28, 40),
+		Color = SIGN_BLACK,
 	})
-	surfaceText(title, Enum.NormalId.Front, Config.GameName, Color3.fromRGB(255, 80, 80))
-	surfaceText(title, Enum.NormalId.Back, Config.GameName, Color3.fromRGB(80, 160, 255))
+	newPart(hubFolder, { Size = Vector3.new(60, 0.6, 1.1), CFrame = CFrame.new(0, 25.3, 0), Color = VEX_RED })
+	surfaceText(title, Enum.NormalId.Front, string.upper(Config.GameName), Color3.new(1, 1, 1))
+	surfaceText(title, Enum.NormalId.Back, string.upper(Config.GameName), Color3.new(1, 1, 1))
 
 	-- leaderboard (faces the center)
 	local board = newPart(hubFolder, {
 		Name = "Leaderboard",
 		Size = Vector3.new(18, 22, 1),
 		CFrame = CFrame.new(0, 12, -100),
-		Color = Color3.fromRGB(25, 28, 40),
+		Color = SIGN_BLACK,
 	})
 	newPart(hubFolder, { Size = Vector3.new(1, 12, 1), CFrame = CFrame.new(-7, 0.5, -100), Color = METAL, Material = Enum.Material.Metal })
 	newPart(hubFolder, { Size = Vector3.new(1, 12, 1), CFrame = CFrame.new(7, 0.5, -100), Color = METAL, Material = Enum.Material.Metal })
@@ -281,22 +285,22 @@ local function buildHub(root)
 	layout.Parent = list
 	local header = Instance.new("TextLabel")
 	header.Size = UDim2.new(1, 0, 0, 60)
-	header.BackgroundColor3 = Color3.fromRGB(220, 50, 50)
-	header.Font = Enum.Font.GothamBlack
+	header.BackgroundColor3 = VEX_RED
+	header.FontFace = FONT_BOLD
 	header.TextScaled = true
 	header.TextColor3 = Color3.new(1, 1, 1)
-	header.Text = "🏆 TOP TEAMS (Trophies)"
+	header.Text = "TOP TEAMS  ·  TROPHIES"
 	header.Parent = list
 	hub.LeaderboardRows = {}
 	for i = 1, 10 do
 		local row = Instance.new("TextLabel")
 		row.Size = UDim2.new(1, 0, 0, 40)
 		row.BackgroundTransparency = 1
-		row.Font = Enum.Font.GothamBold
+		row.FontFace = FONT_SEMI
 		row.TextScaled = true
 		row.TextXAlignment = Enum.TextXAlignment.Left
-		row.TextColor3 = i <= 3 and Color3.fromRGB(255, 215, 80) or Color3.new(1, 1, 1)
-		row.Text = string.format("  #%d  ---", i)
+		row.TextColor3 = i <= 3 and Color3.new(1, 1, 1) or Color3.fromRGB(170, 170, 178)
+		row.Text = string.format("  %d    —", i)
 		row.Parent = list
 		hub.LeaderboardRows[i] = row
 	end
@@ -306,15 +310,9 @@ local function buildHub(root)
 		Name = "CompetitionKiosk",
 		Size = Vector3.new(14, 6, 4),
 		CFrame = CFrame.new(0, 3.3, 100),
-		Color = Color3.fromRGB(25, 28, 40),
+		Color = SIGN_BLACK,
 	})
-	local kioskSign = newPart(hubFolder, {
-		Size = Vector3.new(16, 5, 1),
-		CFrame = CFrame.new(0, 10, 100),
-		Color = Color3.fromRGB(240, 190, 40),
-		Material = Enum.Material.Neon,
-	})
-	surfaceText(kioskSign, Enum.NormalId.Front, "🏆 COMPETITIONS", Color3.fromRGB(30, 30, 30))
+	vexSign(hubFolder, Vector3.new(18, 5, 1), CFrame.new(0, 10, 100), "COMPETITIONS")
 	hub.CompetitionPrompt = prompt(kiosk, "Enter Competitions", "Tournament Desk")
 
 	-- lamp posts
@@ -386,7 +384,7 @@ local function buildField(root, name, center, accentText)
 	for _, info in ipairs({ { "Red", -1, Color3.fromRGB(220, 45, 50) }, { "Blue", 1, Color3.fromRGB(40, 110, 230) } }) do
 		local side, sign, color = info[1], info[2], info[3]
 		local gx = sign * (half - 4)
-		local pad = newPart(f, { Name = side .. "GoalPad", Size = Vector3.new(8, 0.1, 12), CFrame = at(gx, 0.65, 0), Color = color, Material = Enum.Material.Neon, Transparency = 0.2 })
+		local pad = newPart(f, { Name = side .. "GoalPad", Size = Vector3.new(8, 0.1, 12), CFrame = at(gx, 0.65, 0), Color = color, Material = Enum.Material.SmoothPlastic })
 		newPart(f, { Size = Vector3.new(0.6, 8, 0.6), CFrame = at(gx + sign * 3.5, 4.6, -5.5), Color = color, Material = Enum.Material.Metal })
 		newPart(f, { Size = Vector3.new(0.6, 8, 0.6), CFrame = at(gx + sign * 3.5, 4.6, 5.5), Color = color, Material = Enum.Material.Metal })
 		newPart(f, { Size = Vector3.new(0.6, 0.6, 11.6), CFrame = at(gx + sign * 3.5, 8.6, 0), Color = color, Material = Enum.Material.Metal })
@@ -416,9 +414,8 @@ local function buildField(root, name, center, accentText)
 	end
 
 	-- entrance kiosk
-	local kiosk = newPart(f, { Name = "Kiosk", Size = Vector3.new(10, 4, 3), CFrame = at(0, 2.3, -half - 10), Color = Color3.fromRGB(25, 28, 40) })
-	local sign = newPart(f, { Size = Vector3.new(26, 5, 1), CFrame = at(0, 13, -half - 1.5), Color = Color3.fromRGB(25, 28, 40) })
-	surfaceText(sign, Enum.NormalId.Front, accentText, Color3.fromRGB(255, 255, 255))
+	local kiosk = newPart(f, { Name = "Kiosk", Size = Vector3.new(10, 4, 3), CFrame = at(0, 2.3, -half - 10), Color = SIGN_BLACK })
+	vexSign(f, Vector3.new(28, 5, 1), at(0, 13, -half - 1.5), accentText)
 	field.Kiosk = kiosk
 	field.ExitCFrame = at(0, 3.5, -half - 16)
 
@@ -431,7 +428,7 @@ local function buildScoreboard(field)
 		Name = "Scoreboard",
 		Size = Vector3.new(40, 12, 1),
 		CFrame = field.CFrame * CFrame.new(0, 17, half + 3),
-		Color = Color3.fromRGB(20, 22, 30),
+		Color = SIGN_BLACK,
 	})
 	local labels = {}
 	for _, face in ipairs({ Enum.NormalId.Front, Enum.NormalId.Back }) do
@@ -446,7 +443,7 @@ local function buildScoreboard(field)
 			l.BackgroundTransparency = 1
 			l.Position = UDim2.fromScale(x, 0)
 			l.Size = UDim2.fromScale(w, 1)
-			l.Font = Enum.Font.GothamBlack
+			l.FontFace = FONT_BOLD
 			l.TextScaled = true
 			l.TextColor3 = color
 			l.Text = text
@@ -495,23 +492,24 @@ local function buildPlot(root, index)
 	local base = plot.Base
 	plotPart(plot, base, Vector3.new(Config.PlotSize, 1, Config.PlotSize), Vector3.new(0, 0.5, 0), Color3.fromRGB(175, 175, 180), Enum.Material.Concrete, { Name = "Floor" })
 	-- colored border
-	plotPart(plot, base, Vector3.new(Config.PlotSize, 1.2, 1), Vector3.new(0, 0.6, -half + 0.5), color, Enum.Material.Neon)
-	plotPart(plot, base, Vector3.new(Config.PlotSize, 1.2, 1), Vector3.new(0, 0.6, half - 0.5), color, Enum.Material.Neon)
-	plotPart(plot, base, Vector3.new(1, 1.2, Config.PlotSize), Vector3.new(-half + 0.5, 0.6, 0), color, Enum.Material.Neon)
-	plotPart(plot, base, Vector3.new(1, 1.2, Config.PlotSize), Vector3.new(half - 0.5, 0.6, 0), color, Enum.Material.Neon)
+	plotPart(plot, base, Vector3.new(Config.PlotSize, 1.2, 1), Vector3.new(0, 0.6, -half + 0.5), color, Enum.Material.SmoothPlastic)
+	plotPart(plot, base, Vector3.new(Config.PlotSize, 1.2, 1), Vector3.new(0, 0.6, half - 0.5), color, Enum.Material.SmoothPlastic)
+	plotPart(plot, base, Vector3.new(1, 1.2, Config.PlotSize), Vector3.new(-half + 0.5, 0.6, 0), color, Enum.Material.SmoothPlastic)
+	plotPart(plot, base, Vector3.new(1, 1.2, Config.PlotSize), Vector3.new(half - 0.5, 0.6, 0), color, Enum.Material.SmoothPlastic)
 
 	-- path to hub
 	local pathLength = Config.PlotRadius - half - Config.HubRadius + 6
 	plotPart(plot, base, Vector3.new(16, 0.4, pathLength), Vector3.new(0, 0.1, -half - pathLength / 2 + 2), Color3.fromRGB(150, 150, 155), Enum.Material.Concrete)
 
 	-- owner sign
-	local sign = plotPart(plot, base, Vector3.new(26, 6, 1), Vector3.new(-30, 6, -half + 1), Color3.fromRGB(25, 28, 40))
+	local sign = plotPart(plot, base, Vector3.new(26, 6, 1), Vector3.new(-30, 6, -half + 1), SIGN_BLACK)
 	plotPart(plot, base, Vector3.new(1, 3, 1), Vector3.new(-40, 2, -half + 1), METAL, Enum.Material.Metal)
 	plotPart(plot, base, Vector3.new(1, 3, 1), Vector3.new(-20, 2, -half + 1), METAL, Enum.Material.Metal)
-	plot.OwnerLabel = surfaceText(sign, Enum.NormalId.Front, "Empty Workshop", color)
+	plotPart(plot, base, Vector3.new(26, 0.4, 1.1), Vector3.new(-30, 3.2, -half + 1), color, Enum.Material.SmoothPlastic)
+	plot.OwnerLabel = surfaceText(sign, Enum.NormalId.Front, "Empty Workshop", Color3.new(1, 1, 1))
 
 	-- spawn pad
-	plotPart(plot, base, Vector3.new(8, 0.2, 8), Vector3.new(30, 1.1, -42), color, Enum.Material.Neon, { CanCollide = false })
+	plotPart(plot, base, Vector3.new(8, 0.2, 8), Vector3.new(30, 1.1, -42), color, Enum.Material.SmoothPlastic, { CanCollide = false })
 	plot.SpawnCFrame = cf * CFrame.new(30, 4, -42) * CFrame.Angles(0, math.pi, 0)
 
 	-- conveyor
@@ -526,7 +524,7 @@ local function buildPlot(root, index)
 	plotPart(plot, base, Vector3.new(1, 3, 6), Vector3.new(-45.5, 4, z), METAL, Enum.Material.Metal) -- end stop
 
 	-- collector
-	local collector = plotPart(plot, base, Vector3.new(11, 1, 10), Vector3.new(39.5, 1.5, z), color, Enum.Material.Neon, { Name = "Collector" })
+	local collector = plotPart(plot, base, Vector3.new(11, 1, 10), Vector3.new(39.5, 1.5, z), Color3.fromRGB(40, 40, 44), Enum.Material.DiamondPlate, { Name = "Collector" })
 	plotPart(plot, base, Vector3.new(11, 3, 0.5), Vector3.new(39.5, 3, z - 5), METAL, Enum.Material.Metal)
 	plotPart(plot, base, Vector3.new(11, 3, 0.5), Vector3.new(39.5, 3, z + 5), METAL, Enum.Material.Metal)
 	plotPart(plot, base, Vector3.new(0.5, 3, 10), Vector3.new(45.25, 3, z), METAL, Enum.Material.Metal)
@@ -534,9 +532,9 @@ local function buildPlot(root, index)
 	billboard(collector, "PART COLLECTOR", 10, 1.5, Vector3.new(0, 4, 0), Color3.fromRGB(255, 255, 255))
 
 	-- collect pad
-	local collectPad = plotPart(plot, base, Vector3.new(7, 0.4, 7), Vector3.new(40, 1.2, -4), Color3.fromRGB(60, 220, 90), Enum.Material.Neon, { Name = "CollectPad" })
+	local collectPad = plotPart(plot, base, Vector3.new(7, 0.4, 7), Vector3.new(40, 1.2, -4), Color3.fromRGB(52, 199, 89), Enum.Material.SmoothPlastic, { Name = "CollectPad" })
 	plot.CollectPad = collectPad
-	plot.StorageLabel = billboard(collectPad, "Step here to collect\n$0", 9, 3, Vector3.new(0, 4, 0), Color3.fromRGB(120, 255, 140))
+	plot.StorageLabel = billboard(collectPad, "Collect\n$0", 9, 3, Vector3.new(0, 4, 0), Color3.fromRGB(120, 255, 140))
 
 	return plot
 end
@@ -564,7 +562,7 @@ function WorldBuilder.BuildButton(plot, item)
 		CFrame = plot.CFrame * CFrame.new(x, 1.1, z) * CFrame.Angles(0, 0, math.rad(90)),
 	})
 	local priceText = item.Cost == 0 and "FREE" or Config.Money(item.Cost)
-	priceTag(pad, item.Name, priceText, item.Cost == 0)
+	priceTag(pad, item.Name, priceText)
 	model.PrimaryPart = pad
 	model.Parent = plot.Buttons
 	return model
@@ -576,7 +574,7 @@ end
 function WorldBuilder.BuildBayPad(plot, index)
 	local pos = Config.Layout.BayPositions[index]
 	local pad = plotPart(plot, plot.Bays, Vector3.new(10, 0.3, 11), pos + Vector3.new(0, 1.15, 0), Color3.fromRGB(45, 48, 60), Enum.Material.Metal, { Name = "BayPad" .. index })
-	plotPart(plot, plot.Bays, Vector3.new(10, 0.32, 0.4), pos + Vector3.new(0, 1.16, -5.3), plot.Color, Enum.Material.Neon)
+	plotPart(plot, plot.Bays, Vector3.new(10, 0.32, 0.4), pos + Vector3.new(0, 1.16, -5.3), VEX_RED, Enum.Material.SmoothPlastic)
 	return pad
 end
 
@@ -591,7 +589,7 @@ function itemBuilders.Dropper(plot, item, model)
 	plotPart(plot, model, Vector3.new(1.2, 12, 1.2), Vector3.new(x, 7, z + 5.5), METAL, Enum.Material.Metal)
 	plotPart(plot, model, Vector3.new(1, 1, 5), Vector3.new(x, 12.5, z + 3), METAL, Enum.Material.Metal)
 	local body = plotPart(plot, model, Vector3.new(4.5, 4, 4.5), Vector3.new(x, 11, z), item.DropColor, Enum.Material.Metal, { Name = "Body" })
-	plotPart(plot, model, Vector3.new(4.7, 0.6, 4.7), Vector3.new(x, 13.2, z), plot.Color, Enum.Material.Neon)
+	plotPart(plot, model, Vector3.new(4.7, 0.6, 4.7), Vector3.new(x, 13.2, z), SIGN_BLACK, Enum.Material.SmoothPlastic)
 	plotPart(plot, model, Vector3.new(2, 1.5, 2), Vector3.new(x, 8.3, z), Color3.fromRGB(50, 50, 55), Enum.Material.Metal)
 	local dropPoint = Instance.new("Attachment")
 	dropPoint.Name = "DropPoint"
@@ -606,13 +604,13 @@ function itemBuilders.Upgrader(plot, item, model)
 	local z = Config.Layout.ConveyorZ
 	plotPart(plot, model, Vector3.new(1, 8, 1), Vector3.new(x, 5, z - 4), Color3.fromRGB(50, 50, 55), Enum.Material.Metal)
 	plotPart(plot, model, Vector3.new(1, 8, 1), Vector3.new(x, 5, z + 4), Color3.fromRGB(50, 50, 55), Enum.Material.Metal)
-	local top = plotPart(plot, model, Vector3.new(1.4, 1.4, 9), Vector3.new(x, 9.5, z), item.Color, Enum.Material.Neon)
+	local top = plotPart(plot, model, Vector3.new(1.4, 1.4, 9), Vector3.new(x, 9.5, z), SIGN_BLACK, Enum.Material.Metal)
 	local laser = plotPart(plot, model, Vector3.new(0.4, 3.5, 6), Vector3.new(x, 5.25, z), item.Color, Enum.Material.Neon, {
 		Name = "Laser",
 		Transparency = 0.45,
 		CanCollide = false,
 	})
-	billboard(top, item.Name .. " x" .. item.Multiplier, 8, 1.4, Vector3.new(0, 2, 0), item.Color)
+	billboard(top, item.Name .. "  ·  " .. item.Multiplier .. "×", 8, 1.4, Vector3.new(0, 2, 0), item.Color)
 	model.PrimaryPart = laser
 end
 
@@ -622,9 +620,9 @@ function itemBuilders.Walls(plot, _, model)
 	plotPart(plot, model, Vector3.new(Config.PlotSize, 14, 1), Vector3.new(0, 8, half - 0.5), wallColor, Enum.Material.SmoothPlastic)
 	plotPart(plot, model, Vector3.new(1, 14, 75), Vector3.new(-half + 0.5, 8, 17.5), wallColor, Enum.Material.SmoothPlastic)
 	plotPart(plot, model, Vector3.new(1, 14, 75), Vector3.new(half - 0.5, 8, 17.5), wallColor, Enum.Material.SmoothPlastic)
-	plotPart(plot, model, Vector3.new(Config.PlotSize, 1.5, 1.2), Vector3.new(0, 6, half - 0.6), plot.Color, Enum.Material.Neon)
-	plotPart(plot, model, Vector3.new(1.2, 1.5, 75), Vector3.new(-half + 0.6, 6, 17.5), plot.Color, Enum.Material.Neon)
-	plotPart(plot, model, Vector3.new(1.2, 1.5, 75), Vector3.new(half - 0.6, 6, 17.5), plot.Color, Enum.Material.Neon)
+	plotPart(plot, model, Vector3.new(Config.PlotSize, 1.5, 1.2), Vector3.new(0, 6, half - 0.6), VEX_RED, Enum.Material.SmoothPlastic)
+	plotPart(plot, model, Vector3.new(1.2, 1.5, 75), Vector3.new(-half + 0.6, 6, 17.5), VEX_RED, Enum.Material.SmoothPlastic)
+	plotPart(plot, model, Vector3.new(1.2, 1.5, 75), Vector3.new(half - 0.6, 6, 17.5), VEX_RED, Enum.Material.SmoothPlastic)
 end
 
 function itemBuilders.Assembly(plot, _, model)
@@ -633,7 +631,7 @@ function itemBuilders.Assembly(plot, _, model)
 		plotPart(plot, model, Vector3.new(0.6, 3, 0.6), Vector3.new(p[1], 2.5, p[2]), METAL, Enum.Material.Metal)
 	end
 	local monitor = plotPart(plot, model, Vector3.new(5, 3.2, 0.3), Vector3.new(-38, 6.3, 38.5), Color3.fromRGB(20, 20, 25))
-	surfaceText(monitor, Enum.NormalId.Front, "🤖 ROBOT LAB", Color3.fromRGB(90, 200, 255), Color3.fromRGB(10, 20, 35))
+	surfaceText(monitor, Enum.NormalId.Front, "ROBOT LAB", Color3.new(1, 1, 1), SIGN_BLACK)
 	-- tool rack
 	plotPart(plot, model, Vector3.new(0.6, 6, 0.6), Vector3.new(-47, 4, 36), METAL, Enum.Material.Metal)
 	plotPart(plot, model, Vector3.new(0.4, 0.4, 4), Vector3.new(-46, 6.5, 35) , Color3.fromRGB(240, 120, 30), Enum.Material.Metal)
@@ -689,7 +687,7 @@ function itemBuilders.Shelf(plot, _, model)
 		end
 	end
 	local sign = plotPart(plot, model, Vector3.new(0.4, 3, 14), Vector3.new(-half + 1.5, 12.5, -3), Color3.fromRGB(25, 28, 40))
-	local label = surfaceText(sign, Enum.NormalId.Right, "🏆 0 Trophies", Color3.fromRGB(255, 210, 70))
+	local label = surfaceText(sign, Enum.NormalId.Right, "0 TROPHIES", Color3.new(1, 1, 1))
 	label.Name = "TrophyLabel"
 end
 
@@ -704,7 +702,7 @@ function itemBuilders.Overclock(plot, _, model)
 	light.Range = 20
 	light.Brightness = 3
 	light.Parent = core
-	billboard(core, "⚡ OVERCLOCK", 8, 1.5, Vector3.new(0, 5, 0), Color3.fromRGB(80, 200, 255))
+	billboard(core, "Factory Overclock", 8, 1.5, Vector3.new(0, 5, 0), Color3.fromRGB(80, 200, 255))
 end
 
 function itemBuilders.Hall(plot, _, model)
@@ -713,8 +711,8 @@ function itemBuilders.Hall(plot, _, model)
 	plotPart(plot, model, Vector3.new(2, 18, 2), Vector3.new(-10, 10, -half + 2), gold, Enum.Material.Metal)
 	plotPart(plot, model, Vector3.new(2, 18, 2), Vector3.new(10, 10, -half + 2), gold, Enum.Material.Metal)
 	local top = plotPart(plot, model, Vector3.new(24, 4, 2), Vector3.new(0, 20, -half + 2), gold, Enum.Material.Metal)
-	surfaceText(top, Enum.NormalId.Front, "🏆 CHAMPIONS 🏆", Color3.fromRGB(60, 40, 0))
-	plotPart(plot, model, Vector3.new(16, 0.2, 30), Vector3.new(0, 1.02, -half + 16), gold, Enum.Material.Neon, { CanCollide = false, Transparency = 0.3 })
+	surfaceText(top, Enum.NormalId.Front, "CHAMPIONS", Color3.fromRGB(40, 30, 0))
+	plotPart(plot, model, Vector3.new(16, 0.2, 30), Vector3.new(0, 1.02, -half + 16), SIGN_BLACK, Enum.Material.SmoothPlastic, { CanCollide = false })
 end
 
 function WorldBuilder.BuildItem(plot, item)
@@ -748,8 +746,8 @@ function WorldBuilder.GetWorld()
 	world.Root = root
 	world.Hub = buildHub(root)
 	world.Fields = {
-		Practice = buildField(root, "Practice", Vector3.new(-62, 0, 0), "🎮 PRACTICE FIELD"),
-		Ranked = buildField(root, "Ranked", Vector3.new(62, 0, 0), "⚔️ RANKED 1v1 ARENA"),
+		Practice = buildField(root, "Practice", Vector3.new(-62, 0, 0), "PRACTICE FIELD"),
+		Ranked = buildField(root, "Ranked", Vector3.new(62, 0, 0), "RANKED  ·  1 V 1"),
 	}
 	buildScoreboard(world.Fields.Ranked)
 	world.Fields.Practice.Prompt = prompt(world.Fields.Practice.Kiosk, "Drive Your Robot", "Practice Field")

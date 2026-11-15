@@ -17,6 +17,9 @@ local Config = require(ReplicatedStorage:WaitForChild("Config"))
 
 local RobotBuilder = {}
 
+local FONT_BOLD = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+local FONT_SEMI = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.SemiBold)
+
 local METAL = Color3.fromRGB(196, 198, 204)
 local DARK = Color3.fromRGB(35, 35, 40)
 local MOTOR = Color3.fromRGB(55, 30, 30)
@@ -33,23 +36,24 @@ local function makeBillboard(root, label, subLabel, accent)
 	local card = Instance.new("Frame")
 	card.Name = "Card"
 	card.Size = UDim2.fromScale(1, 1)
-	card.BackgroundColor3 = Color3.fromRGB(18, 20, 30)
+	card.BackgroundColor3 = Color3.fromRGB(16, 16, 18)
 	card.BackgroundTransparency = 0.2
 	card.Parent = gui
 	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0.25, 0)
+	corner.CornerRadius = UDim.new(0.5, 0)
 	corner.Parent = card
 	local stroke = Instance.new("UIStroke")
-	stroke.Color = accent
-	stroke.Thickness = 2
+	stroke.Color = Color3.new(1, 1, 1)
+	stroke.Thickness = 1
+	stroke.Transparency = 0.85
 	stroke.Parent = card
 
 	local title = Instance.new("TextLabel")
 	title.Name = "Title"
 	title.BackgroundTransparency = 1
-	title.Position = UDim2.new(0.05, 0, 0.06, 0)
-	title.Size = UDim2.new(0.9, 0, 0.52, 0)
-	title.Font = Enum.Font.GothamBlack
+	title.Position = UDim2.new(0.1, 0, 0.1, 0)
+	title.Size = UDim2.new(0.8, 0, 0.46, 0)
+	title.FontFace = FONT_BOLD
 	title.TextScaled = true
 	title.TextColor3 = Color3.new(1, 1, 1)
 	title.Text = label or "Robot"
@@ -58,11 +62,11 @@ local function makeBillboard(root, label, subLabel, accent)
 	local sub = Instance.new("TextLabel")
 	sub.Name = "Sub"
 	sub.BackgroundTransparency = 1
-	sub.Position = UDim2.new(0.05, 0, 0.56, 0)
-	sub.Size = UDim2.new(0.9, 0, 0.36, 0)
-	sub.Font = Enum.Font.GothamBold
+	sub.Position = UDim2.new(0.1, 0, 0.56, 0)
+	sub.Size = UDim2.new(0.8, 0, 0.3, 0)
+	sub.FontFace = FONT_SEMI
 	sub.TextScaled = true
-	sub.TextColor3 = Color3.fromRGB(255, 205, 80)
+	sub.TextColor3 = Color3.fromRGB(170, 170, 178)
 	sub.Text = subLabel or ""
 	sub.Parent = card
 end
@@ -130,7 +134,7 @@ function RobotBuilder.Build(loadout, options)
 				cf = cf * CFrame.Angles(0, math.rad(angle), 0)
 			end
 			add("Wheel", Vector3.new(0.8, wheelD, wheelD), cf, drivetrain.WheelColor, Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
-			add("Hub", Vector3.new(0.85, wheelD * 0.4, wheelD * 0.4), cf, accent, Enum.Material.Neon, Enum.PartType.Cylinder)
+			add("Hub", Vector3.new(0.85, wheelD * 0.4, wheelD * 0.4), cf, accent, Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
 			add("Motor", Vector3.new(0.9, 0.9, 1.2), CFrame.new(side * 2.2, wy + 0.35, z), MOTOR, Enum.Material.SmoothPlastic)
 		end
 	end
@@ -178,7 +182,7 @@ function RobotBuilder.Build(loadout, options)
 	elseif lift.Style == "Flywheel" then
 		add("FlyFrame", Vector3.new(0.3, 3.5, 3.5), CFrame.new(-1.8, wy + 2.5, 2.3), METAL, Enum.Material.Metal)
 		add("FlyFrame2", Vector3.new(0.3, 3.5, 3.5), CFrame.new(1.8, wy + 2.5, 2.3), METAL, Enum.Material.Metal)
-		add("Flywheel", Vector3.new(0.7, 3.2, 3.2), CFrame.new(0, wy + 2.8, 2.3), liftColor, Enum.Material.Neon, Enum.PartType.Cylinder)
+		add("Flywheel", Vector3.new(0.7, 3.2, 3.2), CFrame.new(0, wy + 2.8, 2.3), liftColor, Enum.Material.Metal, Enum.PartType.Cylinder)
 		add("Hood", Vector3.new(3.4, 0.25, 3), CFrame.new(0, wy + 4.5, 1.8) * CFrame.Angles(math.rad(-15), 0, 0), Color3.fromRGB(240, 240, 240), Enum.Material.Glass)
 	end
 

@@ -56,7 +56,7 @@ local function updateTrophyShelf(plot)
 	if model and data then
 		local label = model:FindFirstChild("TrophyLabel", true)
 		if label then
-			label.Text = "🏆 " .. Config.Format(data.Trophies) .. " Trophies"
+			label.Text = Config.Format(data.Trophies) .. " TROPHIES"
 		end
 	end
 end
@@ -102,12 +102,12 @@ local function refreshBays(plot)
 		local loadout = data.Garage[i]
 		if loadout then
 			local stats = Config.GetRobotStats(loadout)
-			local label = (i == data.Active and "⭐ " or "") .. "Robot #" .. i .. " (" .. stats.Rating .. ")"
+			local label = "Robot " .. i .. (i == data.Active and "  ·  Active" or "")
 			local robot = RobotBuilder.Build(loadout, {
 				Name = "BayRobot" .. i,
 				TeamColor = plot.Color,
 				Label = label,
-				SubLabel = "+" .. Config.Money(stats.Income * mult) .. "/s",
+				SubLabel = "Rating " .. stats.Rating .. "  ·  +" .. Config.Money(stats.Income * mult) .. "/s",
 			})
 			robot:PivotTo(pad.CFrame * CFrame.new(0, 0.15 + 1, 0) * CFrame.Angles(0, math.pi, 0))
 			robot.Parent = plot.Bays
@@ -274,7 +274,7 @@ function tryPurchase(player, item)
 		refreshBays(plot)
 	end
 	if item.Type == "Assembly" then
-		notify(player, "Robot Lab unlocked! Use the 🤖 button or the workbench to design robots.", "success")
+		notify(player, "Robot Lab unlocked. Open Lab from the dock or use the workbench.", "success")
 	else
 		notify(player, "Built " .. item.Name .. "!", "success")
 	end
@@ -766,7 +766,7 @@ local function showOnlineLeaderboard(rows)
 	end)
 	for i, row in ipairs(rows) do
 		local entry = list[i]
-		row.Text = entry and string.format("  #%d  %s - %s 🏆", i, entry.Name, Config.Format(entry.Value)) or string.format("  #%d  ---", i)
+		row.Text = entry and string.format("  %d    %s    %s", i, entry.Name, Config.Format(entry.Value)) or string.format("  %d    —", i)
 	end
 end
 
@@ -801,9 +801,9 @@ local function refreshLeaderboard()
 				name = success and result or ("User " .. tostring(userId))
 				nameCache[userId] = name
 			end
-			row.Text = string.format("  #%d  %s - %s 🏆", i, name, Config.Format(entry.value))
+			row.Text = string.format("  %d    %s    %s", i, name, Config.Format(entry.value))
 		else
-			row.Text = string.format("  #%d  ---", i)
+			row.Text = string.format("  %d    —", i)
 		end
 	end
 end

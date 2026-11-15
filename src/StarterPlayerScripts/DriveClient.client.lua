@@ -46,13 +46,13 @@ end
 
 local function bindControls(model)
 	ContextActionService:BindAction("VexScore", onScore, true, Enum.KeyCode.F, Enum.KeyCode.ButtonX)
-	ContextActionService:SetTitle("VexScore", "SCORE")
+	ContextActionService:SetTitle("VexScore", "Score")
 	ContextActionService:SetPosition("VexScore", UDim2.new(1, -200, 1, -140))
 	if model:GetAttribute("Strafe") then
 		ContextActionService:BindAction("VexStrafeLeft", onStrafe, true, Enum.KeyCode.Q, Enum.KeyCode.ButtonL1)
 		ContextActionService:BindAction("VexStrafeRight", onStrafe, true, Enum.KeyCode.E, Enum.KeyCode.ButtonR1)
-		ContextActionService:SetTitle("VexStrafeLeft", "◀")
-		ContextActionService:SetTitle("VexStrafeRight", "▶")
+		ContextActionService:SetTitle("VexStrafeLeft", "Left")
+		ContextActionService:SetTitle("VexStrafeRight", "Right")
 		ContextActionService:SetPosition("VexStrafeLeft", UDim2.new(1, -270, 1, -80))
 		ContextActionService:SetPosition("VexStrafeRight", UDim2.new(1, -200, 1, -60))
 	end
