@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parent.parent
 FILES = [
     ("src/ReplicatedStorage/Config.lua", "ModuleScript", "ReplicatedStorage", None, "Config"),
     ("src/ServerScriptService/DataManager.lua", "ModuleScript", "ServerScriptService", None, "DataManager"),
-    ("src/ServerScriptService/RobotBuilder.lua", "ModuleScript", "ServerScriptService", None, "RobotBuilder"),
+    ("src/ReplicatedStorage/RobotBuilder.lua", "ModuleScript", "ReplicatedStorage", None, "RobotBuilder"),
     ("src/ServerScriptService/WorldBuilder.lua", "ModuleScript", "ServerScriptService", None, "WorldBuilder"),
     ("src/ServerScriptService/TycoonServer.server.lua", "Script", "ServerScriptService", None, "TycoonServer"),
     ("src/ServerScriptService/ArenaServer.server.lua", "Script", "ServerScriptService", None, "ArenaServer"),
@@ -36,6 +36,11 @@ def main() -> None:
         "-- It creates (or replaces) every game script. Undo with Ctrl+Z.",
         'local ChangeHistoryService = game:GetService("ChangeHistoryService")',
         'ChangeHistoryService:SetWaypoint("Before VEX Tycoon install")',
+        "-- remove scripts from older versions that moved",
+        'local oldBuilder = game:GetService("ServerScriptService"):FindFirstChild("RobotBuilder")',
+        "if oldBuilder then",
+        "\toldBuilder:Destroy()",
+        "end",
         "local files = {}",
     ]
     for path, cls, service, sub, name in FILES:

@@ -14,7 +14,7 @@ local Debris = game:GetService("Debris")
 
 local Config = require(ReplicatedStorage:WaitForChild("Config"))
 local DataManager = require(ServerScriptService:WaitForChild("DataManager"))
-local RobotBuilder = require(ServerScriptService:WaitForChild("RobotBuilder"))
+local RobotBuilder = require(ReplicatedStorage:WaitForChild("RobotBuilder"))
 local WorldBuilder = require(ServerScriptService:WaitForChild("WorldBuilder"))
 
 local Remotes = DataManager.Remotes
@@ -82,7 +82,7 @@ local function refreshDisplay(plot)
 	})
 	robot:PivotTo(plot.CFrame * CFrame.new(-20, 1.4 + 1, 36) * CFrame.Angles(0, math.pi, 0))
 	robot.Parent = assembly
-	local sub = robot.Root.Nameplate:FindFirstChild("Sub")
+	local sub = robot.Root:FindFirstChild("Sub", true)
 	if sub then
 		sub.Text = "Rating " .. stats.Rating
 	end

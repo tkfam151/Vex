@@ -21,7 +21,7 @@ Create these objects in the **Explorer** (right-click the parent → *Insert Obj
 |---|---|---|---|
 | `Config` | ModuleScript | ReplicatedStorage | `src/ReplicatedStorage/Config.lua` |
 | `DataManager` | ModuleScript | ServerScriptService | `src/ServerScriptService/DataManager.lua` |
-| `RobotBuilder` | ModuleScript | ServerScriptService | `src/ServerScriptService/RobotBuilder.lua` |
+| `RobotBuilder` | ModuleScript | ReplicatedStorage | `src/ReplicatedStorage/RobotBuilder.lua` |
 | `WorldBuilder` | ModuleScript | ServerScriptService | `src/ServerScriptService/WorldBuilder.lua` |
 | `TycoonServer` | Script | ServerScriptService | `src/ServerScriptService/TycoonServer.server.lua` |
 | `ArenaServer` | Script | ServerScriptService | `src/ServerScriptService/ArenaServer.server.lua` |
@@ -67,6 +67,9 @@ Ranked matches need two players. In Studio go to **Test → Clients and Servers*
 
 ---
 
+## Updating from an older version
+Paste the new `Installer.lua` into the Command Bar again. It replaces every script, and removes the old `ServerScriptService.RobotBuilder` (it now lives in ReplicatedStorage). If you installed by hand, move `RobotBuilder` into ReplicatedStorage and replace the other scripts.
+
 ## Customizing
 
 Every price, stat, reward and robot part is in **`Config`** (ReplicatedStorage):
@@ -86,12 +89,12 @@ If you edit the files in `src/`, run `python3 tools/build_installer.py` to rebui
 ```
 src/
   ReplicatedStorage/Config.lua            shared settings + stat math
+  ReplicatedStorage/RobotBuilder.lua      builds 3D robots (world + UI previews)
   ServerScriptService/DataManager.lua     saving, leaderstats, cash, remotes
-  ServerScriptService/RobotBuilder.lua    builds 3D robots from modules
   ServerScriptService/WorldBuilder.lua    generates hub, fields, workshops, items
   ServerScriptService/TycoonServer.server.lua   tycoon, lab, garage, competitions, seasons
   ServerScriptService/ArenaServer.server.lua    practice + ranked driving
-  StarterPlayerScripts/MainUI.client.lua        all UI
+  StarterPlayerScripts/MainUI.client.lua        all UI (auto-scales, 3D previews, animations)
   StarterPlayerScripts/DriveClient.client.lua   robot driving controls
 Installer.lua         generated one-paste installer
 ```

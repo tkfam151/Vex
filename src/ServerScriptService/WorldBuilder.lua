@@ -85,16 +85,101 @@ local function billboard(adornee, text, studsWidth, studsHeight, offset, color)
 	gui.MaxDistance = 90
 	gui.LightInfluence = 0
 	gui.Parent = adornee
+	local card = Instance.new("Frame")
+	card.Size = UDim2.fromScale(1, 1)
+	card.BackgroundColor3 = Color3.fromRGB(18, 20, 30)
+	card.BackgroundTransparency = 0.25
+	card.Parent = gui
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0.2, 0)
+	corner.Parent = card
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = color or Color3.new(1, 1, 1)
+	stroke.Thickness = 2
+	stroke.Transparency = 0.2
+	stroke.Parent = card
 	local label = Instance.new("TextLabel")
-	label.Size = UDim2.fromScale(1, 1)
+	label.Position = UDim2.fromScale(0.05, 0.1)
+	label.Size = UDim2.fromScale(0.9, 0.8)
 	label.BackgroundTransparency = 1
 	label.TextScaled = true
 	label.Font = Enum.Font.GothamBlack
 	label.TextColor3 = color or Color3.new(1, 1, 1)
-	label.TextStrokeTransparency = 0.3
 	label.Text = text
-	label.Parent = gui
+	label.Parent = card
 	return label
+end
+
+-- two-line "shop tag" used above tycoon buttons
+local function priceTag(adornee, name, price, isFree)
+	local gui = Instance.new("BillboardGui")
+	gui.Size = UDim2.new(9, 0, 3, 0)
+	gui.StudsOffset = Vector3.new(0, 3.2, 0)
+	gui.MaxDistance = 80
+	gui.LightInfluence = 0
+	gui.Parent = adornee
+	local card = Instance.new("Frame")
+	card.Size = UDim2.fromScale(1, 0.62)
+	card.BackgroundColor3 = Color3.fromRGB(18, 20, 30)
+	card.BackgroundTransparency = 0.15
+	card.Parent = gui
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0.3, 0)
+	corner.Parent = card
+	local nameLabel = Instance.new("TextLabel")
+	nameLabel.Position = UDim2.fromScale(0.05, 0.12)
+	nameLabel.Size = UDim2.fromScale(0.9, 0.76)
+	nameLabel.BackgroundTransparency = 1
+	nameLabel.TextScaled = true
+	nameLabel.Font = Enum.Font.GothamBlack
+	nameLabel.TextColor3 = Color3.new(1, 1, 1)
+	nameLabel.Text = name
+	nameLabel.Parent = card
+	local pill = Instance.new("Frame")
+	pill.AnchorPoint = Vector2.new(0.5, 0)
+	pill.Position = UDim2.fromScale(0.5, 0.64)
+	pill.Size = UDim2.fromScale(0.5, 0.36)
+	pill.BackgroundColor3 = isFree and Color3.fromRGB(245, 190, 50) or Color3.fromRGB(46, 190, 100)
+	pill.Parent = gui
+	local pillCorner = Instance.new("UICorner")
+	pillCorner.CornerRadius = UDim.new(0.5, 0)
+	pillCorner.Parent = pill
+	local priceLabel = Instance.new("TextLabel")
+	priceLabel.Name = "Price"
+	priceLabel.Position = UDim2.fromScale(0.08, 0.1)
+	priceLabel.Size = UDim2.fromScale(0.84, 0.8)
+	priceLabel.BackgroundTransparency = 1
+	priceLabel.TextScaled = true
+	priceLabel.Font = Enum.Font.GothamBlack
+	priceLabel.TextColor3 = Color3.fromRGB(15, 20, 25)
+	priceLabel.Text = price
+	priceLabel.Parent = pill
+	return pill
+end
+
+local function setupLighting()
+	local Lighting = game:GetService("Lighting")
+	Lighting.ClockTime = 14.5
+	Lighting.Brightness = 2.2
+	Lighting.GlobalShadows = true
+	Lighting.OutdoorAmbient = Color3.fromRGB(135, 135, 150)
+	Lighting.Ambient = Color3.fromRGB(60, 60, 75)
+	Lighting.EnvironmentDiffuseScale = 0.6
+	Lighting.EnvironmentSpecularScale = 0.6
+	local function ensure(className, props)
+		local effect = Lighting:FindFirstChildOfClass(className)
+		if not effect then
+			effect = Instance.new(className)
+			for k, v in pairs(props) do
+				effect[k] = v
+			end
+			effect.Parent = Lighting
+		end
+	end
+	ensure("Atmosphere", { Density = 0.28, Offset = 0.2, Color = Color3.fromRGB(200, 215, 235), Decay = Color3.fromRGB(110, 120, 150), Glare = 0.1, Haze = 1 })
+	ensure("BloomEffect", { Intensity = 0.5, Size = 28, Threshold = 1.4 })
+	ensure("ColorCorrectionEffect", { Saturation = 0.12, Contrast = 0.06, Brightness = 0.01 })
+	ensure("SunRaysEffect", { Intensity = 0.06, Spread = 0.6 })
 end
 
 local function prompt(parent, actionText, objectText, holdTime)
@@ -451,7 +536,7 @@ local function buildPlot(root, index)
 	-- collect pad
 	local collectPad = plotPart(plot, base, Vector3.new(7, 0.4, 7), Vector3.new(40, 1.2, -4), Color3.fromRGB(60, 220, 90), Enum.Material.Neon, { Name = "CollectPad" })
 	plot.CollectPad = collectPad
-	plot.StorageLabel = billboard(collectPad, "Step here to collect\n$0", 10, 3, Vector3.new(0, 4, 0), Color3.fromRGB(120, 255, 140))
+	plot.StorageLabel = billboard(collectPad, "Step here to collect\n$0", 9, 3, Vector3.new(0, 4, 0), Color3.fromRGB(120, 255, 140))
 
 	return plot
 end
@@ -479,7 +564,7 @@ function WorldBuilder.BuildButton(plot, item)
 		CFrame = plot.CFrame * CFrame.new(x, 1.1, z) * CFrame.Angles(0, 0, math.rad(90)),
 	})
 	local priceText = item.Cost == 0 and "FREE" or Config.Money(item.Cost)
-	billboard(pad, item.Name .. "\n" .. priceText, 9, 3, Vector3.new(0, 3, 0), Color3.new(1, 1, 1))
+	priceTag(pad, item.Name, priceText, item.Cost == 0)
 	model.PrimaryPart = pad
 	model.Parent = plot.Buttons
 	return model
@@ -658,6 +743,7 @@ function WorldBuilder.GetWorld()
 	root.Name = "VexWorld"
 	root.Parent = workspace
 
+	setupLighting()
 	world = {}
 	world.Root = root
 	world.Hub = buildHub(root)

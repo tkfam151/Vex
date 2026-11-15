@@ -1,5 +1,6 @@
 --[[
-	RobotBuilder (ModuleScript)  ->  ServerScriptService.RobotBuilder
+	RobotBuilder (ModuleScript)  ->  ReplicatedStorage.RobotBuilder
+	Shared so the UI can show live 3D robot previews.
 
 	Builds a 3D VEX-style robot Model out of the chosen modules.
 	  RobotBuilder.Build(loadout, options) -> model, stats
@@ -8,6 +9,7 @@
 	  TeamColor  = Color3 accent color
 	  Label      = text shown above the robot
 	  SubLabel   = second line of text
+	  NoNameplate = true -> skip the floating name tag (UI previews)
 ]]
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -19,37 +21,50 @@ local METAL = Color3.fromRGB(196, 198, 204)
 local DARK = Color3.fromRGB(35, 35, 40)
 local MOTOR = Color3.fromRGB(55, 30, 30)
 
-local function makeBillboard(root, label, subLabel)
+local function makeBillboard(root, label, subLabel, accent)
 	local gui = Instance.new("BillboardGui")
 	gui.Name = "Nameplate"
-	gui.Size = UDim2.new(10, 0, 2.4, 0)
+	gui.Size = UDim2.new(9, 0, 2.2, 0)
 	gui.StudsOffset = Vector3.new(0, 6.5, 0)
-	gui.MaxDistance = 120
+	gui.MaxDistance = 110
 	gui.LightInfluence = 0
 	gui.Parent = root
+
+	local card = Instance.new("Frame")
+	card.Name = "Card"
+	card.Size = UDim2.fromScale(1, 1)
+	card.BackgroundColor3 = Color3.fromRGB(18, 20, 30)
+	card.BackgroundTransparency = 0.2
+	card.Parent = gui
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0.25, 0)
+	corner.Parent = card
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = accent
+	stroke.Thickness = 2
+	stroke.Parent = card
 
 	local title = Instance.new("TextLabel")
 	title.Name = "Title"
 	title.BackgroundTransparency = 1
-	title.Size = UDim2.new(1, 0, 0.55, 0)
+	title.Position = UDim2.new(0.05, 0, 0.06, 0)
+	title.Size = UDim2.new(0.9, 0, 0.52, 0)
 	title.Font = Enum.Font.GothamBlack
 	title.TextScaled = true
 	title.TextColor3 = Color3.new(1, 1, 1)
-	title.TextStrokeTransparency = 0.4
 	title.Text = label or "Robot"
-	title.Parent = gui
+	title.Parent = card
 
 	local sub = Instance.new("TextLabel")
 	sub.Name = "Sub"
 	sub.BackgroundTransparency = 1
-	sub.Position = UDim2.new(0, 0, 0.55, 0)
-	sub.Size = UDim2.new(1, 0, 0.45, 0)
+	sub.Position = UDim2.new(0.05, 0, 0.56, 0)
+	sub.Size = UDim2.new(0.9, 0, 0.36, 0)
 	sub.Font = Enum.Font.GothamBold
 	sub.TextScaled = true
-	sub.TextColor3 = Color3.fromRGB(255, 220, 90)
-	sub.TextStrokeTransparency = 0.4
+	sub.TextColor3 = Color3.fromRGB(255, 205, 80)
 	sub.Text = subLabel or ""
-	sub.Parent = gui
+	sub.Parent = card
 end
 
 function RobotBuilder.Build(loadout, options)
@@ -199,7 +214,9 @@ function RobotBuilder.Build(loadout, options)
 		seat.Parent = model
 	end
 
-	makeBillboard(root, options.Label, options.SubLabel)
+	if not options.NoNameplate then
+		makeBillboard(root, options.Label, options.SubLabel, accent)
+	end
 
 	-------------------------------------------------------------- weld everything to root
 	for _, d in ipairs(model:GetDescendants()) do

@@ -14,7 +14,7 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local Config = require(ReplicatedStorage:WaitForChild("Config"))
 local DataManager = require(ServerScriptService:WaitForChild("DataManager"))
-local RobotBuilder = require(ServerScriptService:WaitForChild("RobotBuilder"))
+local RobotBuilder = require(ReplicatedStorage:WaitForChild("RobotBuilder"))
 local WorldBuilder = require(ServerScriptService:WaitForChild("WorldBuilder"))
 
 local Remotes = DataManager.Remotes

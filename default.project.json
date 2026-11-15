@@ -3,11 +3,11 @@
   "tree": {
     "$className": "DataModel",
     "ReplicatedStorage": {
-      "Config": { "$path": "src/ReplicatedStorage/Config.lua" }
+      "Config": { "$path": "src/ReplicatedStorage/Config.lua" },
+      "RobotBuilder": { "$path": "src/ReplicatedStorage/RobotBuilder.lua" }
     },
     "ServerScriptService": {
       "DataManager": { "$path": "src/ServerScriptService/DataManager.lua" },
-      "RobotBuilder": { "$path": "src/ServerScriptService/RobotBuilder.lua" },
       "WorldBuilder": { "$path": "src/ServerScriptService/WorldBuilder.lua" },
       "TycoonServer": { "$path": "src/ServerScriptService/TycoonServer.server.lua" },
       "ArenaServer": { "$path": "src/ServerScriptService/ArenaServer.server.lua" }
